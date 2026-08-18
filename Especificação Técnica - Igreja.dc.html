@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<style>doc-page:not(:defined){visibility:hidden}
+h1,h2,h3{font-family:Georgia,serif}
+body{font-family:-apple-system,Segoe UI,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f2f2f2}
+code{background:#f2f2f2;padding:1px 5px;border-radius:3px;font-size:12px}
+</style>
+</helmet>
+
+<doc-page margin="0.85in">
+
+<h1 style="margin-bottom:2px">Redenção Church App — Especificação técnica: Igreja</h1>
+<p style="color:#666;margin-top:0">Handoff para a equipa de desenvolvimento · backend, dados e administração para a nova estrutura da aba Igreja</p>
+
+<p>O protótipo de UI/UX (<code>Redenção Church App.dc.html</code>, aba Igreja) já implementa a nova estrutura visual — cabeçalho, destaque dinâmico e os três grupos "Sua caminhada", "Faça parte" e "Redenção Church" — com Agenda, Caminhando com Deus, Preciso de Oração, Próximos Passos, Células, Quero Servir e Dízimos e Ofertas navegáveis com dados de exemplo. Este documento cobre o que falta para tornar isso real: dados, autenticação, regras de acesso e painel administrativo.</p>
+
+<h2>1. Modelo de dados (tabelas sugeridas)</h2>
+<p>Reaproveitar tabelas equivalentes já existentes no projeto sempre que possível.</p>
+<table>
+<tr><th>Tabela</th><th>Campos principais</th><th>Notas</th></tr>
+<tr><td><code>church_events</code></td><td>id, name, date, time, location, category, flyer_url, recurring_rule</td><td>Agenda; cultos recorrentes configuráveis, não hardcoded</td></tr>
+<tr><td><code>church_highlight</code></td><td>id, kicker, title, cta_label, target_type, target_id, active_from, active_to</td><td>Card de destaque dinâmico no topo da Igreja; ou derivado automaticamente do próximo evento se vazio</td></tr>
+<tr><td><code>cells</code></td><td>id, name, leader_id, day, time, region, city, category, capacity, description, address (privado), status</td><td>Endereço completo só liberado após aprovação (ver seção 4)</td></tr>
+<tr><td><code>cell_join_requests</code></td><td>id, cell_id, user_id, status (pending/approved/rejected), requested_at</td><td>Aprovado por líder/admin</td></tr>
+<tr><td><code>ministries</code></td><td>id, name, image_url, description, leader_id, requirements, meeting_info</td><td>Quero Servir</td></tr>
+<tr><td><code>ministry_interest</code></td><td>id, ministry_id, user_id, contact, experience, motivation, availability, status, created_at</td><td>Formulário "Tenho interesse em servir"</td></tr>
+<tr><td><code>baptism_requests</code></td><td>id, user_id, name, phone, email, birth_date, decision_confirmed, notes, status (interessado/inscrito/aguardando/preparação/batizado)</td><td>Estados internos, nunca expostos publicamente</td></tr>
+<tr><td><code>testimonies</code></td><td>id, user_id, title, text, display_name, photo_url, status (pending/approved/rejected), created_at</td><td>Só "approved" aparece publicamente</td></tr>
+<tr><td><code>courses</code>, <code>course_modules</code>, <code>course_progress</code></td><td>curso → módulos/aulas; progresso por usuário</td><td>Fase 3 — Discipulado e Cursos</td></tr>
+<tr><td><code>newcomer_contacts</code></td><td>id, user_id (nullable), name, phone, email, how_found, first_time, wants_contact, created_at</td><td>"Sou Novo Aqui"</td></tr>
+<tr><td><code>church_information</code></td><td>key, value (JSON/texto)</td><td>História, visão, missão, valores, liderança — editável sem nova versão do app</td></tr>
+<tr><td><code>giving_methods</code></td><td>id, type (mbway/iban/qr/gateway), label, value, active</td><td>Sem histórico financeiro individual nesta fase</td></tr>
+</table>
+<p><code>prayer_requests</code> já especificada no documento de Perfil — reutilizar a mesma tabela.</p>
+
+<h2>2. Segurança e privacidade (RLS)</h2>
+<ul>
+<li><b>Pedidos de oração:</b> autor + pastores/equipa autorizada apenas (já especificado no doc de Perfil).</li>
+<li><b>Interesse em célula:</b> próprio usuário, líder da célula, administração.</li>
+<li><b>Interesse em ministério:</b> próprio usuário e liderança do ministério.</li>
+<li><b>Pedidos de batismo:</b> próprio usuário e liderança autorizada; estados internos nunca expostos na UI pública.</li>
+<li><b>Endereço de célula:</b> mostrar apenas região/cidade publicamente; endereço completo liberado apenas após <code>cell_join_requests.status = 'approved'</code>.</li>
+<li><b>Dados de visitante (newcomer_contacts):</b> equipa autorizada apenas.</li>
+<li>Implementar todas as regras no backend (RLS do Postgres/Supabase ou equivalente) — nunca confiar apenas na UI.</li>
+</ul>
+
+<h2>3. Painel administrativo — submenus a criar em "Igreja"</h2>
+<table>
+<tr><th>Submenu</th><th>Permite</th></tr>
+<tr><td>Agenda</td><td>CRUD de eventos, recorrência, flyers</td></tr>
+<tr><td>Células</td><td>criar/editar/arquivar, definir líder/dia/horário/local/capacidade/categoria, ver interessados</td></tr>
+<tr><td>Ministérios</td><td>criar/editar, líder, descrição, imagem, requisitos, ver interessados</td></tr>
+<tr><td>Batismos</td><td>funil interno: interessados → inscritos → aguardando contacto → em preparação → batizados</td></tr>
+<tr><td>Cursos</td><td>estrutura de curso/módulo/aula (Fase 3)</td></tr>
+<tr><td>Testemunhos</td><td>aprovar/rejeitar (pending → approved/rejected)</td></tr>
+<tr><td>Pedidos de oração</td><td>ver e responder (acesso restrito à equipa pastoral)</td></tr>
+<tr><td>Visitantes</td><td>lista de newcomer_contacts para acompanhamento</td></tr>
+<tr><td>Dízimos e Ofertas</td><td>cadastrar métodos de contribuição (MB WAY, IBAN, QR, texto) — sem histórico financeiro individual</td></tr>
+<tr><td>Informações da Igreja</td><td>editar história, visão, missão, valores, liderança, horários, endereço, contactos</td></tr>
+</table>
+
+<h2>4. Fluxos de integração entre funcionalidades</h2>
+<p>Exemplo — batismo: usuário toca "Quero me batizar" → preenche inscrição → aparece no painel administrativo → liderança atualiza status → usuário recebe confirmação/notificação.</p>
+<p>Exemplo — célula: usuário toca "Quero participar" → solicitação enviada → líder/admin aprova → célula passa a aparecer em Perfil → Minha Célula (a construir) e o endereço completo é liberado.</p>
+
+<h2>5. Notificações</h2>
+<p>Reaproveitar o serviço de notificações já especificado no documento de Perfil, adicionando categorias: lembrete de culto, novo evento, inscrições de batismo abertas, confirmação de inscrição recebida.</p>
+
+<h2>6. Personalização por perfil</h2>
+<ul>
+<li><b>Visitante:</b> priorizar Sou Novo Aqui, Visite-nos, Próximo Culto, Preciso de Oração, Mensagens — sem exigir cadastro para conteúdo público.</li>
+<li><b>Membro:</b> priorizar Minha caminhada, Minha célula, Próximo evento, Plano em andamento, Quero servir, Meus pedidos de oração.</li>
+<li><b>Novo convertido</b> (campo de status no perfil, a criar futuramente): destacar Começando com Jesus → Batismo → Célula → Discipulado, em sequência.</li>
+</ul>
+
+<h2>7. Estados vazios (já modelados na UI, reforçar no backend)</h2>
+<p>Células sem resultado para o filtro, cursos sem progresso iniciado, testemunhos ainda não aprovados — sempre com texto explicativo, nunca uma tela em branco.</p>
+
+<h2>Prioridade de implementação sugerida</h2>
+<ol>
+<li><b>Fase 1</b> — preservar/integrar Agenda, Caminhando com Deus, Preciso de Oração; implementar Dízimos e Ofertas, Células, Próximos Passos, Quero Servir (protótipo de UI já pronto para as quatro).</li>
+<li><b>Fase 2</b> — Batismo, Sou Novo Aqui, Visite-nos, Sobre Nós, Testemunhos.</li>
+<li><b>Fase 3</b> — Discipulado e Cursos, personalização avançada por perfil, fluxos de acompanhamento pastoral.</li>
+</ol>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>

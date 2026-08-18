@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<style>doc-page:not(:defined){visibility:hidden}
+h1,h2,h3{font-family:Georgia,serif}
+body{font-family:-apple-system,Segoe UI,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f2f2f2}
+code{background:#f2f2f2;padding:1px 5px;border-radius:3px;font-size:12px}
+.tag{display:inline-block;background:#eef;border:1px solid #99a;border-radius:4px;padding:1px 6px;font-size:11px;margin-right:4px}
+</style>
+</helmet>
+
+<doc-page margin="0.85in">
+
+<h1 style="margin-bottom:2px">Redenção Church App — Especificação técnica: Perfil</h1>
+<p style="color:#666;margin-top:0">Handoff para a equipa de desenvolvimento · itens fora do escopo do protótipo de design</p>
+
+<p>Este documento descreve o que precisa ser construído no backend para que as seis funcionalidades prioritárias da página Perfil (edição de dados, foto, favoritos, notas, histórico de leitura e pedidos de oração) funcionem de verdade, com dados reais, autenticação e sincronização entre dispositivos. O protótipo de UI/UX já existe em <code>Redenção Church App.dc.html</code> e deve servir de referência visual e de fluxo — este documento cobre apenas a camada de dados/backend que o protótipo não pode simular.</p>
+
+<h2>1. Autenticação</h2>
+<ul>
+<li>Login/cadastro por e-mail + senha, e idealmente Google/Apple (o protótipo já mostra esses botões na tela de auth).</li>
+<li>Alteração de e-mail deve seguir o fluxo de confirmação do provedor de autenticação (verificação por e-mail), não uma escrita direta na tabela de usuários.</li>
+<li>Suporte a "modo visitante" sem conta — funcionalidades de Bíblia/conteúdo público continuam acessíveis; ao tentar favoritar, anotar, etc., redirecionar para criar conta (o protótipo já modela essa tela vazia de visitante).</li>
+</ul>
+
+<h2>2. Modelo de dados (tabelas sugeridas)</h2>
+<p>Nomes ilustrativos — adaptar ao schema já existente no projeto, reaproveitando tabelas equivalentes se já existirem.</p>
+<table>
+<tr><th>Tabela</th><th>Campos principais</th><th>Notas</th></tr>
+<tr><td><code>profiles</code></td><td>user_id (FK auth), full_name, email, avatar_url, member_since, ministry, cell_group</td><td>1:1 com o usuário autenticado</td></tr>
+<tr><td><code>favorites</code></td><td>id, user_id, type (verse/devotional/sermon), ref, text, created_at</td><td>type filtra a lista de favoritos</td></tr>
+<tr><td><code>bible_notes</code></td><td>id, user_id, book, chapter, verse, text, created_at, updated_at</td><td>privadas por padrão</td></tr>
+<tr><td><code>reading_history</code></td><td>id, user_id, book, chapter, last_verse, translation, read_at</td><td>um registro por leitura; agrupar por data na UI</td></tr>
+<tr><td><code>prayer_requests</code></td><td>id, user_id, title, description, category, is_anonymous, is_confidential, status (recebido/orando/acompanhado), created_at</td><td>ver regras de acesso na seção 4</td></tr>
+<tr><td><code>reading_plan_progress</code></td><td>id, user_id, plan_id, current_day, total_days, status</td><td>ex: "Conhecendo Jesus", dia 8/30</td></tr>
+<tr><td><code>devotional_progress</code></td><td>id, user_id, devotional_date, completed_at, streak_count</td><td>alimenta o contador de sequência</td></tr>
+<tr><td><code>event_registrations</code></td><td>id, user_id, event_id, registered_at</td><td>alimenta "Meus eventos"</td></tr>
+<tr><td><code>notification_preferences</code></td><td>user_id, verse_of_day, devotional_reminder, reading_reminder, church_events</td><td>toggles individuais, já modelados na UI</td></tr>
+</table>
+
+<h2>3. Foto de perfil</h2>
+<ul>
+<li>Upload via storage do backend (bucket dedicado, ex: <code>avatars/{user_id}.jpg</code>).</li>
+<li>Redimensionar/comprimir no cliente antes do upload (evitar arquivos grandes).</li>
+<li>Permitir recorte circular antes de salvar (o protótipo mostra o menu "Tirar foto / Galeria / Remover", sem lógica real).</li>
+<li>Salvar apenas a URL resultante em <code>profiles.avatar_url</code>; atualizar em tempo real todos os pontos da UI que exibem o avatar.</li>
+</ul>
+
+<h2>4. Segurança e regras de acesso (RLS)</h2>
+<p><b>Regra geral:</b> um usuário só pode ler, editar ou excluir os próprios dados — aplica-se a <code>bible_notes</code>, <code>favorites</code>, <code>reading_history</code>, <code>reading_plan_progress</code>, <code>devotional_progress</code>, <code>profiles</code>.</p>
+<p><b>Exceção — <code>prayer_requests</code>:</b> visível para o próprio usuário e para perfis pastorais autorizados (role/claim específico). Nunca visível para outros membros.</p>
+<p>Implementar as políticas no banco (RLS do Postgres/Supabase, ou equivalente), não apenas ocultar na interface — a UI nunca deve ser a única barreira de acesso.</p>
+
+<h2>5. Sincronização entre dispositivos</h2>
+<p>Ao autenticar em qualquer dispositivo, recuperar do backend: nome, foto, favoritos, notas, histórico, progresso de planos/devocionais, pedidos de oração e preferências de notificação. Nenhum dado local deve "vencer" o servidor — o servidor é a fonte de verdade.</p>
+
+<h2>6. Integração com as telas já existentes</h2>
+<table>
+<tr><th>Ação do usuário</th><th>Efeito esperado no backend</th></tr>
+<tr><td>Favoritar um versículo/devocional/mensagem</td><td>Insere/remove linha em <code>favorites</code>; reflete imediatamente em Perfil → Meus Favoritos</td></tr>
+<tr><td>Escrever/editar/excluir uma nota</td><td>CRUD em <code>bible_notes</code>; reflete em Perfil → Minhas Notas</td></tr>
+<tr><td>Abrir um capítulo da Bíblia</td><td>Insere em <code>reading_history</code>; atualiza "Continue de onde parou"</td></tr>
+<tr><td>Enviar um pedido de oração</td><td>Insere em <code>prayer_requests</code> com status inicial "recebido"; reflete em Meus Pedidos de Oração</td></tr>
+<tr><td>Alterar nome/e-mail/foto</td><td>Atualiza <code>profiles</code>; propaga para saudação da Home, cabeçalho do Perfil e demais componentes</td></tr>
+<tr><td>Ativar/desativar notificação</td><td>Atualiza <code>notification_preferences</code>; consumido pelo serviço de push/e-mail</td></tr>
+</table>
+
+<h2>7. Estados de interface a cobrir</h2>
+<p>Carregamento (skeleton), sucesso (toast — já modelado no protótipo, ex: "Nota salva.", "Perfil atualizado com sucesso."), erro, vazio (já modelado para favoritos/notas/pedidos), sem internet.</p>
+
+<h2>8. Fora de escopo deste documento</h2>
+<p>Testemunho/oração respondida com aprovação administrativa para publicação (item 8 do briefing original) e exclusão de conta com fluxo RGPD — recomenda-se especificar em documento separado quando o fluxo de moderação/admin for definido.</p>
+
+<h2>Prioridade de implementação sugerida</h2>
+<ol>
+<li>Autenticação + tabela <code>profiles</code> (nome/e-mail reais em toda a app)</li>
+<li>Favoritos e Notas (maior valor percebido, menor complexidade)</li>
+<li>Histórico de leitura (grava automaticamente ao navegar na Bíblia)</li>
+<li>Pedidos de oração + regra de acesso pastoral</li>
+<li>Upload de foto de perfil</li>
+<li>Sincronização entre dispositivos e preferências de notificação</li>
+</ol>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>

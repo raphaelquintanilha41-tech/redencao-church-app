@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<style>doc-page:not(:defined){visibility:hidden}
+h1,h2,h3{font-family:Georgia,serif}
+body{font-family:-apple-system,Segoe UI,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid #ccc;padding:5px 7px;text-align:left;vertical-align:top}
+th{background:#f2f2f2}
+code{background:#f2f2f2;padding:1px 5px;border-radius:3px;font-size:11px}
+.s-ok{color:#1a7a34;font-weight:600}.s-part{color:#a06a00;font-weight:600}.s-no{color:#a01f1f;font-weight:600}
+</style>
+</helmet>
+
+<doc-page margin="0.8in">
+
+<h1 style="margin-bottom:2px">Redenção Church App — Auditoria e Especificação Consolidada</h1>
+<p style="color:#666;margin-top:0">O que existe, o que falta, e o que precisa de backend real</p>
+
+<p><b>Contexto importante:</b> este projeto é um protótipo de front-end interativo (clicável), sem banco de dados, servidor, autenticação real ou painel administrativo funcional. Itens como RLS, permissões por papel, logs de auditoria, backup, push notifications reais e conformidade RGPD não existem — e não podem existir — neste tipo de entrega. Esta auditoria classifica cada área pedida e, quando aplicável, aponta para os documentos técnicos já produzidos (<code>Especificação Técnica - Perfil.dc.html</code> e <code>Especificação Técnica - Igreja.dc.html</code>) ou detalha aqui o que falta.</p>
+
+<h2>1. Tabela de auditoria</h2>
+<table>
+<tr><th>Área</th><th>Status no protótipo</th><th>Observação</th></tr>
+<tr><td>Onboarding</td><td class="s-ok">Implementado</td><td>4 telas, não reaparece após concluído (estado de sessão)</td></tr>
+<tr><td>Login/Cadastro/Visitante</td><td class="s-part">Simulado</td><td>UI completa; sem backend real (sem Google/Apple funcional, sem recuperação de senha)</td></tr>
+<tr><td>Home — saudação, Palavra do Dia, Caminhando com Deus, próximo culto, continue leitura, última pregação, pedido de oração, próximos eventos</td><td class="s-ok">Implementado</td><td>Dados de exemplo; culto vem de <code>events[]</code>, não hardcoded no componente</td></tr>
+<tr><td>Banners de evento</td><td class="s-part">Parcial</td><td>Flyer de imagem no detalhe do evento; sem gestão administrativa nem datas de início/fim</td></tr>
+<tr><td>Bíblia (livros, capítulos, versículos, fonte, destaque, tradução)</td><td class="s-part">Parcial</td><td>Navegação e leitor funcionam; texto de exemplo (João 3), sem busca nem seleção real de tradução</td></tr>
+<tr><td>Histórico de leitura</td><td class="s-ok">Implementado</td><td>Registra capítulos abertos; "Continue de onde parou" funcional na sessão</td></tr>
+<tr><td>Favoritos (versículos, Palavra do Dia, devocionais, pregações)</td><td class="s-part">Parcial</td><td>Versículo/Palavra do Dia favoritam e aparecem em Perfil; pregações/devocionais ainda não têm botão de favoritar</td></tr>
+<tr><td>Minhas Notas</td><td class="s-ok">Implementado</td><td>Criar/excluir/listar; privadas por design (sem outros usuários no protótipo)</td></tr>
+<tr><td>Palavra do Dia</td><td class="s-ok">Implementado</td><td>30 dias completos com todos os campos pedidos, ciclando pelo dia do mês</td></tr>
+<tr><td>Devocionais / Caminhando com Deus</td><td class="s-ok">Implementado</td><td>31 dias de agosto completos, com "Concluir meu momento com Deus"</td></tr>
+<tr><td>Planos de leitura</td><td class="s-ok">Implementado nesta rodada</td><td>Lista com progresso, categorias de exemplo</td></tr>
+<tr><td>Pregações (mensagens)</td><td class="s-part">Parcial</td><td>Lista, filtro, detalhe; sem integração real com YouTube (placeholder de vídeo)</td></tr>
+<tr><td>Agenda da Igreja</td><td class="s-ok">Implementado</td><td>Lista, detalhe, mapa embutido, flyer; inscrição é apenas botão (sem back-end)</td></tr>
+<tr><td>Área Igreja (3 blocos: Sua Caminhada / Faça Parte / Redenção Church)</td><td class="s-ok">Implementado</td><td>Estrutura reorganizada nesta rodada</td></tr>
+<tr><td>Pedidos de Oração</td><td class="s-part">Parcial</td><td>Envio, categoria, anônimo/confidencial, lista "Meus pedidos" com status; sem painel admin nem RLS reais</td></tr>
+<tr><td>Dízimos e Ofertas / Generosidade</td><td class="s-ok">Implementado</td><td>MB WAY, IBAN, copiar; dados de exemplo (não editáveis por admin real)</td></tr>
+<tr><td>Células</td><td class="s-ok">Implementado</td><td>Lista, filtro, "Quero participar" (sem endereço completo, como pedido)</td></tr>
+<tr><td>Quero Servir</td><td class="s-ok">Implementado</td><td>Lista de ministérios + formulário de interesse</td></tr>
+<tr><td>Batismo</td><td class="s-ok">Implementado nesta rodada</td><td>Explicação + formulário de inscrição</td></tr>
+<tr><td>Testemunhos</td><td class="s-ok">Implementado nesta rodada</td><td>Lista de aprovados (exemplo) + envio (fica "pendente" na sessão)</td></tr>
+<tr><td>Sou Novo Aqui</td><td class="s-ok">Implementado nesta rodada</td><td>Boas-vindas, horários, localização, formulário</td></tr>
+<tr><td>Próximos Passos</td><td class="s-ok">Implementado</td><td>6 etapas da jornada</td></tr>
+<tr><td>Discipulado e Cursos</td><td class="s-no">Não implementado</td><td>Marcado como "Em breve" — fora do escopo desta rodada (Fase 3 no doc de Igreja)</td></tr>
+<tr><td>Perfil (foto, nome, e-mail, editar)</td><td class="s-ok">Implementado</td><td>Edição reflete na saudação da Home e no cabeçalho; upload de foto é só menu (sem storage real)</td></tr>
+<tr><td>Minha Área (favoritos/notas/histórico/pedidos)</td><td class="s-ok">Implementado</td><td>—</td></tr>
+<tr><td>Minha Redenção</td><td class="s-ok">Implementado nesta rodada</td><td>Resumo de participação, distinto do Perfil</td></tr>
+<tr><td>Busca global</td><td class="s-ok">Implementado nesta rodada</td><td>Busca em livros da Bíblia, mensagens e eventos, no cliente</td></tr>
+<tr><td>Central de Notificações</td><td class="s-ok">Implementado nesta rodada</td><td>Marcar lida/todas, excluir, contador não lido no sino</td></tr>
+<tr><td>Notificações push</td><td class="s-no">Não implementado</td><td>Requer backend/serviço de push — fora do escopo de um protótipo de design</td></tr>
+<tr><td>Ajuda e Suporte</td><td class="s-ok">Implementado nesta rodada</td><td>Tópicos + envio de feedback</td></tr>
+<tr><td>Biblioteca (PDFs/apostilas)</td><td class="s-no">Não implementado</td><td>Não solicitado nesta rodada de telas</td></tr>
+<tr><td>Modo offline</td><td class="s-no">Não aplicável</td><td>Protótipo HTML não tem camada de cache/sincronização real</td></tr>
+<tr><td>Painel administrativo</td><td class="s-part">Preview visual apenas</td><td>Tela de métricas de exemplo em Perfil; sem CRUD real de nenhuma entidade</td></tr>
+<tr><td>Permissões por papel, RLS, logs, backup, RGPD, push, deep links reais, banco de dados</td><td class="s-no">Não implementado — requer engenharia de backend</td><td>Ver especificação abaixo</td></tr>
+</table>
+
+<h2>2. O que exige backend real (não implementável em protótipo de design)</h2>
+<p>Os documentos <code>Especificação Técnica - Perfil.dc.html</code> e <code>Especificação Técnica - Igreja.dc.html</code> já cobrem: modelo de dados, autenticação, upload de foto, RLS/segurança, sincronização entre dispositivos, painel administrativo por área. Este documento adiciona os pontos do novo briefing que ainda não estavam cobertos.</p>
+
+<h3>2.1 Permissões por papel (RBAC)</h3>
+<table>
+<tr><th>Papel</th><th>Acesso</th></tr>
+<tr><td>Super Admin</td><td>Tudo</td></tr>
+<tr><td>Pastor</td><td>Conteúdo, membros, pedidos de oração, acompanhamento pastoral</td></tr>
+<tr><td>Administrador</td><td>Conteúdo e eventos</td></tr>
+<tr><td>Editor</td><td>Publicação de conteúdo (Palavra do Dia, devocionais, banners)</td></tr>
+<tr><td>Líder de Célula</td><td>Somente a própria célula e seus interessados</td></tr>
+<tr><td>Líder de Ministério</td><td>Somente o próprio ministério e seus interessados</td></tr>
+<tr><td>Intercessor</td><td>Pedidos de oração autorizados (não confidenciais salvo autorização extra)</td></tr>
+</table>
+<p>Implementar via claims/roles no backend de autenticação + RLS por papel — nunca apenas ocultar botões na UI.</p>
+
+<h3>2.2 Controlo editorial e agendamento</h3>
+<p>Aplicar aos conteúdos de Palavra do Dia, Devocionais, Notícias, Eventos e Banners um campo <code>status</code>: <code>draft → review → scheduled → published → archived</code>, mais <code>publish_at</code> e <code>expire_at</code> para agendamento. Um job periódico (cron/edge function) promove <code>scheduled → published</code> quando chega a data.</p>
+
+<h3>2.3 Logs administrativos (audit_logs)</h3>
+<p>Tabela <code>audit_logs</code> (actor_id, action, resource_type, resource_id, before, after, created_at) registando toda alteração feita por um papel administrativo — essencial para rastreabilidade em conteúdo pastoral sensível (pedidos de oração, testemunhos, batismos).</p>
+
+<h3>2.4 RGPD (aplicação usada em Portugal)</h3>
+<ul>
+<li>Política de Privacidade e Termos de Utilização versionados, com aceite registado por usuário e data.</li>
+<li>Exportar dados pessoais (JSON/PDF) e excluir conta com confirmação — a exclusão deve remover ou anonimizar notas, favoritos, histórico e pedidos de oração, preservando apenas o necessário para registos pastorais com base legal (ex.: contabilidade de ofertas, se aplicável).</li>
+<li>Consentimento explícito e retirável para: notificações, uso de fotografia em testemunhos, contacto de "Sou Novo Aqui".</li>
+<li>Minimização de dados: não recolher campos que a funcionalidade não usa (ex.: data de nascimento no batismo só se for estritamente necessária).</li>
+<li>Atenção redobrada a: pedidos de oração, dados de visitantes, inscrições de batismo, participação em células, e qualquer dado sobre crianças (nunca criar perfil de conta própria para menores nesta fase — apenas visibilidade de horários/avisos para responsáveis).</li>
+</ul>
+
+<h3>2.5 Notificações push</h3>
+<p>Serviço de push (ex. FCM/APNs via backend) com tabela <code>device_tokens</code> por usuário, categorias de notificação (Palavra do Dia, Devocionais, Cultos, Eventos, Planos, Cursos, Igreja) e preferências individuais já modeladas na UI de Perfil. Cada notificação carrega um deep link (ex. <code>/biblia/joao/3</code>, <code>/evento/123</code>) que a app resolve ao abrir.</p>
+
+<h3>2.6 Deep links e busca</h3>
+<p>Definir rotas estáveis para Bíblia, devocional, evento, pregação, célula. A busca global do protótipo já demonstra o padrão de resultado tipado (Bíblia/Mensagem/Evento) — o backend real estenderia a mesma busca a devocionais, planos e cursos via full-text search.</p>
+
+<h3>2.7 Segurança geral</h3>
+<p>Nunca expor chaves de serviço (service role) no cliente; variáveis sensíveis apenas em ambiente de servidor; rate limiting em endpoints de formulário público (pedidos de oração, "Sou Novo Aqui", testemunhos) para evitar abuso; upload de imagens validado por tipo/tamanho antes de ir para storage.</p>
+
+<h3>2.8 Banco de dados</h3>
+<p>Reaproveitar as tabelas já listadas nos dois documentos anteriores (<code>profiles</code>, <code>favorites</code>, <code>bible_notes</code>, <code>reading_history</code>, <code>prayer_requests</code>, <code>cells</code>, <code>ministries</code>, <code>baptism_requests</code>, <code>testimonies</code>, <code>church_events</code>, <code>giving_methods</code>, etc.) — não duplicar. Adicionar apenas: <code>audit_logs</code>, <code>device_tokens</code>, <code>notification_preferences</code> (já prevista), <code>consents</code> (RGPD), <code>reading_plans</code> / <code>reading_plan_progress</code>. Toda alteração de schema via migration versionada, nunca manual.</p>
+
+<h2>3. Instalação como PWA + notificações + badge de ícone</h2>
+<p>Implementado no protótipo (Perfil → Configurações → seção "Aplicação" e nova tela "Instalar Redenção Church"): detecção de <code>display-mode: standalone</code>, captura real de <code>beforeinstallprompt</code> (Android/desktop) com chamada a <code>prompt()</code>, instruções visuais dedicadas para iOS (Safari → Compartilhar → Adicionar à Tela de Início, sem botão falso), <code>Notification.requestPermission()</code> só acionado por toque explícito do usuário (nunca automático), e badge no ícone via <code>navigator.setAppBadge()/clearAppBadge()</code> com feature detection — sincronizado ao contador de notificações não lidas já existente no protótipo.</p>
+<p><b>Não implementável em protótipo de front-end</b> (requer backend/infra real):</p>
+<table>
+<tr><th>Item</th><th>O que falta</th></tr>
+<tr><td>Web App Manifest de produção</td><td><code>manifest.webmanifest</code> com <code>name</code>, <code>short_name</code>, <code>display: standalone</code>, <code>theme_color</code>, <code>background_color</code>, <code>scope</code>, ícones 192/512 normais + maskable + Apple Touch Icon gerados a partir do logotipo oficial (com margem de segurança no maskable).</td></tr>
+<tr><td>Service worker de produção</td><td>Único SW gerindo cache, <code>push</code>, <code>notificationclick</code> (deep link para o conteúdo), atualização automática ("Nova versão disponível" → <code>skipWaiting</code> + reload) e cache offline seletivo (últimos capítulos, favoritos, Palavra do Dia) sem cachear dados privados.</td></tr>
+<tr><td>Push notifications reais</td><td>Backend com VAPID/chaves privadas nunca expostas no frontend, gestão de <code>push subscription</code> por usuário, categorias (Palavra do Dia, devocionais, cultos, eventos, planos, células, cursos, comunicados) configuráveis em Perfil → Notificações.</td></tr>
+<tr><td>Badge em app fechado</td><td>Depende do SW receber o push e chamar <code>setAppBadge</code> fora do contexto da aba aberta — só funciona com push real registrado no backend.</td></tr>
+<tr><td>Privacidade das notificações</td><td>Nunca enviar conteúdo pastoral sensível no corpo do push (ex.: pedido de oração confidencial); enviar texto genérico e revelar detalhe só após abrir e autenticar.</td></tr>
+<tr><td>Compatibilidade real entre plataformas</td><td>Badging API não tem suporte uniforme em iOS/Android/navegadores — testar Chrome Android, Samsung Internet, Safari iPhone/iPad, Chrome/Edge Desktop, e cair em fallback (contador interno, sem erro visível) onde não houver suporte.</td></tr>
+</table>
+
+<h2>4. Plano de implementação (para a equipa de desenvolvimento)</h2>
+<ol>
+<li><b>Fase 1 — Crítica:</b> autenticação real, banco de dados, RLS, permissões por papel, segurança de pedidos de oração, RGPD básico (política, consentimento, exportar/excluir dados).</li>
+<li><b>Fase 2 — Alta:</b> Bíblia com tradução licenciada e busca, sincronização de favoritos/notas/histórico, Palavra do Dia e Devocionais com publicação agendada, Agenda ligada a banco.</li>
+<li><b>Fase 3 — Média:</b> Dízimos, Células, Próximos Passos, Quero Servir, Batismo, notificações push reais, busca global no backend.</li>
+<li><b>Fase 4 — Expansão:</b> Cursos/Discipulado, Biblioteca, Redenção Kids, métricas avançadas, modo offline.</li>
+</ol>
+
+<h2>5. Testes de fluxo recomendados (para QA da equipa técnica)</h2>
+<p>Novo visitante (onboarding → visitante → Home → Agenda → Sou Novo Aqui); novo membro (cadastro → Bíblia → favoritar → Perfil); pedido de oração (enviar → painel → status → usuário consulta); célula (solicitar → aprovação → aparece em Minha Redenção); evento (abrir → inscrever → Perfil); Palavra do Dia (notificação → abrir → ler → favoritar). Estes fluxos já são navegáveis ponta a ponta no protótipo de UI, exceto pelas partes que dependem de backend (aprovação administrativa, notificação push real).</p>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>

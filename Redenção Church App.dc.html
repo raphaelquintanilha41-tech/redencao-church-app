@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<template id="__bundler_thumbnail" data-bg-color="#161826">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#161826"/>
+    <circle cx="600" cy="330" r="150" fill="none" stroke="#9184d9" stroke-width="10"/>
+    <path d="M600 260v140M540 300h120" stroke="#9184d9" stroke-width="14" stroke-linecap="round"/>
+    <text x="600" y="560" font-family="Georgia,serif" font-size="52" fill="#e9e9ed" text-anchor="middle">Redenção Church</text>
+  </svg>
+</template>
+<helmet>
+<link rel="stylesheet" href="assets/nocturne.css">
+<style>
+body{margin:0}
+.rc-scroll::-webkit-scrollbar{width:0;height:0}
+.rc-dot{width:6px;height:6px;border-radius:50%}
+.rc-ph{display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,monospace;letter-spacing:.02em;text-align:center;line-height:1.4}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;padding:56px 24px 80px;font-family:var(--font-body);color:var(--color-text)">
+
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+    <img src="assets/redencao-logo.jpeg" alt="Redenção Church" style="width:44px;height:44px;border-radius:12px;object-fit:cover;box-shadow:var(--shadow-sm)"/>
+    <div>
+      <div style="font-family:var(--font-heading);font-weight:500;font-size:20px;letter-spacing:-0.01em">Redenção Church</div>
+      <div style="font-size:12px;color:var(--rc-muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap">Palavra · Comunhão · Propósito</div>
+    </div>
+  </div>
+  <div style="font-size:13px;color:var(--rc-muted);margin-top:8px;margin-bottom:40px">Protótipo interativo — mobile</div>
+
+  <x-import component-from-global-scope="{{ deviceGlobal }}" from="./ios-frame.jsx ./android-frame.jsx" dark="{{ isDarkFrame }}" width="{{ frameWidth }}" height="{{ frameHeight }}" hint-size="402px,874px">
+    <div style="{{ appOuterStyle }}">
+      <div class="rc-scroll" style="flex:1;overflow:auto;display:flex;flex-direction:column;padding-top:{{ scrollTopPad }}px;padding-bottom:{{ scrollBottomPad }}px">
+
+        <sc-if value="{{ stageOnboarding }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;padding:28px 24px 20px">
+            <div style="display:flex;justify-content:flex-end">
+              <sc-if value="{{ onboardNotLast }}" hint-placeholder-val="{{ true }}"><button class="btn btn-ghost" onClick="{{ skipOnboarding }}">Saltar</button></sc-if>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
+              <sc-if value="{{ onboardIsFirst }}" hint-placeholder-val="{{ true }}"><img src="assets/redencao-logo.jpeg" alt="Redenção Church" style="width:200px;height:200px;border-radius:28px;object-fit:cover;box-shadow:var(--shadow-md)"/></sc-if>
+              <sc-if value="{{ onboardIsSecond }}" hint-placeholder-val="{{ false }}"><img src="assets/onboard-biblia.jpeg" alt="Bíblia" style="width:180px;height:180px;border-radius:24px;object-fit:cover;box-shadow:var(--shadow-md)"/></sc-if>
+              <sc-if value="{{ onboardIsThird }}" hint-placeholder-val="{{ false }}"><img src="assets/onboard-comunidade.jpeg" alt="Comunidade" style="width:180px;height:180px;border-radius:24px;object-fit:cover;box-shadow:var(--shadow-md)"/></sc-if>
+              <sc-if value="{{ onboardIsFourth }}" hint-placeholder-val="{{ false }}"><img src="assets/redencao-logo.jpeg" alt="Redenção Church" style="width:200px;height:200px;border-radius:28px;object-fit:cover;box-shadow:var(--shadow-md)"/></sc-if>
+              <div style="text-align:center">
+                <div style="font-family:var(--font-heading);font-weight:500;font-size:26px;margin-bottom:10px;letter-spacing:-0.01em">{{ onboardTitle }}</div>
+                <div style="font-size:14px;color:var(--rc-faint);max-width:280px;margin:0 auto;line-height:1.5">{{ onboardBody }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ onboardNotLast }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+                <div style="display:flex;gap:6px"><sc-for list="{{ onboardDots }}" as="dot" hint-placeholder-count="4"><div class="rc-dot" style="background:{{ dot.color }}"></div></sc-for></div>
+                <button class="btn btn-primary btn-block" onClick="{{ nextOnboard }}">Avançar</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ onboardIsLast }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <button class="btn btn-primary btn-block" onClick="{{ goAuthLogin }}">Entrar</button>
+                <button class="btn btn-secondary btn-block" onClick="{{ goAuthSignup }}">Criar conta</button>
+                <button class="btn btn-ghost btn-block" onClick="{{ continueGuest }}">Continuar como visitante</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stageAuth }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;display:flex;flex-direction:column;padding:32px 24px 24px;gap:20px">
+            <div>
+              <div style="font-family:var(--font-heading);font-weight:500;font-size:24px;margin-bottom:4px">{{ authHeading }}</div>
+              <div style="font-size:13px;color:var(--rc-muted)">Palavra, comunhão e propósito — num só lugar.</div>
+            </div>
+            <div class="seg" style="align-self:flex-start">
+              <label class="seg-opt"><input type="radio" checked="{{ isLoginMode }}" onChange="{{ setAuthLogin }}"/><span class="dot"></span>Entrar</label>
+              <label class="seg-opt"><input type="radio" checked="{{ isSignupMode }}" onChange="{{ setAuthSignup }}"/><span class="dot"></span>Criar conta</label>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-if value="{{ isSignupMode }}" hint-placeholder-val="{{ false }}"><div class="field"><label>Nome</label><input class="input" type="text" placeholder="O seu nome" value="{{ authName }}" onChange="{{ setAuthName }}"/></div></sc-if>
+              <div class="field"><label>E-mail</label><input class="input" type="email" placeholder="voce@email.com" value="{{ authEmail }}" onChange="{{ setAuthEmail }}"/></div>
+              <div class="field"><label>Palavra-passe</label><input class="input" type="password" placeholder="••••••••" value="{{ authPassword }}" onChange="{{ setAuthPassword }}"/></div>
+            </div>
+            <button class="btn btn-primary btn-block" disabled="{{ authDisabled }}" onClick="{{ submitAuth }}">{{ authCta }}</button>
+            <div style="display:flex;align-items:center;gap:10px;color:var(--color-neutral-600);font-size:12px"><div style="flex:1;height:1px;background:var(--color-divider)"></div>ou<div style="flex:1;height:1px;background:var(--color-divider)"></div></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-secondary btn-block" onClick="{{ submitAuth }}">Continuar com Google</button>
+              <button class="btn btn-secondary btn-block" onClick="{{ submitAuth }}">Continuar com Apple</button>
+            </div>
+            <button class="btn btn-ghost" style="align-self:center" onClick="{{ continueGuest }}">Continuar como visitante</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stageApp }}" hint-placeholder-val="{{ false }}">
+
+          <sc-if value="{{ tabHome }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ homeMain }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:20px 20px 12px;display:flex;flex-direction:column;gap:22px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div>
+                    <div style="font-family:var(--font-heading);font-weight:500;font-size:20px">{{ greeting }}</div>
+                    <div style="font-size:13px;color:var(--rc-muted);margin-top:2px">Que a Palavra conduza seu dia.</div>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <button class="btn btn-icon btn-secondary" onClick="{{ openSearch }}"><span style="display:flex" dangerouslySetInnerHTML="{{ searchIconHtml }}"></span></button>
+                    <button class="btn btn-icon btn-secondary" style="position:relative" onClick="{{ openNotifications }}">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1112 0c0 3 1 4.5 2 6H4c1-1.5 2-3 2-6Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M10 20a2 2 0 004 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                      <sc-if value="{{ hasUnreadNotifs }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></div></sc-if>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card elev-md" style="gap:8px;padding:20px;cursor:pointer" onClick="{{ openVerseDetail }}">
+                  <div class="card-kicker">Palavra do dia</div>
+                  <div class="card-title">{{ dailyVerse.title }}</div>
+                  <div class="card-meta">{{ dailyVerse.ref }}</div>
+                  <div style="font-size:13px;color:var(--rc-faint);line-height:1.5">{{ dailyVerse.text }}</div>
+                  <div style="font-size:12px;color:var(--color-accent-300);margin-top:4px">Ler Palavra →</div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:10px">Seu momento com Deus</h6>
+                  <div class="card elev-sm" style="cursor:pointer;gap:12px" onClick="{{ openDevotionalToday }}">
+                    <div style="display:flex;gap:20px">
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ bookIconLgHtml }}"></span>{{ devotional.reading }}</div>
+                    </div>
+                    <div class="card-title" style="font-size:14px">{{ devotional.title }}</div>
+                    <button class="btn btn-secondary btn-block" onClick="{{ openDevotionalToday }}">Continuar →</button>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:10px">Próximo encontro</h6>
+                  <div class="card elev-sm" style="cursor:pointer;gap:8px" onClick="{{ openNextEvent }}">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ churchIconHtml }}"></span><span class="card-title" style="font-size:15px">{{ nextEvent.name }}</span></div>
+                    <div class="card-meta">{{ nextEvent.date }} · {{ nextEvent.time }}</div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--rc-faint)"><span style="display:flex" dangerouslySetInnerHTML="{{ mapPinIconHtml }}"></span>{{ nextEvent.location }}</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:10px">Continue sua caminhada</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <sc-for list="{{ progressRows }}" as="pr" hint-placeholder-count="2">
+                      <div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ pr.onOpen }}">
+                        <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ pr.iconHtml }}"></span>
+                        <div style="flex:1;font-size:13px">{{ pr.label }}</div>
+                        <sc-if value="{{ pr.hasPct }}" hint-placeholder-val="{{ false }}"><span class="card-meta">{{ pr.pctLabel }}</span></sc-if>
+                        <sc-if value="{{ pr.isCta }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:var(--color-accent-300)">Continuar</span></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:10px">Última mensagem</h6>
+                  <div class="card elev-sm" style="cursor:pointer;padding:0;overflow:hidden" onClick="{{ openLastSermon }}">
+                    <div style="position:relative;height:120px;background:repeating-linear-gradient(45deg,var(--color-surface),var(--color-surface) 10px,var(--color-neutral-800) 10px,var(--color-neutral-800) 20px);display:flex;align-items:center;justify-content:center">
+                      <div style="width:44px;height:44px;border-radius:50%;background:var(--color-accent-800);display:flex;align-items:center;justify-content:center" dangerouslySetInnerHTML="{{ playIconHtml }}"></div>
+                    </div>
+                    <div style="padding:12px 14px">
+                      <div class="card-title" style="font-size:14px">{{ sermons.0.title }}</div>
+                      <div class="card-meta">{{ sermons.0.preacher }} · {{ sermons.0.duration }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:14px;background:var(--color-accent-900)">
+                  <span style="display:flex;color:var(--color-accent-300)" dangerouslySetInnerHTML="{{ heartIconLgHtml }}"></span>
+                  <div style="flex:1;font-size:14px">Podemos orar por você?</div>
+                  <button class="btn btn-secondary" style="font-size:12px;flex-shrink:0" onClick="{{ shortcutPrayer }}">Pedir oração</button>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:10px">Acontecendo na Redenção</h6>
+                  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">
+                    <sc-for list="{{ eventStrip }}" as="ev" hint-placeholder-count="3">
+                      <div class="card elev-sm" style="cursor:pointer;flex:none;width:130px;gap:6px" onClick="{{ ev.onOpen }}">
+                        <div class="rc-ph" style="width:44px;height:44px;border-radius:8px;background:var(--color-accent-900);color:var(--color-accent-200);font-size:10px;flex-direction:column">{{ ev.dayLabel }}</div>
+                        <div style="font-size:12px;font-family:var(--font-heading);font-weight:500;line-height:1.3">{{ ev.name }}</div>
+                        <div class="card-meta">{{ ev.time }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ homeVerseDetail }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px;display:flex;flex-direction:column;gap:20px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backHome }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Palavra do dia</div>
+                </div>
+                <div class="card elev-md" style="gap:12px;padding:24px">
+                  <div class="card-kicker">{{ dailyVerse.ref }}</div>
+                  <div class="card-title" style="font-size:18px">{{ dailyVerse.title }}</div>
+                  <div style="font-size:14px;line-height:1.6;color:var(--rc-body2)">{{ dailyVerse.message }}</div>
+                  <div class="hr"></div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">GUARDE ISSO HOJE</b><span style="font-style:italic;color:var(--color-accent-300)">"{{ dailyVerse.takeaway }}"</span></div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">PRATIQUE HOJE</b>{{ dailyVerse.action }}</div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">VAMOS ORAR</b>{{ dailyVerse.prayer }}</div>
+                  <div style="display:flex;gap:10px;margin-top:4px">
+                    <button class="btn btn-secondary btn-icon" onClick="{{ stop }}"><span style="display:flex" dangerouslySetInnerHTML="{{ shareIconHtml }}"></span></button>
+                    <button class="btn btn-secondary btn-icon" onClick="{{ stop }}"><span style="display:flex" dangerouslySetInnerHTML="{{ copyIconHtml }}"></span></button>
+                    <button class="btn btn-secondary btn-icon" onClick="{{ toggleFavVerse }}" style="{{ favBtnStyle }}"><span style="display:flex" dangerouslySetInnerHTML="{{ bookmarkIconHtml }}"></span></button>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-block" onClick="{{ openReaderFromHome }}">Abrir na Bíblia</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ homeNotifications }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <button class="btn btn-icon btn-secondary" onClick="{{ backHome }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                    <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Notificações</div>
+                  </div>
+                  <button class="btn btn-ghost" style="font-size:12px" onClick="{{ markAllNotifsRead }}">Marcar todas</button>
+                </div>
+                <sc-if value="{{ notifsEmpty }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px"><div class="card-body">Sem notificações por agora.</div></div></sc-if>
+                <sc-for list="{{ notifGroups }}" as="grp" hint-placeholder-count="2">
+                  <div>
+                    <h6 style="color:var(--rc-muted);margin-bottom:8px">{{ grp.label }}</h6>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <sc-for list="{{ grp.items }}" as="n" hint-placeholder-count="2">
+                        <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:12px;padding:12px;cursor:pointer;opacity:{{ n.opacity }}" onClick="{{ n.onOpen }}">
+                          <div style="color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ n.iconHtml }}"></div>
+                          <div style="flex:1"><div style="font-size:13px">{{ n.title }}</div><div class="card-meta" style="margin-top:2px">{{ n.time }}</div></div>
+                          <button class="btn btn-icon btn-ghost" style="width:28px;height:28px" onClick="{{ n.onDelete }}">✕</button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabBible }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ bibleBooks }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:20px 20px 12px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:20px">Bíblia</div>
+                  <button class="btn btn-icon btn-secondary" onClick="{{ stop }}"><span style="display:flex" dangerouslySetInnerHTML="{{ searchIconHtml }}"></span></button>
+                </div>
+                <div class="seg" style="align-self:flex-start">
+                  <label class="seg-opt"><input type="radio" checked="{{ testamentAT }}" onChange="{{ setTestamentAT }}"/><span class="dot"></span>Antigo</label>
+                  <label class="seg-opt"><input type="radio" checked="{{ testamentNT }}" onChange="{{ setTestamentNT }}"/><span class="dot"></span>Novo</label>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ visibleBooks }}" as="book" hint-placeholder-count="10">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ book.onOpen }}">
+                      <div style="font-size:14px">{{ book.name }}</div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ bibleChapters }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backToBooks }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">{{ selectedBook }}</div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+                  <sc-for list="{{ chapterList }}" as="ch" hint-placeholder-count="15"><button class="btn btn-secondary" style="height:40px" onClick="{{ ch.onOpen }}">{{ ch.n }}</button></sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ bibleReader }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 28px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <button class="btn btn-icon btn-secondary" onClick="{{ backToChapters }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                    <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">{{ selectedBook }} {{ selectedChapter }}</div>
+                  </div>
+                  <button class="btn btn-icon btn-secondary" onClick="{{ markChapterRead }}" style="{{ readBtnStyle }}"><span style="display:flex" dangerouslySetInnerHTML="{{ checkIconHtml }}"></span></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--color-divider)">
+                  <button class="btn btn-secondary btn-icon" style="width:32px;height:32px" onClick="{{ decreaseFont }}">A-</button>
+                  <button class="btn btn-secondary btn-icon" style="width:32px;height:32px" onClick="{{ increaseFont }}">A+</button>
+                  <div style="width:1px;height:20px;background:var(--color-divider);margin:0 4px"></div>
+                  <sc-for list="{{ highlightLevels }}" as="hl" hint-placeholder-count="3"><button onClick="{{ hl.onPick }}" style="{{ hl.style }}" title="{{ hl.label }}"></button></sc-for>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-secondary btn-icon" style="width:32px;height:32px" onClick="{{ stop }}"><span style="display:flex" dangerouslySetInnerHTML="{{ shareIconSmHtml }}"></span></button>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:14px;font-size:{{ readerFontSize }}px;line-height:1.7">
+                  <sc-for list="{{ readerVerses }}" as="v" hint-placeholder-count="6"><div style="{{ v.style }}"><span style="color:var(--color-accent-300);font-size:11px;vertical-align:top;margin-right:4px">{{ v.n }}</span>{{ v.text }}</div></sc-for>
+                </div>
+                <div class="text-muted" style="font-size:11px;text-align:center;margin-top:4px">Edição de estudo Redenção (texto de exemplo)</div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabChurch }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ churchHub }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:20px 20px 24px;display:flex;flex-direction:column;gap:22px">
+                <div>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:20px">Igreja</div>
+                  <div style="font-size:13px;color:var(--rc-muted);margin-top:2px">Caminhamos juntos.</div>
+                  <div style="font-size:13px;color:var(--rc-faint);margin-top:6px;line-height:1.5">Encontre seu próximo passo e faça parte daquilo que Deus está construindo entre nós.</div>
+                </div>
+                <div class="card elev-md" style="gap:6px;padding:18px;cursor:pointer" onClick="{{ openNextEvent }}">
+                  <div class="card-kicker">{{ churchHighlight.kicker }}</div>
+                  <div class="card-title">{{ churchHighlight.title }}</div>
+                  <div style="font-size:12px;color:var(--color-accent-300)">Ver detalhes →</div>
+                </div>
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Sua caminhada</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openDevotionals }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ bookIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Caminhando com Deus</div><div class="card-meta">{{ devotional.streak }} dias caminhando na Palavra</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openPrayer }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ heartIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Preciso de Oração</div><div class="card-meta">A nossa equipa pastoral está a orar por si</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openNextSteps }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ crossIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Próximos Passos</div><div class="card-meta">Sua jornada de crescimento na Redenção</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer;opacity:.6" onClick="{{ openComingSoon }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ bookIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Discipulado e Cursos</div><div class="card-meta">Em breve</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Faça parte</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openCells }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ usersIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Células</div><div class="card-meta">A igreja também acontece de casa em casa</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openServe }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ handshakeIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Quero Servir</div><div class="card-meta">Existe um lugar para você servir</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openBaptism }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ droplet }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Batismo</div><div class="card-meta">Entenda e inscreva-se</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openTestimonies }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ heartIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Testemunhos</div><div class="card-meta">O que Deus tem feito</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Redenção Church</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openAgenda }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ calendarIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Agenda</div><div class="card-meta">Cultos, eventos e encontros</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openGiving }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ heartIconLgHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Dízimos e Ofertas</div><div class="card-meta">Contribua de forma simples e segura</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openNewcomer }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ churchIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Sou Novo Aqui</div><div class="card-meta">Seja bem-vindo à Redenção</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer;opacity:.6" onClick="{{ openComingSoon }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ mapPinIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Visite-nos</div><div class="card-meta">Em breve</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer;opacity:.6" onClick="{{ openComingSoon }}">
+                      <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ churchIconHtml }}"></span>
+                      <div style="flex:1"><div style="font-size:14px">Sobre Nós</div><div class="card-meta">Em breve</div></div>
+                      <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchAgenda }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Agenda</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ events }}" as="ev" hint-placeholder-count="4">
+                    <div class="card elev-sm" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px" onClick="{{ ev.onOpen }}">
+                      <div class="rc-ph" style="width:44px;height:44px;border-radius:8px;background:var(--color-accent-900);color:var(--color-accent-200);font-size:10px;flex-direction:column">{{ ev.dayLabel }}</div>
+                      <div style="flex:1"><div class="card-title" style="font-size:14px">{{ ev.name }}</div><div class="card-meta" style="margin-top:2px">{{ ev.date }} · {{ ev.time }}</div></div>
+                      <span class="tag tag-outline">{{ ev.category }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchEventDetail }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backAgenda }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">{{ selectedEvent.name }}</div>
+                </div>
+                <sc-if value="{{ selectedEvent.hasFlyerThu }}" hint-placeholder-val="{{ false }}"><img src="assets/evento-culto-quinta.png" alt="{{ selectedEvent.name }}" style="width:100%;height:auto;border-radius:10px;display:block"/></sc-if>
+                <sc-if value="{{ selectedEvent.hasFlyerSun }}" hint-placeholder-val="{{ false }}"><img src="assets/evento-culto-domingo.png" alt="{{ selectedEvent.name }}" style="width:100%;height:auto;border-radius:10px;display:block"/></sc-if>
+                <sc-if value="{{ selectedEvent.noFlyer }}" hint-placeholder-val="{{ true }}"><div class="rc-ph" style="height:130px;border-radius:10px;background:repeating-linear-gradient(45deg,var(--color-surface),var(--color-surface) 10px,var(--color-neutral-800) 10px,var(--color-neutral-800) 20px);color:var(--rc-muted);font-size:10px">FOTO DO EVENTO</div></sc-if>
+                <div class="card elev-sm">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="display:flex" dangerouslySetInnerHTML="{{ calendarIconSmHtml }}"></span>{{ selectedEvent.date }} · {{ selectedEvent.time }}</div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="display:flex" dangerouslySetInnerHTML="{{ mapPinIconHtml }}"></span>{{ selectedEvent.location }}</div>
+                </div>
+                <iframe src="{{ mapEmbedUrl }}" style="width:100%;height:130px;border:0;border-radius:10px" loading="lazy" title="Mapa do local"></iframe>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <button class="btn btn-primary btn-block" onClick="{{ stop }}">Inscrever-me</button>
+                  <div style="display:flex;gap:10px">
+                    <button class="btn btn-secondary" style="flex:1" onClick="{{ stop }}">Adicionar à agenda</button>
+                    <button class="btn btn-secondary" style="flex:1" onClick="{{ stop }}">Direções</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchDevotionals }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Caminhando com Deus</div>
+                </div>
+                <div class="card elev-sm" style="flex-direction:row;align-items:center;justify-content:space-between">
+                  <div><div class="card-kicker">Sequência atual</div><div style="font-family:var(--font-heading);font-size:22px;font-weight:500">{{ devotional.streak }} dias</div></div>
+                  <div style="display:flex;gap:4px"><sc-for list="{{ devotional.days }}" as="d" hint-placeholder-count="7"><div class="rc-dot" style="width:9px;height:9px;background:{{ d.color }}"></div></sc-for></div>
+                </div>
+                <div class="card elev-md" style="gap:12px;padding:20px">
+                  <div class="card-kicker">Palavra do dia</div>
+                  <div class="card-title">{{ devotional.title }}</div>
+                  <div style="font-size:13px;color:var(--color-accent-300);cursor:pointer" onClick="{{ openDevotionalReading }}">Leitura: {{ devotional.reading }} →</div>
+                  <div class="hr"></div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">REFLEXÃO</b>{{ devotional.reflection }}</div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">PARA PENSAR</b>{{ devotional.question }}</div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">PRÁTICA DE HOJE</b>{{ devotional.action }}</div>
+                  <div style="font-size:13px"><b style="font-family:var(--font-heading);font-weight:500;font-size:12px;color:var(--rc-faint);display:block;margin-bottom:4px">ORAÇÃO</b>{{ devotional.prayer }}</div>
+                  <div class="hr"></div>
+                  <div style="font-size:13px;font-style:italic;color:var(--color-accent-300)">"{{ devotional.takeaway }}"</div>
+                </div>
+                <button class="btn btn-primary btn-block" onClick="{{ completeDevotional }}" disabled="{{ devotionalDone }}">{{ devotionalCta }}</button>
+                <sc-if value="{{ devotionalDone }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--rc-faint);text-align:center">Que essa Palavra acompanhe você durante o dia.</div></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchPrayer }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Preciso de oração</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint)">Partilhe o seu pedido. A nossa equipa pastoral vai orar por si e acompanhar com carinho.</div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div class="field"><label>Nome</label><input class="input" type="text" placeholder="O seu nome" value="{{ prayerForm.nome }}" onChange="{{ setPrayerNome }}"/></div>
+                  <div class="field"><label>Telefone (opcional)</label><input class="input" type="text" placeholder="+351" value="{{ prayerForm.telefone }}" onChange="{{ setPrayerTelefone }}"/></div>
+                  <div class="field"><label>Categoria</label>
+                    <select class="input" value="{{ prayerForm.categoria }}" onChange="{{ setPrayerCategoria }}">
+                      <sc-for list="{{ prayerCategories }}" as="c" hint-placeholder-count="9"><option value="{{ c }}">{{ c }}</option></sc-for>
+                    </select>
+                  </div>
+                  <div class="field"><label>Descrição do pedido</label><textarea class="input" placeholder="Como podemos orar por si?" value="{{ prayerForm.descricao }}" onChange="{{ setPrayerDescricao }}"></textarea></div>
+                  <div style="display:flex;gap:8px">
+                    <button class="btn" style="{{ prayerAnonBtnStyle }}" onClick="{{ togglePrayerAnon }}">Enviar anonimamente</button>
+                    <button class="btn" style="{{ prayerConfBtnStyle }}" onClick="{{ togglePrayerConf }}">Confidencial</button>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--rc-muted)">Pedidos confidenciais serão acessíveis somente à equipa pastoral autorizada.</div>
+                <button class="btn btn-primary btn-block" disabled="{{ prayerDisabled }}" onClick="{{ submitPrayer }}">Enviar pedido</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchNextSteps }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Próximos Passos</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint)">Sua jornada de integração e crescimento na Redenção Church.</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ nextSteps }}" as="st" hint-placeholder-count="6">
+                    <div class="card elev-sm" style="gap:6px">
+                      <div style="display:flex;align-items:center;gap:8px"><span class="tag tag-neutral">{{ st.num }}</span><span class="card-title" style="font-size:15px">{{ st.title }}</span></div>
+                      <div class="card-body">{{ st.desc }}</div>
+                      <button class="btn btn-secondary" style="align-self:flex-start;font-size:12px;margin-top:4px" onClick="{{ st.onOpen }}">Conhecer →</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchCells }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Encontre uma célula</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint)">A igreja também acontece de casa em casa. Encontre uma célula e caminhe conosco.</div>
+                <div style="display:flex;gap:8px;overflow:auto;padding-bottom:4px">
+                  <sc-for list="{{ cellFilters }}" as="f" hint-placeholder-count="5"><button class="tag" style="{{ f.style }};cursor:pointer;border:none" onClick="{{ f.onPick }}">{{ f.label }}</button></sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ filteredCells }}" as="c" hint-placeholder-count="3">
+                    <div class="card elev-sm" style="gap:8px">
+                      <div style="display:flex;align-items:center;justify-content:space-between"><span class="card-title" style="font-size:15px">{{ c.name }}</span><span class="tag tag-outline">{{ c.category }}</span></div>
+                      <div class="card-meta">Líder: {{ c.leader }} · {{ c.day }} · {{ c.time }}</div>
+                      <div style="font-size:13px;color:var(--rc-faint)">{{ c.region }}</div>
+                      <button class="btn btn-secondary" style="align-self:flex-start;font-size:12px" onClick="{{ c.onJoin }}" disabled="{{ c.requested }}">{{ c.joinLabel }}</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchServe }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Quero Servir</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint)">Existe um lugar para você servir.</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ ministries }}" as="m" hint-placeholder-count="6">
+                    <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer" onClick="{{ m.onOpen }}">
+                      <div class="rc-ph" style="width:44px;height:44px;border-radius:8px;background:var(--color-accent-900);color:var(--color-accent-200);font-size:9px;flex-shrink:0">{{ m.initials }}</div>
+                      <div style="flex:1"><div class="card-title" style="font-size:14px">{{ m.name }}</div><div class="card-meta">{{ m.desc }}</div></div>
+                      <sc-if value="{{ m.interested }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="font-size:10px">Enviado</span></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ serveFormOpen }}" hint-placeholder-val="{{ false }}">
+                  <div class="dialog-backdrop" onClick="{{ closeServeForm }}">
+                    <div class="dialog" onClick="{{ stopProp }}">
+                      <div class="dialog-title">Tenho interesse em servir — {{ serveFormMinistry }}</div>
+                      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+                        <input class="input" type="text" placeholder="Nome" value="{{ serveForm.nome }}" onChange="{{ setServeNome }}"/>
+                        <input class="input" type="text" placeholder="Contacto" value="{{ serveForm.contacto }}" onChange="{{ setServeContacto }}"/>
+                        <textarea class="input" placeholder="Por que deseja servir?" value="{{ serveForm.motivo }}" onChange="{{ setServeMotivo }}"></textarea>
+                      </div>
+                      <div class="dialog-actions"><button class="btn btn-primary" onClick="{{ submitServe }}">Enviar interesse</button></div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchGiving }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Generosidade</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint);line-height:1.5">Contribua de forma simples e segura com aquilo que Deus tem realizado através da Redenção Church.</div>
+                <div class="card elev-sm" style="gap:8px"><div class="card-kicker">MB WAY</div><div style="font-family:var(--font-heading);font-size:17px">{{ givingMethods.mbway }}</div><button class="btn btn-secondary" style="align-self:flex-start;font-size:12px" onClick="{{ copyMbway }}">Copiar número</button></div>
+                <div class="card elev-sm" style="gap:8px"><div class="card-kicker">Transferência Bancária · IBAN</div><div style="font-family:var(--font-heading);font-size:15px;word-break:break-all">{{ givingMethods.iban }}</div><button class="btn btn-secondary" style="align-self:flex-start;font-size:12px" onClick="{{ copyIban }}">Copiar IBAN</button></div>
+                <div class="card elev-sm" style="gap:6px"><div class="card-kicker">Por que contribuímos?</div><div class="card-body">A generosidade é uma resposta ao que Deus já nos deu, e sustenta a obra e o cuidado com as pessoas dentro da Redenção Church.</div></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchBaptism }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Quero me batizar</div>
+                </div>
+                <sc-if value="{{ baptismSent }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px"><div class="card-title">Inscrição recebida</div><div class="card-body">A liderança irá contactar você para os próximos passos da preparação.</div></div></sc-if>
+                <sc-if value="{{ baptismNotSent }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:13px;color:var(--rc-faint);line-height:1.6">O batismo é o ato público de declarar que você entregou a sua vida a Jesus Cristo e escolheu segui-lo, morrendo para a vida antiga e ressurgindo para uma vida nova nele.</div>
+                  <div class="card elev-sm" style="gap:6px"><div class="card-kicker">Próxima data</div><div class="card-title" style="font-size:15px">A definir — inscreva-se e será notificado</div></div>
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <input class="input" type="text" placeholder="Nome" value="{{ baptismForm.nome }}" onChange="{{ setBaptismNome }}"/>
+                    <input class="input" type="text" placeholder="Telefone" value="{{ baptismForm.telefone }}" onChange="{{ setBaptismTelefone }}"/>
+                    <input class="input" type="email" placeholder="E-mail" value="{{ baptismForm.email }}" onChange="{{ setBaptismEmail }}"/>
+                    <textarea class="input" placeholder="Já entregou sua vida a Jesus? Conte brevemente." value="{{ baptismForm.observacoes }}" onChange="{{ setBaptismObs }}"></textarea>
+                  </div>
+                  <button class="btn btn-primary btn-block" disabled="{{ baptismDisabled }}" onClick="{{ submitBaptism }}">Quero me batizar</button>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchTestimonies }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">O que Deus tem feito</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ testimonies }}" as="t" hint-placeholder-count="2">
+                    <div class="card elev-sm" style="gap:6px">
+                      <div class="card-title" style="font-size:14px">{{ t.title }}</div>
+                      <div class="card-body">{{ t.text }}</div>
+                      <div class="card-meta">{{ t.name }} · {{ t.date }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ testimonySent }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:20px"><div class="card-body">Testemunho enviado. Após aprovação da liderança, ele poderá aparecer aqui.</div></div></sc-if>
+                <sc-if value="{{ testimonyFormOpen }}" hint-placeholder-val="{{ false }}">
+                  <div class="card elev-sm" style="gap:10px">
+                    <div class="card-kicker">Compartilhar meu testemunho</div>
+                    <input class="input" type="text" placeholder="Título" value="{{ testimonyForm.title }}" onChange="{{ setTestimonyTitle }}"/>
+                    <textarea class="input" placeholder="O que Deus fez em sua vida?" value="{{ testimonyForm.text }}" onChange="{{ setTestimonyText }}"></textarea>
+                    <input class="input" type="text" placeholder="Nome a exibir (ou 'Anônimo')" value="{{ testimonyForm.name }}" onChange="{{ setTestimonyName }}"/>
+                    <button class="btn btn-primary" disabled="{{ testimonyDisabled }}" onClick="{{ submitTestimony }}">Enviar para aprovação</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ testimonyFormClosed }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary btn-block" onClick="{{ openTestimonyForm }}">Compartilhar meu testemunho</button></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ churchNewcomer }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backChurchHub }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Seja bem-vindo à Redenção Church</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint);line-height:1.6">Ficamos felizes que você esteja aqui. A Redenção Church é uma comunidade que caminha junto, na Palavra e na vida real uns dos outros.</div>
+                <div class="card elev-sm" style="gap:6px"><div class="card-kicker">Horários</div><div class="card-body">Quintas às 20:15 · Domingos às 10:15</div></div>
+                <div class="card elev-sm" style="gap:6px"><div class="card-kicker">Localização</div><div class="card-body">Beco do Caetaninho 9 · Carnaxide, Oeiras</div></div>
+                <div class="card elev-sm" style="gap:6px"><div class="card-kicker">O que esperar</div><div class="card-body">Louvor, uma palavra prática da Bíblia e um ambiente acolhedor — venha como estiver.</div></div>
+                <div class="card elev-sm" style="gap:6px"><div class="card-kicker">Ministério infantil</div><div class="card-body">Crianças são bem-vindas e acompanhadas por uma equipa dedicada durante o culto.</div></div>
+                <sc-if value="{{ newcomerSent }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:20px"><div class="card-body">Obrigado! Alguém da nossa equipa entrará em contacto em breve.</div></div></sc-if>
+                <sc-if value="{{ newcomerNotSent }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <input class="input" type="text" placeholder="Nome" value="{{ newcomerForm.nome }}" onChange="{{ setNewcomerNome }}"/>
+                    <input class="input" type="text" placeholder="Telefone" value="{{ newcomerForm.telefone }}" onChange="{{ setNewcomerTelefone }}"/>
+                    <input class="input" type="email" placeholder="E-mail" value="{{ newcomerForm.email }}" onChange="{{ setNewcomerEmail }}"/>
+                    <input class="input" type="text" placeholder="Como conheceu a Redenção?" value="{{ newcomerForm.comoConheceu }}" onChange="{{ setNewcomerComoConheceu }}"/>
+                    <button class="btn" style="{{ newcomerFirstTimeStyle }}" onClick="{{ toggleNewcomerFirstTime }}">É a sua primeira vez?</button>
+                    <button class="btn" style="{{ newcomerWantsContactStyle }}" onClick="{{ toggleNewcomerContact }}">Gostaria que alguém entrasse em contacto?</button>
+                  </div>
+                  <button class="btn btn-primary btn-block" disabled="{{ newcomerDisabled }}" onClick="{{ submitNewcomer }}">Quero conhecer a Redenção</button>
+                </sc-if>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabMessages }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ messagesList }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:20px 20px 12px;display:flex;flex-direction:column;gap:14px">
+                <div style="font-family:var(--font-heading);font-weight:500;font-size:20px">Mensagens</div>
+                <div style="display:flex;gap:8px;overflow:auto;padding-bottom:4px"><sc-for list="{{ sermonFilters }}" as="f" hint-placeholder-count="5"><button class="tag" style="{{ f.style }};cursor:pointer;border:none" onClick="{{ f.onPick }}">{{ f.label }}</button></sc-for></div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ filteredSermons }}" as="s" hint-placeholder-count="4">
+                    <div class="card elev-sm" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px" onClick="{{ s.onOpen }}">
+                      <div class="rc-ph" style="width:56px;height:56px;border-radius:8px;background:repeating-linear-gradient(45deg,var(--color-surface),var(--color-surface) 8px,var(--color-neutral-800) 8px,var(--color-neutral-800) 16px);color:var(--rc-muted);font-size:8px;flex-shrink:0">VÍDEO</div>
+                      <div style="flex:1;min-width:0"><div class="card-title" style="font-size:14px">{{ s.title }}</div><div class="card-meta" style="margin-top:2px">{{ s.preacher }} · {{ s.duration }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ messagesDetail }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backMessages }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">{{ selectedSermon.title }}</div>
+                </div>
+                <div style="position:relative;height:160px;border-radius:10px;background:repeating-linear-gradient(45deg,var(--color-surface),var(--color-surface) 10px,var(--color-neutral-800) 10px,var(--color-neutral-800) 20px);display:flex;align-items:center;justify-content:center">
+                  <div style="width:52px;height:52px;border-radius:50%;background:var(--color-accent-800);display:flex;align-items:center;justify-content:center" dangerouslySetInnerHTML="{{ playIconHtml }}"></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-accent">{{ selectedSermon.series }}</span><span class="card-meta">{{ selectedSermon.date }}</span></div>
+                <div class="card elev-sm">
+                  <div class="card-meta">Pregador</div><div style="font-size:14px">{{ selectedSermon.preacher }}</div>
+                  <div class="hr"></div>
+                  <div class="card-meta">Versículos utilizados</div><div style="font-size:14px">{{ selectedSermon.verses }}</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint);line-height:1.6">{{ selectedSermon.description }}</div>
+                <div style="display:flex;gap:10px">
+                  <button class="btn btn-primary" style="flex:1" onClick="{{ stop }}">Assistir</button>
+                  <button class="btn btn-secondary" style="flex:1" onClick="{{ stop }}">Compartilhar</button>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabProfile }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ profileMain }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:20px 20px 24px;display:flex;flex-direction:column;gap:22px">
+                <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:20px">Perfil</div>
+                  <div class="card elev-md" style="gap:14px;padding:20px">
+                    <div class="card-title">Sua caminhada pode continuar em qualquer dispositivo.</div>
+                    <div class="card-body">Crie sua conta gratuitamente para salvar:</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--rc-body2)">
+                      <div style="display:flex;align-items:center;gap:8px"><span style="display:flex" dangerouslySetInnerHTML="{{ bookmarkIconHtml }}"></span>Versículos favoritos</div>
+                      <div style="display:flex;align-items:center;gap:8px"><span style="display:flex" dangerouslySetInnerHTML="{{ copyIconHtml }}"></span>Notas pessoais</div>
+                      <div style="display:flex;align-items:center;gap:8px"><span style="display:flex" dangerouslySetInnerHTML="{{ bookIconLgHtml }}"></span>Histórico de leitura</div>
+                      <div style="display:flex;align-items:center;gap:8px"><span style="display:flex" dangerouslySetInnerHTML="{{ bookIconLgHtml }}"></span>Planos de leitura</div>
+                      <div style="display:flex;align-items:center;gap:8px"><span style="display:flex" dangerouslySetInnerHTML="{{ heartIconLgHtml }}"></span>Pedidos de oração</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+                      <button class="btn btn-primary btn-block" onClick="{{ goAuthSignup }}">Criar minha conta</button>
+                      <button class="btn btn-secondary btn-block" onClick="{{ goAuthLogin }}">Já tenho uma conta</button>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ isMember }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <div class="rc-ph" style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);font-family:var(--font-heading);font-size:20px;flex-shrink:0;cursor:pointer" onClick="{{ openEditProfile }}">{{ userInitials }}</div>
+                      <div style="flex:1;min-width:0;overflow:hidden">
+                        <div style="font-family:var(--font-heading);font-weight:500;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userName }}</div>
+                        <div class="card-meta" style="margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userEmail }}</div>
+                      </div>
+                    </div>
+                    <button class="btn btn-secondary" style="font-size:12px;flex-shrink:0" onClick="{{ openEditProfile }}">Editar perfil</button>
+                  </div>
+                </sc-if>
+
+                <div class="card elev-sm" style="cursor:pointer;flex-direction:row;align-items:center;gap:14px;background:var(--color-accent-900)" onClick="{{ openMinhaRedencao }}">
+                  <span style="display:flex;color:var(--color-accent-300)" dangerouslySetInnerHTML="{{ churchIconHtml }}"></span>
+                  <div style="flex:1"><div class="card-title" style="font-size:14px">Minha Redenção</div><div class="card-body">Sua participação na comunidade, num só lugar</div></div>
+                  <span style="display:flex;color:var(--color-accent-300)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Minha área</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <sc-for list="{{ myAreaRows }}" as="row" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ row.onOpen }}">
+                        <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ row.iconHtml }}"></span>
+                        <div style="flex:1"><div style="font-size:14px">{{ row.label }}</div><div class="card-meta">{{ row.sub }}</div></div>
+                        <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Minha caminhada</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <sc-for list="{{ caminhadaRows }}" as="row" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ row.onOpen }}">
+                        <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ row.iconHtml }}"></span>
+                        <div style="flex:1"><div style="font-size:14px">{{ row.label }}</div><div class="card-meta">{{ row.sub }}</div></div>
+                        <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Configurações</h6>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider)">
+                      <div style="font-size:14px">Tema</div>
+                      <div class="seg">
+                        <label class="seg-opt"><input type="radio" checked="{{ isDark }}" onChange="{{ setThemeDark }}"/><span class="dot"></span>Escuro</label>
+                        <label class="seg-opt"><input type="radio" checked="{{ isLight }}" onChange="{{ setThemeLight }}"/><span class="dot"></span>Claro</label>
+                      </div>
+                    </div>
+                    <div style="padding:4px 4px 2px;font-size:13px;color:var(--rc-faint);display:flex;align-items:center;gap:6px"><span style="display:flex" dangerouslySetInnerHTML="{{ bellIconHtml }}"></span>Notificações</div>
+                    <sc-for list="{{ notifToggles }}" as="nt" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--color-divider)">
+                        <div style="font-size:13px">{{ nt.label }}</div>
+                        <div class="btn" style="{{ nt.style }};cursor:pointer;padding:4px 10px;font-size:11px" onClick="{{ nt.toggle }}">{{ nt.stateLabel }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Aplicação</h6>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openInstall }}">
+                    <div style="flex:1"><div style="font-size:14px">{{ installRowLabel }}</div><div class="card-meta">{{ installRowSub }}</div></div>
+                    <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider)">
+                    <div style="flex:1"><div style="font-size:14px">Notificações do aplicativo</div><div class="card-meta">{{ notifPermissionLabel }}</div></div>
+                    <sc-if value="{{ notifPermissionCanAsk }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" style="font-size:12px" onClick="{{ requestNotifPermission }}">Ativar</button></sc-if>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openHelp }}">
+                  <div style="font-size:14px">Ajuda e Suporte</div>
+                  <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                </div>
+
+                <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ openAdmin }}">
+                    <div style="font-size:14px">Painel administrativo</div>
+                    <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                  </div>
+                </sc-if>
+
+                <div>
+                  <h6 style="color:var(--rc-muted);margin-bottom:8px">Pré-visualização do protótipo</h6>
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="font-size:13px">Dispositivo</div>
+                    <div class="seg">
+                      <label class="seg-opt"><input type="radio" checked="{{ deviceIsIOS }}" onChange="{{ setDeviceIOS }}"/><span class="dot"></span>iOS</label>
+                      <label class="seg-opt"><input type="radio" checked="{{ deviceIsAndroid }}" onChange="{{ setDeviceAndroid }}"/><span class="dot"></span>Android</label>
+                    </div>
+                  </div>
+                </div>
+
+                <sc-if value="{{ isMember }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary btn-block" onClick="{{ doLogout }}">Sair da conta</button></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileInstall }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Instalar Redenção Church</div>
+                </div>
+
+                <sc-if value="{{ isInstalled }}" hint-placeholder-val="{{ false }}">
+                  <div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px">
+                    <div class="card-title" style="color:var(--color-accent-300)">✓ Redenção Church instalada</div>
+                    <div class="card-body">A aplicação já está instalada neste dispositivo.</div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ showInstallAndroid }}" hint-placeholder-val="{{ false }}">
+                  <div class="card elev-sm" style="gap:10px">
+                    <div class="card-title">📱 Instalar no Android</div>
+                    <div class="card-body">Adicione a Redenção Church à tela inicial para acessar rapidamente a Bíblia, seus devocionais, eventos e conteúdos da igreja.</div>
+                    <button class="btn btn-primary btn-block" onClick="{{ handleInstallClick }}" disabled="{{ installUnavailable }}">Instalar aplicação</button>
+                    <sc-if value="{{ installUnavailable }}" hint-placeholder-val="{{ false }}"><div class="card-meta">Se o botão não funcionar, use o menu do navegador (⋮) e escolha "Instalar aplicativo" ou "Adicionar à tela inicial".</div></sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ showInstallIOS }}" hint-placeholder-val="{{ false }}">
+                  <div class="card elev-sm" style="gap:10px">
+                    <div class="card-title">Instale a Redenção Church</div>
+                    <div class="card-body" style="display:flex;flex-direction:column;gap:6px">
+                      <div>1. Abra este site no Safari.</div>
+                      <div>2. Toque no botão Compartilhar.</div>
+                      <div>3. Selecione "Adicionar à Tela de Início".</div>
+                      <div>4. Confirme em "Adicionar".</div>
+                    </div>
+                    <div class="hr"></div>
+                    <div class="card-meta">A Redenção Church aparecerá junto aos seus aplicativos.</div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ showInstallDesktop }}" hint-placeholder-val="{{ false }}">
+                  <div class="card elev-sm" style="gap:10px">
+                    <div class="card-title">💻 Instalar no computador</div>
+                    <div class="card-body">Use a Redenção Church como uma aplicação independente, sem precisar abrir o navegador primeiro.</div>
+                    <button class="btn btn-primary btn-block" onClick="{{ handleInstallClick }}" disabled="{{ installUnavailable }}">Instalar</button>
+                  </div>
+                </sc-if>
+
+                <div class="card elev-sm" style="gap:8px">
+                  <div class="card-title" style="font-size:14px">🔔 Não perca aquilo que está acontecendo</div>
+                  <div class="card-body">Ative as notificações para receber a Palavra do Dia, lembretes de cultos e informações importantes da Redenção Church.</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding-top:4px">
+                    <div class="card-meta">{{ notifPermissionLabel }}</div>
+                    <sc-if value="{{ notifPermissionCanAsk }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" style="font-size:12px" onClick="{{ requestNotifPermission }}">Ativar notificações</button></sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileEdit }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:18px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Editar perfil</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+                  <div class="rc-ph" style="width:84px;height:84px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);font-family:var(--font-heading);font-size:28px">{{ userInitials }}</div>
+                  <button class="btn btn-secondary" style="font-size:12px" onClick="{{ openPhotoMenu }}">Alterar foto</button>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div class="field"><label>Nome completo</label><input class="input" type="text" value="{{ editName }}" onChange="{{ setEditName }}"/></div>
+                  <div class="field"><label>E-mail</label><input class="input" type="email" value="{{ editEmail }}" onChange="{{ setEditEmail }}"/></div>
+                </div>
+                <button class="btn btn-primary btn-block" onClick="{{ saveProfile }}">Salvar alterações</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileFavorites }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Meus Favoritos</div>
+                </div>
+                <div style="display:flex;gap:8px;overflow:auto;padding-bottom:4px"><sc-for list="{{ favFilters }}" as="f" hint-placeholder-count="4"><button class="tag" style="{{ f.style }};cursor:pointer;border:none" onClick="{{ f.onPick }}">{{ f.label }}</button></sc-for></div>
+                <sc-if value="{{ favEmpty }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px"><div class="card-title">Seus favoritos aparecerão aqui.</div><div class="card-body">Explore a Bíblia e os conteúdos da Redenção e toque no coração para guardar aquilo que deseja encontrar novamente.</div></div></sc-if>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ filteredFavorites }}" as="fv" hint-placeholder-count="3">
+                    <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:12px">
+                      <div style="flex:1;min-width:0"><div class="card-kicker">{{ fv.type }}</div><div class="card-title" style="font-size:14px">{{ fv.ref }}</div><div class="card-body">{{ fv.text }}</div></div>
+                      <button class="btn btn-icon btn-ghost" onClick="{{ fv.onRemove }}" style="color:var(--color-accent)" dangerouslySetInnerHTML="{{ bookmarkIconHtml }}"></button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Minhas Notas</div>
+                </div>
+                <div class="card elev-sm" style="gap:10px">
+                  <div class="card-kicker">Nova nota</div>
+                  <input class="input" type="text" placeholder="Referência (ex: João 3:16)" value="{{ noteRefDraft }}" onChange="{{ setNoteRefDraft }}"/>
+                  <textarea class="input" placeholder="Escreva sua anotação..." value="{{ noteTextDraft }}" onChange="{{ setNoteTextDraft }}"></textarea>
+                  <button class="btn btn-secondary" disabled="{{ noteDraftInvalid }}" onClick="{{ addNote }}">Adicionar nota</button>
+                </div>
+                <sc-if value="{{ notesEmpty }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px"><div class="card-body">Suas anotações da leitura bíblica aparecerão aqui. Elas são privadas — só você pode vê-las.</div></div></sc-if>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ notes }}" as="n" hint-placeholder-count="2">
+                    <div class="card elev-sm" style="gap:6px">
+                      <div class="card-title" style="font-size:14px">{{ n.ref }}</div>
+                      <div class="card-body">"{{ n.text }}"</div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px"><div class="card-meta">{{ n.date }}</div><button class="btn btn-ghost" style="font-size:12px;padding-inline:6px" onClick="{{ n.onDelete }}">Excluir</button></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileHistory }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Histórico de Leitura</div>
+                </div>
+                <div class="card elev-sm" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px" onClick="{{ continueReadingFromHistory }}">
+                  <div style="flex:1"><div class="card-kicker">Continue de onde parou</div><div class="card-title" style="font-size:14px">{{ continueRef }}</div></div>
+                  <div style="font-size:12px;color:var(--color-accent-300)">Continuar →</div>
+                </div>
+                <sc-for list="{{ historyGroups }}" as="g" hint-placeholder-count="3">
+                  <div>
+                    <h6 style="color:var(--rc-muted);margin-bottom:6px">{{ g.label }}</h6>
+                    <div style="display:flex;flex-direction:column;gap:2px">
+                      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ it.onOpen }}">
+                          <div style="font-size:14px">{{ it.ref }}</div>
+                          <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profilePrayers }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Meus Pedidos de Oração</div>
+                </div>
+                <button class="btn btn-secondary btn-block" onClick="{{ shortcutPrayerFromProfile }}">+ Novo pedido de oração</button>
+                <sc-if value="{{ prayersEmpty }}" hint-placeholder-val="{{ false }}"><div class="card elev-sm" style="text-align:center;gap:6px;padding:28px 20px"><div class="card-body">Ainda não enviou nenhum pedido de oração.</div></div></sc-if>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ myPrayers }}" as="p" hint-placeholder-count="2">
+                    <div class="card elev-sm" style="gap:6px">
+                      <div class="card-title" style="font-size:14px">{{ p.title }}</div>
+                      <div class="card-meta">Enviado em {{ p.date }}</div>
+                      <span class="tag" style="{{ p.statusStyle }};align-self:flex-start">{{ p.statusLabel }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-size:11px;color:var(--rc-muted)">Somente você e a equipa pastoral autorizada podem ver estes pedidos.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileMinhaRedencao }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Minha Redenção</div>
+                </div>
+                <div style="font-size:13px;color:var(--rc-faint)">Sua participação na vida da igreja, resumida.</div>
+                <sc-for list="{{ minhaRedencaoCards }}" as="c" hint-placeholder-count="6">
+                  <div class="card elev-sm" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px" onClick="{{ c.onOpen }}">
+                    <span style="display:flex;color:var(--color-accent-400)" dangerouslySetInnerHTML="{{ c.iconHtml }}"></span>
+                    <div style="flex:1"><div class="card-kicker">{{ c.label }}</div><div class="card-title" style="font-size:14px">{{ c.value }}</div></div>
+                    <span style="display:flex;color:var(--rc-muted)" dangerouslySetInnerHTML="{{ chevronRightHtml }}"></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profilePlans }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Planos de Leitura</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ readingPlans }}" as="p" hint-placeholder-count="4">
+                    <div class="card elev-sm" style="gap:8px">
+                      <div style="display:flex;align-items:center;justify-content:space-between"><span class="card-title" style="font-size:14px">{{ p.title }}</span><span class="tag tag-outline">{{ p.category }}</span></div>
+                      <div class="card-meta">Dia {{ p.day }} de {{ p.total }}</div>
+                      <div style="height:5px;border-radius:3px;background:var(--color-neutral-800)"><div style="height:100%;border-radius:3px;background:var(--color-accent-500);width:{{ p.pct }}%"></div></div>
+                      <button class="btn btn-secondary" style="align-self:flex-start;font-size:12px" onClick="{{ p.onOpen }}">{{ p.cta }}</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileHelp }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Ajuda e Suporte</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ helpTopics }}" as="h" hint-placeholder-count="5"><div style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--color-divider)"><div style="font-size:14px">{{ h }}</div></div></sc-for>
+                </div>
+                <div class="card elev-sm" style="gap:10px">
+                  <div class="card-kicker">Enviar feedback</div>
+                  <textarea class="input" placeholder="Como podemos melhorar?" value="{{ feedbackText }}" onChange="{{ setFeedbackText }}"></textarea>
+                  <button class="btn btn-secondary" style="align-self:flex-start" disabled="{{ feedbackDisabled }}" onClick="{{ submitFeedback }}">Enviar</button>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ profileAdmin }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-icon btn-secondary" onClick="{{ backProfile }}"><span style="display:flex" dangerouslySetInnerHTML="{{ chevronLeftHtml }}"></span></button>
+                  <div style="font-family:var(--font-heading);font-weight:500;font-size:17px">Painel administrativo</div>
+                </div>
+                <div style="font-size:11px;color:var(--rc-muted);font-style:italic">Pré-visualização — a versão completa fica disponível na web.</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <sc-for list="{{ adminStats }}" as="st" hint-placeholder-count="5"><div class="card elev-sm" style="gap:2px"><div class="card-meta">{{ st.label }}</div><div style="font-family:var(--font-heading);font-size:22px;font-weight:500">{{ st.value }}</div></div></sc-for>
+                </div>
+                <div class="card elev-sm" style="gap:10px">
+                  <div class="card-kicker">Conteúdos mais acessados</div>
+                  <sc-for list="{{ adminContent }}" as="c" hint-placeholder-count="4">
+                    <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;justify-content:space-between;font-size:12px"><span>{{ c.label }}</span><span class="text-muted">{{ c.value }}</span></div>
+                      <div style="height:5px;border-radius:3px;background:var(--color-neutral-800)"><div style="height:100%;border-radius:3px;background:var(--color-accent-500);width:{{ c.pct }}%"></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ showTabBar }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:none;display:flex;border-top:1px solid var(--color-divider);background:var(--color-bg);padding-bottom:{{ tabBarBottomPad }}px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;cursor:pointer;color:{{ t.color }}" onClick="{{ t.onOpen }}">
+              <div dangerouslySetInnerHTML="{{ t.iconHtml }}"></div>
+              <div style="font-size:10.5px">{{ t.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </x-import>
+
+  <sc-if value="{{ showPrayerDialog }}" hint-placeholder-val="{{ false }}">
+    <div class="dialog-backdrop" onClick="{{ closePrayerDialog }}">
+      <div class="dialog" onClick="{{ stopProp }}">
+        <div class="dialog-title">Pedido enviado</div>
+        <div class="dialog-body">A nossa equipa pastoral irá orar por si e, se autorizou o contacto, entrará em contacto em breve.</div>
+        <div class="dialog-actions"><button class="btn btn-primary" onClick="{{ closePrayerDialog }}">Fechar</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showSearch }}" hint-placeholder-val="{{ false }}">
+    <div class="dialog-backdrop" onClick="{{ closeSearch }}">
+      <div class="dialog" style="max-width:340px" onClick="{{ stopProp }}">
+        <input class="input" type="text" placeholder="Buscar na Bíblia, mensagens, eventos..." value="{{ searchQuery }}" onChange="{{ setSearchQuery }}" autoFocus="{{ true }}"/>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:10px;max-height:320px;overflow:auto">
+          <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--rc-muted);padding:8px 4px">Digite para buscar em livros da Bíblia, mensagens e eventos.</div></sc-if>
+          <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="0">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--color-divider);cursor:pointer" onClick="{{ r.onOpen }}">
+              <span class="tag tag-outline" style="font-size:10px">{{ r.type }}</span>
+              <div style="flex:1;font-size:13px">{{ r.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showPhotoMenu }}" hint-placeholder-val="{{ false }}">
+    <div class="dialog-backdrop" onClick="{{ closePhotoMenu }}">
+      <div class="dialog" onClick="{{ stopProp }}">
+        <div class="dialog-title">Alterar foto</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <button class="btn btn-secondary btn-block" onClick="{{ closePhotoMenu }}">Tirar foto</button>
+          <button class="btn btn-secondary btn-block" onClick="{{ closePhotoMenu }}">Escolher da galeria</button>
+          <button class="btn btn-ghost btn-block" onClick="{{ closePhotoMenu }}">Remover foto</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toastMsg }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--color-neutral-800);color:var(--color-text);padding:10px 18px;border-radius:var(--radius-md);font-size:13px;box-shadow:var(--shadow-md);z-index:999">{{ toastMsg }}</div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:960},&quot;defaultDevice&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ios&quot;,&quot;options&quot;:[&quot;ios&quot;,&quot;android&quot;],&quot;tsType&quot;:&quot;'ios'|'android'&quot;},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;light&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;tsType&quot;:&quot;'dark'|'light'&quot;},&quot;showAdminEntry&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const ICONS = {
+  home: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 11l8-7 8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 001 1h10a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  book: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5c-2-1.3-4.6-2-7-2v14c2.4 0 5 .7 7 2 2-1.3 4.6-2 7-2V3c-2.4 0-5 .7-7 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5v14" stroke="currentColor" stroke-width="1.6"/></svg>',
+  church: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v6M9 6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 21V12l6-5 6 5v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 21v-6h4v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  messages: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H9l-5 4V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  profile: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  bell: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1112 0c0 3 1 4.5 2 6H4c1-1.5 2-3 2-6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 20a2 2 0 004 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  chevronLeft: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chevronRight: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  share: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  copy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 15V5a1.5 1.5 0 011.5-1.5H15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  bookmark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 3.5h12v17l-6-4-6 4v-17Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-4.5-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  calendarLg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  calendarSm: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  bookLg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5c-2-1.3-4.6-2-7-2v14c2.4 0 5 .7 7 2 2-1.3 4.6-2 7-2V3c-2.4 0-5 .7-7 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  heartLg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 20s-7.5-4.6-9.3-9.4C1.6 7.5 3.4 4.5 6.6 4.2c2-.2 3.6.9 5.4 3 1.8-2.1 3.4-3.2 5.4-3 3.2.3 5 3.3 3.9 6.4C19.5 15.4 12 20 12 20Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  mapPin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.3 7-11.5A7 7 0 105 9.5C5 14.7 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.6"/></svg>',
+  play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 4.5v15l14-7.5-14-7.5Z" fill="currentColor"/></svg>',
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12.5l2.5 2.5 4.5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cross: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M6 9h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  users: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="9" r="2.3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20c1-3.5 3.3-5.3 5.5-5.3s4.5 1.8 5.5 5.3M15 15.2c2 .2 3.7 1.7 4.5 4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  handshake: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12l4-4 4 3 3-3 3 2 4-3 2 2-5 5-3-2-3 3-3-2-2 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  droplet: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3c4 5 6.5 8.4 6.5 11.3A6.5 6.5 0 015.5 14.3C5.5 11.4 8 8 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+};
+const H = (html) => ({ __html: html });
+
+class Component extends DCLogic {
+  state = {
+    device: this.props.defaultDevice || 'ios',
+    theme: this.props.defaultTheme || 'light',
+    stage: 'onboarding',
+    onboardStep: 0,
+    authMode: 'login',
+    authName: '', authEmail: '', authPassword: '',
+    isGuest: false,
+    isAdmin: this.props.showAdminEntry !== false,
+    tab: 'home',
+    homeView: 'home',
+    testament: 'nt',
+    bibleStage: 'books',
+    selectedBook: 'João',
+    selectedChapter: 3,
+    readerFontSize: 17,
+    favVerse: false,
+    highlightLevel: 0,
+    chapterRead: false,
+    churchView: 'hub',
+    selectedEventId: null,
+    devotionalDone: false,
+    prayerForm: { nome: '', telefone: '', categoria: 'Família', descricao: '', anon: false, conf: false },
+    showPrayerDialog: false,
+    messagesView: 'list',
+    sermonFilter: 'Todas',
+    selectedSermonId: null,
+    profileView: 'profile',
+    userName: 'Raphael Duarte',
+    userEmail: 'raphael@email.com',
+    editName: '', editEmail: '',
+    showPhotoMenu: false,
+    toastMsg: null,
+    favFilter: 'Todos',
+    favorites: [
+      { id: 1, type: 'Versículo', ref: 'Salmos 119:105', text: 'A tua palavra é lâmpada que ilumina os meus passos.' },
+      { id: 2, type: 'Devocional', ref: 'Confiar no tempo de Deus', text: 'Salmos 37:1-7' },
+    ],
+    noteRefDraft: '', noteTextDraft: '',
+    notes: [
+      { id: 1, ref: 'João 3:16', text: 'Minha anotação pessoal sobre este texto — o amor de Deus é para todos, sem exceção.', date: '12 de agosto de 2026' },
+    ],
+    readingLog: [
+      { group: 'Hoje', items: ['João 4', 'João 3'] },
+      { group: 'Ontem', items: ['Salmos 23', 'Romanos 8'] },
+      { group: '10 de agosto', items: ['Mateus 6'] },
+    ],
+    myPrayers: [
+      { id: 1, title: 'Minha família', date: '10 de agosto de 2026', status: 'orando' },
+    ],
+    notifPrefs: { verse: true, devotional: true, reading: false, events: true },
+    monthDevotionals: null,
+    palavraList: null,
+    cellFilter: 'Todas',
+    cellRequests: {},
+    serveFormMinistryId: null,
+    serveForm: { nome: '', contacto: '', motivo: '' },
+    ministryInterest: {},
+    showSearch: false, searchQuery: '',
+    notifs: [
+      { id: 1, group: 'Hoje', title: 'Palavra do dia disponível.', time: '07:00', icon: 'book', read: false },
+      { id: 2, group: 'Hoje', title: 'Hoje temos culto às 20h15.', time: '16:00', icon: 'church', read: false },
+      { id: 3, group: 'Esta semana', title: 'Novo devocional disponível.', time: 'Ontem', icon: 'book', read: true },
+      { id: 4, group: 'Esta semana', title: 'Não esqueça a sua leitura de hoje.', time: 'Ter', icon: 'bell', read: true },
+    ],
+    baptismForm: { nome: '', telefone: '', email: '', observacoes: '' }, baptismSent: false,
+    testimonyFormOpen: false, testimonySent: false, testimonyForm: { title: '', text: '', name: '' },
+    newcomerForm: { nome: '', telefone: '', email: '', comoConheceu: '', firstTime: false, wantsContact: true }, newcomerSent: false,
+    readingPlansProgress: { 1: 8, 2: 0, 3: 0 },
+    feedbackText: '',
+  };
+
+  onboardSlides = [
+    { title: 'Bem-vindo à Redenção Church', body: 'Uma igreja para viver Cristo todos os dias.' },
+    { title: 'A Palavra todos os dias', body: 'Leia a Bíblia, acompanhe planos e receba uma palavra diariamente.' },
+    { title: 'Caminhamos juntos', body: 'Cultos, células, oração, discipulado e comunhão num único lugar.' },
+    { title: 'Começar', body: '' },
+  ];
+  fallbackDevotional = {
+    title: 'Confiar no tempo de Deus', reading: 'Salmos 37:1-7', summary: 'Sobre entregar os seus caminhos ao Senhor e confiar no seu tempo.',
+    reflection: 'Muitas vezes queremos respostas imediatas, mas a fé bíblica ensina-nos a esperar com confiança, sabendo que Deus está a trabalhar mesmo quando não vemos.',
+    question: 'Em que área da sua vida tem sido mais difícil confiar no tempo de Deus?',
+    prayer: 'Senhor, ajuda-me a entregar os meus planos e ansiedades a Ti, confiando que o Teu tempo é perfeito.',
+    action: 'Escreva uma preocupação num papel e ore sobre ela hoje, entregando-a a Deus.',
+    takeaway: 'O fruto que permanece nasce de uma vida que permanece em Cristo.',
+  };
+  events = [
+    { id: 1, name: 'Culto de Celebração', date: 'Qui, 20 Ago', dayLabel: 'QUI\n20', time: '20:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerThu: true },
+    { id: 2, name: 'Culto de Celebração', date: 'Dom, 23 Ago', dayLabel: 'DOM\n23', time: '10:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerSun: true },
+    { id: 6, name: 'Culto de Celebração', date: 'Qui, 27 Ago', dayLabel: 'QUI\n27', time: '20:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerThu: true },
+    { id: 7, name: 'Culto de Celebração', date: 'Dom, 30 Ago', dayLabel: 'DOM\n30', time: '10:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerSun: true },
+    { id: 8, name: 'Culto de Celebração', date: 'Qui, 03 Set', dayLabel: 'QUI\n03', time: '20:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerThu: true },
+    { id: 9, name: 'Culto de Celebração', date: 'Dom, 06 Set', dayLabel: 'DOM\n06', time: '10:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerSun: true },
+    { id: 10, name: 'Culto de Celebração', date: 'Qui, 10 Set', dayLabel: 'QUI\n10', time: '20:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerThu: true },
+    { id: 11, name: 'Culto de Celebração', date: 'Dom, 13 Set', dayLabel: 'DOM\n13', time: '10:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerSun: true },
+    { id: 12, name: 'Culto de Celebração', date: 'Qui, 17 Set', dayLabel: 'QUI\n17', time: '20:15', location: 'Beco do Caetaninho 9 · Carnaxide, Oeiras', category: 'Cultos', hasFlyerThu: true },
+  ];
+  sermons = [
+    { id: 1, title: 'Fé que Move Montanhas', preacher: 'Pastor Miguel Santos', series: 'Cultos de Celebração', duration: '42 min', date: '09 Ago 2026', tag: 'Cultos', verses: 'Marcos 11:22-24', description: 'Uma mensagem sobre como a fé genuína transforma a forma como enfrentamos os desafios do dia a dia.' },
+    { id: 2, title: 'O Coração do Pai', preacher: 'Pastora Inês Rocha', series: 'Família', duration: '38 min', date: '02 Ago 2026', tag: 'Família', verses: 'Lucas 15:11-24', description: 'Uma reflexão sobre o amor incondicional de Deus e o que isso significa para as nossas famílias.' },
+    { id: 3, title: 'Identidade em Cristo', preacher: 'Pastor Miguel Santos', series: 'Jovens', duration: '35 min', date: '26 Jul 2026', tag: 'Jovens', verses: '2 Coríntios 5:17', description: 'Descobrir quem somos à luz de quem Deus diz que somos.' },
+    { id: 4, title: 'Vivendo em Comunhão', preacher: 'Pastor Tiago Neves', series: 'Discipulado', duration: '40 min', date: '19 Jul 2026', tag: 'Discipulado', verses: 'Atos 2:42-47', description: 'Porque a vida cristã não foi feita para ser vivida sozinha.' },
+  ];
+  booksNT = ['Mateus','Marcos','Lucas','João','Atos','Romanos','1 Coríntios','2 Coríntios','Gálatas','Efésios','Filipenses','Apocalipse'];
+  booksAT = ['Génesis','Êxodo','Salmos','Provérbios','Isaías','Jeremias','Daniel'];
+  joao3 = [
+    { n: 1, text: 'Havia um fariseu chamado Nicodemos, um dos líderes dos judeus.' },
+    { n: 2, text: 'Ele veio a Jesus, de noite, e disse: "Sabemos que vieste de Deus, pois ninguém faz o que fazes sem que Deus esteja com ele."' },
+    { n: 3, text: 'Jesus respondeu: "Digo-te a verdade: ninguém pode ver o Reino de Deus sem nascer de novo."' },
+    { n: 14, text: 'Assim como Moisés levantou a serpente no deserto, também o Filho do Homem será levantado.' },
+    { n: 16, text: 'Porque Deus amou o mundo de tal maneira que entregou o seu Filho único, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.' },
+    { n: 17, text: 'Deus não enviou o seu Filho para condenar o mundo, mas para o mundo ser salvo por meio dele.' },
+    { n: 21, text: 'Mas quem vive segundo a verdade vem para a luz, para que se veja claramente que as suas obras são feitas em Deus.' },
+  ];
+  nextSteps = [
+    { id: 1, title: 'Conhecer Jesus', desc: 'O primeiro passo de toda a jornada de fé.' },
+    { id: 2, title: 'Começando com Jesus', desc: 'Fundamentos simples para quem está começando.' },
+    { id: 3, title: 'Quero me batizar', desc: 'Entenda o significado bíblico do batismo e saiba como participar do próximo.' },
+    { id: 4, title: 'Quero participar de uma célula', desc: 'Encontre um grupo para caminhar em comunidade.' },
+    { id: 5, title: 'Quero ser discipulado', desc: 'Cresça acompanhado por alguém mais experiente na fé.' },
+    { id: 6, title: 'Quero servir', desc: 'Descubra um ministério onde pode contribuir.' },
+  ];
+  cells = [
+    { id: 1, name: 'Célula Amadora Centro', leader: 'Ana e Pedro Costa', day: 'Quarta-feira', time: '20:00', region: 'Amadora Centro', category: 'Casais' },
+    { id: 2, name: 'Célula das Mulheres', leader: 'Inês Rocha', day: 'Terça-feira', time: '19:30', region: 'Carnaxide', category: 'Mulheres' },
+    { id: 3, name: 'Célula de Jovens', leader: 'Tiago Neves', day: 'Sexta-feira', time: '21:00', region: 'Oeiras', category: 'Jovens' },
+  ];
+  ministries = [
+    { id: 1, name: 'Louvor', desc: 'Ministério de adoração e música', initials: 'LV' },
+    { id: 2, name: 'Infantil', desc: 'Cuidado e ensino das crianças', initials: 'IN' },
+    { id: 3, name: 'Recepção', desc: 'Acolhimento de visitantes e membros', initials: 'RC' },
+    { id: 4, name: 'Intercessão', desc: 'Ministério de oração', initials: 'IT' },
+  ];
+  testimonies = [
+    { id: 1, title: 'Um novo começo', text: 'Depois de anos afastado da igreja, encontrei na Redenção uma comunidade que me recebeu sem julgamento e me ajudou a recomeçar com Deus.', name: 'Carlos M.', date: 'Jul 2026' },
+    { id: 2, title: 'Cura num tempo difícil', text: 'A equipa de oração da Redenção esteve comigo durante um período muito difícil da minha vida. Vi a fidelidade de Deus de um jeito que não esperava.', name: 'Sofia R.', date: 'Jun 2026' },
+  ];
+  readingPlanDefs = [
+    { id: 1, title: 'Conhecendo Jesus', category: 'Novo Convertido', total: 30 },
+    { id: 2, title: 'Fundamentos da Fé', category: 'Fundamentos', total: 21 },
+    { id: 3, title: 'Oração', category: 'Oração', total: 14 },
+  ];
+
+  stop = (e) => { if (e) e.stopPropagation(); };
+  stopProp = (e) => { if (e) e.stopPropagation(); };
+
+  componentDidMount() {
+    import('./devocionais-agosto-2026.js').then((mod) => this.setState({ monthDevotionals: mod.DEVOTIONALS_AUG_2026 })).catch(() => {});
+    import('./palavra-do-dia.js').then((mod) => this.setState({ palavraList: mod.PALAVRA_DO_DIA })).catch(() => {});
+    this.setState({ isInstalled: window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true, notifPermission: (typeof Notification !== 'undefined') ? Notification.permission : 'unsupported' });
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.deferredInstallPrompt = e; this.forceUpdate(); });
+    window.addEventListener('appinstalled', () => this.setState({ isInstalled: true }));
+  }
+
+  getTodayDevotional() {
+    const list = this.state.monthDevotionals;
+    if (!list || !list.length) return this.fallbackDevotional;
+    const now = new Date();
+    const iso = now.toISOString().slice(0, 10);
+    let entry = list.find((d) => d.date === iso);
+    if (!entry) entry = list[Math.min(list.length - 1, Math.max(0, now.getDate() - 1))];
+    return {
+      title: entry.title, reading: entry.reading_reference, summary: entry.takeaway,
+      reflection: entry.reflection, question: entry.reflection_question, prayer: entry.prayer, action: entry.daily_action,
+      takeaway: entry.takeaway, date: entry.date, dayOfWeek: entry.day_of_week,
+    };
+  }
+
+  getTodayPalavra() {
+    const list = this.state.palavraList;
+    const fallback = { day_number: 0, title: 'Entrega o teu caminho', main_reference: 'Salmos 37:5', message: 'Entrega o teu caminho ao Senhor, confia nele, e ele agirá.', takeaway: 'Entrega o teu caminho ao Senhor, confia nele, e ele agirá.', daily_action: 'Entregue hoje a Deus algo que você tem tentado controlar sozinho.', prayer: 'Senhor, entrego o meu caminho a ti. Confio em ti e sei que agirás. Em nome de Jesus, amém.', home_excerpt: 'Entrega o teu caminho ao Senhor, confia nele, e ele agirá.' };
+    if (!list || !list.length) return fallback;
+    const day = Math.min(30, Math.max(1, new Date().getDate()));
+    return list.find((p) => p.day_number === day) || list[0];
+  }
+
+  skipOnboarding = () => this.setState({ onboardStep: 3 });
+  nextOnboard = () => this.setState((s) => ({ onboardStep: Math.min(3, s.onboardStep + 1) }));
+  goAuthLogin = () => this.setState({ stage: 'auth', authMode: 'login' });
+  goAuthSignup = () => this.setState({ stage: 'auth', authMode: 'signup' });
+  continueGuest = () => this.setState({ stage: 'app', isGuest: true });
+  setAuthLogin = () => this.setState({ authMode: 'login' });
+  setAuthSignup = () => this.setState({ authMode: 'signup' });
+  setAuthName = (e) => this.setState({ authName: e.target.value });
+  setAuthEmail = (e) => this.setState({ authEmail: e.target.value });
+  setAuthPassword = (e) => this.setState({ authPassword: e.target.value });
+  submitAuth = () => this.setState({ stage: 'app', isGuest: false });
+
+  openNotifications = () => this.setState({ homeView: 'notifications' });
+  openVerseDetail = () => this.setState({ homeView: 'verse' });
+  backHome = () => this.setState({ homeView: 'home' });
+  toggleFavVerse = (e) => {
+    this.stop(e);
+    const p = this.getTodayPalavra();
+    this.setState((s) => {
+      const already = s.favorites.some((f) => f.ref === p.main_reference);
+      return {
+        favVerse: !already,
+        favorites: already
+          ? s.favorites.filter((f) => f.ref !== p.main_reference)
+          : [{ id: Date.now(), type: 'Versículo', ref: p.main_reference, text: p.takeaway }, ...s.favorites],
+      };
+    });
+  };
+  openReaderFromHome = () => this.setState({ tab: 'bible', bibleStage: 'reader', selectedBook: 'João', selectedChapter: 3, homeView: 'home' });
+  openDevotionalToday = () => this.setState({ tab: 'church', churchView: 'devotionals' });
+  openLastSermon = () => this.setState({ tab: 'messages', messagesView: 'detail', selectedSermonId: 1 });
+
+  goTab = (tab) => this.setState({ tab });
+
+  setTestamentAT = () => this.setState({ testament: 'at' });
+  setTestamentNT = () => this.setState({ testament: 'nt' });
+  openBook = (name) => this.setState({ selectedBook: name, bibleStage: 'chapters' });
+  backToBooks = () => this.setState({ bibleStage: 'books' });
+  openChapter = (n) => this.setState((s) => ({
+    selectedChapter: n, bibleStage: 'reader',
+    readingLog: [{ group: 'Hoje', items: [`${s.selectedBook} ${n}`, ...(s.readingLog[0]?.group === 'Hoje' ? s.readingLog[0].items : [])] }, ...s.readingLog.filter((g) => g.group !== 'Hoje')],
+  }));
+  backToChapters = () => this.setState({ bibleStage: 'chapters' });
+  decreaseFont = () => this.setState((s) => ({ readerFontSize: Math.max(13, s.readerFontSize - 1) }));
+  increaseFont = () => this.setState((s) => ({ readerFontSize: Math.min(24, s.readerFontSize + 1) }));
+  pickHighlight = (lvl) => this.setState({ highlightLevel: lvl });
+  markChapterRead = () => this.setState((s) => ({ chapterRead: !s.chapterRead }));
+
+  openAgenda = () => this.setState({ churchView: 'agenda' });
+  backChurchHub = () => this.setState({ churchView: 'hub' });
+  openEvent = (id) => this.setState({ churchView: 'eventDetail', selectedEventId: id });
+  backAgenda = () => this.setState({ churchView: 'agenda' });
+  openDevotionals = () => this.setState({ churchView: 'devotionals' });
+  completeDevotional = () => this.setState({ devotionalDone: true });
+  openDevotionalReading = () => {
+    const ref = this.getTodayDevotional().reading || '';
+    const m = ref.match(/^([\dA-Za-zÀ-ú.\s]+?)\s+(\d+)/);
+    if (m) this.setState({ tab: 'bible', bibleStage: 'reader', selectedBook: m[1].trim(), selectedChapter: Number(m[2]) });
+  };
+  openPrayer = () => this.setState({ churchView: 'prayer' });
+  openNextSteps = () => this.setState({ churchView: 'nextSteps' });
+  openCells = () => this.setState({ churchView: 'cells' });
+  openServe = () => this.setState({ churchView: 'serve' });
+  openGiving = () => this.setState({ churchView: 'giving' });
+  openComingSoon = () => this.showToast('Em breve.');
+  setCellFilter = (f) => this.setState({ cellFilter: f });
+  requestCell = (id) => { this.setState((s) => ({ cellRequests: { ...s.cellRequests, [id]: true } })); this.showToast('Solicitação enviada à liderança.'); };
+  openServeForm = (id) => this.setState({ serveFormMinistryId: id, serveForm: { nome: '', contacto: '', motivo: '' } });
+  closeServeForm = () => this.setState({ serveFormMinistryId: null });
+  setServeNome = (e) => this.setState((s) => ({ serveForm: { ...s.serveForm, nome: e.target.value } }));
+  setServeContacto = (e) => this.setState((s) => ({ serveForm: { ...s.serveForm, contacto: e.target.value } }));
+  setServeMotivo = (e) => this.setState((s) => ({ serveForm: { ...s.serveForm, motivo: e.target.value } }));
+  submitServe = () => {
+    this.setState((s) => ({ ministryInterest: { ...s.ministryInterest, [s.serveFormMinistryId]: true }, serveFormMinistryId: null }));
+    this.showToast('Interesse enviado. A liderança entrará em contacto com você.');
+  };
+  setPrayerNome = (e) => this.setState((s) => ({ prayerForm: { ...s.prayerForm, nome: e.target.value } }));
+  setPrayerTelefone = (e) => this.setState((s) => ({ prayerForm: { ...s.prayerForm, telefone: e.target.value } }));
+  setPrayerCategoria = (e) => this.setState((s) => ({ prayerForm: { ...s.prayerForm, categoria: e.target.value } }));
+  setPrayerDescricao = (e) => this.setState((s) => ({ prayerForm: { ...s.prayerForm, descricao: e.target.value } }));
+  togglePrayerAnon = (e) => { this.stop(e); this.setState((s) => ({ prayerForm: { ...s.prayerForm, anon: !s.prayerForm.anon } })); };
+  togglePrayerConf = (e) => { this.stop(e); this.setState((s) => ({ prayerForm: { ...s.prayerForm, conf: !s.prayerForm.conf } })); };
+  submitPrayer = () => this.setState((s) => ({
+    showPrayerDialog: true,
+    myPrayers: [{ id: Date.now(), title: s.prayerForm.descricao.slice(0, 40) || 'Meu pedido', date: 'hoje', status: 'recebido' }, ...s.myPrayers],
+    prayerForm: { nome: '', telefone: '', categoria: 'Família', descricao: '', anon: false, conf: false },
+  }));
+  closePrayerDialog = () => this.setState({ showPrayerDialog: false, churchView: 'hub' });
+
+  setFilter = (f) => this.setState({ sermonFilter: f });
+  openSermon = (id) => this.setState({ messagesView: 'detail', selectedSermonId: id });
+  backMessages = () => this.setState({ messagesView: 'list' });
+
+  setThemeDark = () => this.setState({ theme: 'dark' });
+  setThemeLight = () => this.setState({ theme: 'light' });
+  setDeviceIOS = () => this.setState({ device: 'ios' });
+  setDeviceAndroid = () => this.setState({ device: 'android' });
+  openInstall = () => this.setState({ profileView: 'install' });
+  handleInstallClick = () => {
+    if (this.deferredInstallPrompt) {
+      this.deferredInstallPrompt.prompt();
+      this.deferredInstallPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') { this.setState({ isInstalled: true }); this.showToast('Redenção Church instalada com sucesso.'); }
+        this.deferredInstallPrompt = null;
+      });
+    }
+  };
+  requestNotifPermission = () => {
+    if (typeof Notification === 'undefined') { this.showToast('Notificações não são suportadas neste navegador.'); return; }
+    if (Notification.permission === 'denied') { this.showToast('Notificações bloqueadas. Ative nas configurações do dispositivo/navegador.'); return; }
+    Notification.requestPermission().then((perm) => {
+      this.setState({ notifPermission: perm });
+      if (perm === 'granted') this.showToast('Notificações ativadas.');
+    });
+  };
+  componentDidUpdate() {
+    const unread = (this.state.notifs || []).filter((n) => !n.read).length;
+    if (unread !== this._lastBadge) { this._lastBadge = unread; this.updateAppBadge(unread); }
+  }
+  updateAppBadge = (count) => {
+    if ('setAppBadge' in navigator) {
+      if (count > 0) navigator.setAppBadge(count).catch(() => {});
+      else if ('clearAppBadge' in navigator) navigator.clearAppBadge().catch(() => {});
+    }
+  };
+  openAdmin = () => this.setState({ profileView: 'admin' });
+  backProfile = () => this.setState({ profileView: 'profile' });
+  doLogout = () => this.setState({ stage: 'onboarding', onboardStep: 0, isGuest: false, tab: 'home', profileView: 'profile' });
+
+  showToast = (msg) => { this.setState({ toastMsg: msg }); clearTimeout(this._toastT); this._toastT = setTimeout(() => this.setState({ toastMsg: null }), 2200); };
+  openEditProfile = () => this.setState((s) => ({ profileView: 'edit', editName: s.userName, editEmail: s.userEmail }));
+  setEditName = (e) => this.setState({ editName: e.target.value });
+  setEditEmail = (e) => this.setState({ editEmail: e.target.value });
+  saveProfile = () => { this.setState((s) => ({ userName: s.editName, userEmail: s.editEmail, profileView: 'profile' })); this.showToast('Perfil atualizado com sucesso.'); };
+  openPhotoMenu = () => this.setState({ showPhotoMenu: true });
+  closePhotoMenu = () => this.setState({ showPhotoMenu: false });
+  openFavorites = () => this.setState({ profileView: 'favorites' });
+  setFavFilter = (f) => this.setState({ favFilter: f });
+  removeFavorite = (id) => { this.setState((s) => ({ favorites: s.favorites.filter((f) => f.id !== id) })); this.showToast('Removido dos favoritos.'); };
+  openNotes = () => this.setState({ profileView: 'notes' });
+  setNoteRefDraft = (e) => this.setState({ noteRefDraft: e.target.value });
+  setNoteTextDraft = (e) => this.setState({ noteTextDraft: e.target.value });
+  addNote = () => {
+    this.setState((s) => ({
+      notes: [{ id: Date.now(), ref: s.noteRefDraft, text: s.noteTextDraft, date: 'Hoje' }, ...s.notes],
+      noteRefDraft: '', noteTextDraft: '',
+    }));
+    this.showToast('Nota salva.');
+  };
+  removeNote = (id) => this.setState((s) => ({ notes: s.notes.filter((n) => n.id !== id) }));
+  openHistory = () => this.setState({ profileView: 'history' });
+  openPrayersList = () => this.setState({ profileView: 'prayers' });
+  toggleNotifPref = (key) => this.setState((s) => ({ notifPrefs: { ...s.notifPrefs, [key]: !s.notifPrefs[key] } }));
+
+  openSearch = () => this.setState({ showSearch: true, searchQuery: '' });
+  closeSearch = () => this.setState({ showSearch: false });
+  setSearchQuery = (e) => this.setState({ searchQuery: e.target.value });
+  markAllNotifsRead = () => this.setState((s) => ({ notifs: s.notifs.map((n) => ({ ...n, read: true })) }));
+  markNotifRead = (id) => this.setState((s) => ({ notifs: s.notifs.map((n) => (n.id === id ? { ...n, read: true } : n)) }));
+  deleteNotif = (id, e) => { this.stop(e); this.setState((s) => ({ notifs: s.notifs.filter((n) => n.id !== id) })); };
+  openBaptism = () => this.setState({ churchView: 'baptism' });
+  setBaptismNome = (e) => this.setState((s) => ({ baptismForm: { ...s.baptismForm, nome: e.target.value } }));
+  setBaptismTelefone = (e) => this.setState((s) => ({ baptismForm: { ...s.baptismForm, telefone: e.target.value } }));
+  setBaptismEmail = (e) => this.setState((s) => ({ baptismForm: { ...s.baptismForm, email: e.target.value } }));
+  setBaptismObs = (e) => this.setState((s) => ({ baptismForm: { ...s.baptismForm, observacoes: e.target.value } }));
+  submitBaptism = () => this.setState({ baptismSent: true });
+  openTestimonies = () => this.setState({ churchView: 'testimonies' });
+  openTestimonyForm = () => this.setState({ testimonyFormOpen: true });
+  setTestimonyTitle = (e) => this.setState((s) => ({ testimonyForm: { ...s.testimonyForm, title: e.target.value } }));
+  setTestimonyText = (e) => this.setState((s) => ({ testimonyForm: { ...s.testimonyForm, text: e.target.value } }));
+  setTestimonyName = (e) => this.setState((s) => ({ testimonyForm: { ...s.testimonyForm, name: e.target.value } }));
+  submitTestimony = () => this.setState({ testimonySent: true, testimonyFormOpen: false });
+  openNewcomer = () => this.setState({ churchView: 'newcomer' });
+  setNewcomerNome = (e) => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, nome: e.target.value } }));
+  setNewcomerTelefone = (e) => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, telefone: e.target.value } }));
+  setNewcomerEmail = (e) => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, email: e.target.value } }));
+  setNewcomerComoConheceu = (e) => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, comoConheceu: e.target.value } }));
+  toggleNewcomerFirstTime = () => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, firstTime: !s.newcomerForm.firstTime } }));
+  toggleNewcomerContact = () => this.setState((s) => ({ newcomerForm: { ...s.newcomerForm, wantsContact: !s.newcomerForm.wantsContact } }));
+  submitNewcomer = () => this.setState({ newcomerSent: true });
+  openMinhaRedencao = () => this.setState({ profileView: 'minhaRedencao' });
+  openPlans = () => this.setState({ profileView: 'plans' });
+  openHelp = () => this.setState({ profileView: 'help' });
+  setFeedbackText = (e) => this.setState({ feedbackText: e.target.value });
+  submitFeedback = () => { this.setState({ feedbackText: '' }); this.showToast('Feedback enviado. Obrigado!'); };
+  copyMbway = () => this.showToast('Número MB WAY copiado.');
+  copyIban = () => this.showToast('IBAN copiado.');
+
+  renderVals() {
+    const s = this.state;
+    const light = s.theme === 'light';
+    const todayDevotional = this.getTodayDevotional();
+    const devotionalStreak = { streak: 7, days: [0,1,2,3,4,5,6].map(() => ({ color: 'var(--color-accent-500)' })) };
+    const appOuterStyle = [
+      'height:100%;display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text)',
+      light
+        ? "--color-bg:var(--color-neutral-100);--color-surface:var(--color-neutral-200);--color-text:var(--color-neutral-900);--color-divider:color-mix(in srgb, var(--color-neutral-900) 14%, transparent);--rc-faint:var(--color-neutral-700);--rc-muted:var(--color-neutral-600);--rc-body2:var(--color-neutral-800)"
+        : '--rc-faint:var(--color-neutral-400);--rc-muted:var(--color-neutral-500);--rc-body2:var(--color-neutral-300)',
+      'background:var(--color-bg)',
+    ].join(';');
+
+    const chevronLeftHtml = H(ICONS.chevronLeft), chevronRightHtml = H(ICONS.chevronRight);
+    const onboard = this.onboardSlides[s.onboardStep];
+    const onboardDots = this.onboardSlides.map((_, i) => ({ color: i === s.onboardStep ? 'var(--color-accent)' : 'var(--color-neutral-700)' }));
+
+    const shortcuts = [
+      { label: 'Bíblia', iconHtml: H(ICONS.book), action: () => this.goTab('bible') },
+      { label: 'Pedidos de Oração', iconHtml: H(ICONS.heartLg), action: () => this.setState({ tab: 'church', churchView: 'prayer' }) },
+      { label: 'Agenda', iconHtml: H(ICONS.calendarLg), action: () => this.setState({ tab: 'church', churchView: 'agenda' }) },
+      { label: 'Pregações', iconHtml: H(ICONS.messages), action: () => this.goTab('messages') },
+      { label: 'Caminhando com Deus', iconHtml: H(ICONS.bookLg), action: () => this.setState({ tab: 'church', churchView: 'devotionals' }) },
+      { label: 'Notificações', iconHtml: H(ICONS.bell), action: this.openNotifications },
+    ];
+
+    const visibleBooks = (s.testament === 'nt' ? this.booksNT : this.booksAT).map((name) => ({ name, onOpen: () => this.openBook(name) }));
+    const chapterList = Array.from({ length: 21 }, (_, i) => i + 1).map((n) => ({ n, onOpen: () => this.openChapter(n) }));
+    const readerVerses = this.joao3.map((v) => ({
+      n: v.n, text: v.text,
+      style: v.n === 16
+        ? `background:${['transparent','color-mix(in srgb, var(--color-accent) 10%, transparent)','color-mix(in srgb, var(--color-accent) 20%, transparent)','color-mix(in srgb, var(--color-accent) 32%, transparent)'][s.highlightLevel]};border-radius:6px;padding:6px 8px;margin:-6px -8px`
+        : '',
+    }));
+    const highlightLevels = [1, 2, 3].map((lvl) => ({
+      onPick: () => this.pickHighlight(lvl),
+      label: ['Realce suave', 'Realce médio', 'Realce forte'][lvl - 1],
+      style: `width:22px;height:22px;border-radius:50%;border:${s.highlightLevel === lvl ? '2px solid var(--color-accent)' : '1px solid var(--color-divider)'};background:color-mix(in srgb, var(--color-accent) ${lvl * 15}%, transparent);cursor:pointer;padding:0`,
+    }));
+
+    const eventsWithHandlers = this.events.map((ev) => ({ ...ev, onOpen: () => this.openEvent(ev.id) }));
+    const selectedEventRaw = this.events.find((e) => e.id === s.selectedEventId) || this.events[0];
+
+    const sermonFilters = ['Todas', 'Cultos', 'Jovens', 'Família', 'Discipulado'].map((f) => ({
+      label: f, onPick: () => this.setFilter(f),
+      style: f === s.sermonFilter ? 'background:var(--color-accent-800);color:var(--color-accent-100)' : 'background:var(--color-neutral-800);color:var(--color-neutral-300)',
+    }));
+    const filteredSermons = this.sermons.filter((sm) => s.sermonFilter === 'Todas' || sm.tag === s.sermonFilter).map((sm) => ({ ...sm, onOpen: () => this.openSermon(sm.id) }));
+    const selectedSermon = this.sermons.find((sm) => sm.id === s.selectedSermonId) || this.sermons[0];
+
+    const myAreaRows = [
+      { label: 'Meus Favoritos', sub: 'Conteúdos que você guardou', iconHtml: H(ICONS.bookmark), onOpen: this.openFavorites },
+      { label: 'Minhas Notas', sub: 'Suas anotações bíblicas', iconHtml: H(ICONS.copy), onOpen: this.openNotes },
+      { label: 'Histórico de Leitura', sub: 'Continue sua caminhada', iconHtml: H(ICONS.book), onOpen: this.openHistory },
+      { label: 'Meus Pedidos de Oração', sub: 'Pedidos e acompanhamento', iconHtml: H(ICONS.heartLg), onOpen: this.openPrayersList },
+    ];
+    const caminhadaRows = [
+      { label: 'Planos de leitura', sub: 'Conhecendo Jesus · 27%', iconHtml: H(ICONS.bookLg), onOpen: this.openPlans },
+      { label: 'Devocionais concluídos', sub: `${devotionalStreak.streak} dias caminhando na Palavra`, iconHtml: H(ICONS.calendarLg), onOpen: () => this.setState({ tab: 'church', churchView: 'devotionals' }) },
+      { label: 'Meus eventos', sub: 'Inscrições e presenças', iconHtml: H(ICONS.calendarSm), onOpen: () => this.setState({ tab: 'church', churchView: 'agenda' }) },
+    ];
+    const favCategories = ['Todos', 'Versículo', 'Devocional', 'Mensagem'];
+    const favFilters = favCategories.map((f) => ({
+      label: f, onPick: () => this.setFavFilter(f),
+      style: f === s.favFilter ? 'background:var(--color-accent-800);color:var(--color-accent-100)' : 'background:var(--color-neutral-800);color:var(--color-neutral-300)',
+    }));
+    const filteredFavorites = s.favorites.filter((f) => s.favFilter === 'Todos' || f.type === s.favFilter).map((f) => ({ ...f, onRemove: () => this.removeFavorite(f.id) }));
+    const notesWithHandlers = s.notes.map((n) => ({ ...n, onDelete: () => this.removeNote(n.id) }));
+    const historyGroups = s.readingLog.map((g) => ({
+      label: g.group,
+      items: g.items.map((ref) => ({ ref, onOpen: () => { const [book, ch] = ref.split(/ (?=\d+$)/); this.setState({ tab: 'bible', bibleStage: 'reader', selectedBook: book, selectedChapter: Number(ch) || 1 }); } })),
+    }));
+    const statusMap = { orando: { label: '❤️ Estamos orando por você', style: 'background:var(--color-accent-900);color:var(--color-accent-200)' }, recebido: { label: '🙏 Recebido pela equipe de oração', style: 'background:var(--color-neutral-800);color:var(--color-neutral-300)' }, acompanhado: { label: '✓ Acompanhado', style: 'background:var(--color-accent-800);color:var(--color-accent-100)' } };
+    const myPrayersDisplay = s.myPrayers.map((p) => ({ ...p, statusLabel: (statusMap[p.status] || statusMap.recebido).label, statusStyle: (statusMap[p.status] || statusMap.recebido).style }));
+    const notifLabels = { verse: 'Versículo do dia', devotional: 'Devocional diário', reading: 'Lembrete de leitura', events: 'Cultos e eventos' };
+    const notifToggles = Object.keys(notifLabels).map((k) => ({
+      label: notifLabels[k], toggle: () => this.toggleNotifPref(k),
+      stateLabel: s.notifPrefs[k] ? 'Ativado' : 'Desativado',
+      style: s.notifPrefs[k] ? 'color:var(--color-accent);border-color:var(--color-accent);background:transparent' : 'color:var(--color-neutral-500);border-color:var(--color-divider);background:transparent',
+    }));
+
+    const eventStrip = eventsWithHandlers.slice(0, 4);
+    const minhaRedencaoCards = [
+      { label: 'Minha Célula', value: s.cellRequests[1] ? 'Célula Amadora Centro' : 'Nenhuma célula ainda', iconHtml: H(ICONS.users), onOpen: this.openCells },
+      { label: 'Meu Ministério', value: Object.keys(s.ministryInterest).length ? (this.ministries.find((m) => s.ministryInterest[m.id]) || {}).name || '—' : 'Nenhum ainda', iconHtml: H(ICONS.handshake), onOpen: this.openServe },
+      { label: 'Próximo Evento', value: `${this.events[0].name} · ${this.events[0].date}`, iconHtml: H(ICONS.calendarLg), onOpen: () => this.setState({ tab: 'church', churchView: 'eventDetail', selectedEventId: this.events[0].id }) },
+      { label: 'Plano em andamento', value: 'Conhecendo Jesus · dia 8 de 30', iconHtml: H(ICONS.bookLg), onOpen: this.openPlans },
+      { label: 'Pedido de Oração', value: s.myPrayers.length ? s.myPrayers[0].title : 'Nenhum pedido ainda', iconHtml: H(ICONS.heartLg), onOpen: this.openPrayersList },
+      { label: 'Próximo Passo', value: 'Quero me batizar', iconHtml: H(ICONS.cross), onOpen: this.openNextSteps },
+    ];
+    const readingPlans = this.readingPlanDefs.map((p) => {
+      const day = s.readingPlansProgress[p.id] || 0;
+      return { ...p, day, pct: Math.round((day / p.total) * 100), cta: day > 0 ? 'Continuar' : 'Começar', onOpen: () => this.setState({ tab: 'church', churchView: 'devotionals' }) };
+    });
+
+    const tabs = [
+      { key: 'home', label: 'Início', iconHtml: ICONS.home },
+      { key: 'bible', label: 'Bíblia', iconHtml: ICONS.book },
+      { key: 'messages', label: 'Mensag.', iconHtml: ICONS.play },
+      { key: 'church', label: 'Igreja', iconHtml: ICONS.church },
+      { key: 'profile', label: 'Eu', iconHtml: ICONS.profile },
+    ].map((t) => ({ ...t, iconHtml: H(t.iconHtml), onOpen: () => this.goTab(t.key), color: s.tab === t.key ? 'var(--color-accent)' : 'var(--color-neutral-500)' }));
+
+    const prayerDisabled = !(s.prayerForm.nome && s.prayerForm.descricao);
+
+    const q = s.searchQuery.trim().toLowerCase();
+    const searchResults = (() => {
+      if (!q) return [];
+      const out = [];
+      [...this.booksNT, ...this.booksAT].filter((b) => b.toLowerCase().includes(q)).forEach((b) => out.push({ type: 'Bíblia', label: b, onOpen: () => this.setState({ tab: 'bible', bibleStage: 'chapters', selectedBook: b, showSearch: false }) }));
+      this.sermons.filter((sm) => sm.title.toLowerCase().includes(q)).forEach((sm) => out.push({ type: 'Mensagem', label: sm.title, onOpen: () => this.setState({ tab: 'messages', messagesView: 'detail', selectedSermonId: sm.id, showSearch: false }) }));
+      this.events.filter((ev) => ev.name.toLowerCase().includes(q)).forEach((ev) => out.push({ type: 'Evento', label: ev.name, onOpen: () => this.setState({ tab: 'church', churchView: 'eventDetail', selectedEventId: ev.id, showSearch: false }) }));
+      return out.slice(0, 12);
+    })();
+
+    return {
+      isDarkFrame: s.theme === 'dark',
+      deviceGlobal: s.device === 'ios' ? 'IOSDevice' : 'AndroidDevice',
+      frameWidth: s.device === 'ios' ? 402 : 412,
+      frameHeight: s.device === 'ios' ? 874 : 892,
+      appOuterStyle,
+      scrollTopPad: s.device === 'ios' ? 62 : 40,
+      tabBarBottomPad: s.device === 'ios' ? 18 : 0,
+      scrollBottomPad: s.device === 'ios' && s.stage !== 'app' ? 24 : 0,
+      stageOnboarding: s.stage === 'onboarding',
+      stageAuth: s.stage === 'auth',
+      stageApp: s.stage === 'app',
+      onboardTitle: onboard.title,
+      onboardBody: onboard.body,
+      onboardIsFirst: s.onboardStep === 0, onboardIsSecond: s.onboardStep === 1, onboardIsThird: s.onboardStep === 2, onboardIsFourth: s.onboardStep === 3,
+      onboardNotLast: s.onboardStep < 3,
+      onboardIsLast: s.onboardStep === 3,
+      onboardDots,
+      skipOnboarding: this.skipOnboarding, nextOnboard: this.nextOnboard,
+      goAuthLogin: this.goAuthLogin, goAuthSignup: this.goAuthSignup, continueGuest: this.continueGuest,
+      authHeading: s.authMode === 'login' ? 'Entrar' : 'Criar conta',
+      authCta: s.authMode === 'login' ? 'Entrar' : 'Criar conta',
+      isLoginMode: s.authMode === 'login', isSignupMode: s.authMode === 'signup',
+      setAuthLogin: this.setAuthLogin, setAuthSignup: this.setAuthSignup,
+      authName: s.authName, authEmail: s.authEmail, authPassword: s.authPassword,
+      setAuthName: this.setAuthName, setAuthEmail: this.setAuthEmail, setAuthPassword: this.setAuthPassword,
+      authDisabled: !(s.authEmail && s.authPassword) || (s.authMode === 'signup' && !s.authName),
+      submitAuth: this.submitAuth,
+      greeting: `Olá, ${s.userName.split(' ')[0]} 👋`,
+      dailyVerse: (() => { const p = this.getTodayPalavra(); return { text: p.home_excerpt, ref: p.main_reference, title: p.title, message: p.message, takeaway: p.takeaway, action: p.daily_action, prayer: p.prayer }; })(),
+      nextEvent: this.events[0],
+      openNextEvent: () => this.setState({ tab: 'church', churchView: 'eventDetail', selectedEventId: this.events[0].id }),
+      progressRows: [
+        { iconHtml: H(ICONS.book), label: 'João 3:21', isCta: true, hasPct: false, onOpen: () => this.setState({ tab: 'bible', bibleStage: 'reader', selectedBook: 'João', selectedChapter: 3 }) },
+        { iconHtml: H(ICONS.bookLg), label: 'Conhecendo Jesus', isCta: false, hasPct: true, pctLabel: '27%', onOpen: this.openPlans },
+      ],
+      churchIconHtml: H(ICONS.church), shortcutPrayer: () => this.setState({ tab: 'church', churchView: 'prayer' }),
+      eventStrip,
+      openNotifications: this.openNotifications, openVerseDetail: this.openVerseDetail,
+      openReaderFromHome: this.openReaderFromHome, openDevotionalToday: this.openDevotionalToday, openLastSermon: this.openLastSermon,
+      devotional: { ...todayDevotional, ...devotionalStreak }, sermons: this.sermons, shortcuts, stop: this.stop,
+      tabHome: s.tab === 'home',
+      homeMain: s.tab === 'home' && s.homeView === 'home',
+      homeVerseDetail: s.tab === 'home' && s.homeView === 'verse',
+      homeNotifications: s.tab === 'home' && s.homeView === 'notifications',
+      backHome: this.backHome, toggleFavVerse: this.toggleFavVerse,
+      favBtnStyle: s.favVerse ? 'color:var(--color-accent);border-color:var(--color-accent)' : '',
+      chevronLeftHtml, chevronRightHtml,
+      shareIconHtml: H(ICONS.share), copyIconHtml: H(ICONS.copy), bookmarkIconHtml: H(ICONS.bookmark), searchIconHtml: H(ICONS.search),
+      shareIconSmHtml: H(ICONS.share), checkIconHtml: H(ICONS.check), playIconHtml: H(ICONS.play),
+      hasUnreadNotifs: s.notifs.some((n) => !n.read),
+      notifsEmpty: s.notifs.length === 0,
+      notifGroups: ['Hoje', 'Esta semana'].map((label) => ({
+        label,
+        items: s.notifs.filter((n) => n.group === label).map((n) => ({ ...n, iconHtml: H(ICONS[n.icon] || ICONS.bell), opacity: n.read ? 0.6 : 1, onOpen: () => this.markNotifRead(n.id), onDelete: (e) => this.deleteNotif(n.id, e) })),
+      })),
+      markAllNotifsRead: this.markAllNotifsRead,
+      showSearch: s.showSearch, openSearch: this.openSearch, closeSearch: this.closeSearch, searchQuery: s.searchQuery, setSearchQuery: this.setSearchQuery,
+      searchEmpty: !q, searchResults,
+      calendarIconLgHtml: H(ICONS.calendarLg), bookIconLgHtml: H(ICONS.bookLg), heartIconLgHtml: H(ICONS.heartLg), calendarIconSmHtml: H(ICONS.calendarSm), mapPinIconHtml: H(ICONS.mapPin),
+      bellIconHtml: H(ICONS.bell),
+      tabBible: s.tab === 'bible',
+      bibleBooks: s.tab === 'bible' && s.bibleStage === 'books',
+      bibleChapters: s.tab === 'bible' && s.bibleStage === 'chapters',
+      bibleReader: s.tab === 'bible' && s.bibleStage === 'reader',
+      testamentAT: s.testament === 'at', testamentNT: s.testament === 'nt',
+      setTestamentAT: this.setTestamentAT, setTestamentNT: this.setTestamentNT,
+      visibleBooks, chapterList, selectedBook: s.selectedBook, selectedChapter: s.selectedChapter,
+      backToBooks: this.backToBooks, backToChapters: this.backToChapters,
+      readerVerses, readerFontSize: s.readerFontSize, highlightLevels,
+      decreaseFont: this.decreaseFont, increaseFont: this.increaseFont,
+      markChapterRead: this.markChapterRead, readBtnStyle: s.chapterRead ? 'color:var(--color-accent);border-color:var(--color-accent)' : '',
+      tabChurch: s.tab === 'church',
+      churchHub: s.tab === 'church' && s.churchView === 'hub',
+      churchHighlight: (() => { const ne = this.events[0]; return { kicker: ne.category === 'Cultos' ? 'CULTO DE CELEBRAÇÃO' : ne.name.toUpperCase(), title: `${ne.date.split(', ')[1] || ne.date} · ${ne.time}` }; })(),
+      openNextSteps: this.openNextSteps, openCells: this.openCells, openServe: this.openServe, openGiving: this.openGiving, openComingSoon: this.openComingSoon,
+      crossIconHtml: H(ICONS.cross), usersIconHtml: H(ICONS.users), handshakeIconHtml: H(ICONS.handshake), droplet: H(ICONS.droplet),
+      openAgenda: this.openAgenda, backChurchHub: this.backChurchHub, events: eventsWithHandlers,
+      openDevotionals: this.openDevotionals, openPrayer: this.openPrayer, openDevotionalReading: this.openDevotionalReading,
+      churchAgenda: s.tab === 'church' && s.churchView === 'agenda',
+      churchEventDetail: s.tab === 'church' && s.churchView === 'eventDetail',
+      selectedEvent: { ...selectedEventRaw, noFlyer: !selectedEventRaw.hasFlyerThu && !selectedEventRaw.hasFlyerSun }, backAgenda: this.backAgenda,
+      mapEmbedUrl: 'https://maps.google.com/maps?q=' + encodeURIComponent(selectedEventRaw.location) + '&output=embed',
+      churchDevotionals: s.tab === 'church' && s.churchView === 'devotionals',
+      devotionalDone: s.devotionalDone, devotionalCta: s.devotionalDone ? 'Devocional concluído' : 'Concluí meu devocional', completeDevotional: this.completeDevotional,
+      churchPrayer: s.tab === 'church' && s.churchView === 'prayer',
+      prayerForm: s.prayerForm, prayerCategories: ['Família','Saúde','Trabalho','Finanças','Espiritual','Casamento','Filhos','Libertação','Outros'],
+      setPrayerNome: this.setPrayerNome, setPrayerTelefone: this.setPrayerTelefone, setPrayerCategoria: this.setPrayerCategoria, setPrayerDescricao: this.setPrayerDescricao,
+      togglePrayerAnon: this.togglePrayerAnon, togglePrayerConf: this.togglePrayerConf,
+      prayerAnonBtnStyle: s.prayerForm.anon ? 'color:var(--color-accent);border:1px solid var(--color-accent)' : 'border:1px solid var(--color-divider)',
+      prayerConfBtnStyle: s.prayerForm.conf ? 'color:var(--color-accent);border:1px solid var(--color-accent)' : 'border:1px solid var(--color-divider)',
+      prayerDisabled, submitPrayer: this.submitPrayer,
+      showPrayerDialog: s.showPrayerDialog, closePrayerDialog: this.closePrayerDialog, stopProp: this.stopProp,
+      churchNextSteps: s.tab === 'church' && s.churchView === 'nextSteps',
+      nextSteps: this.nextSteps.map((st, i) => ({ ...st, num: i + 1, onOpen: () => this.showToast(`"${st.title}" — conteúdo em preparação.`) })),
+      churchCells: s.tab === 'church' && s.churchView === 'cells',
+      cellFilters: ['Todas', 'Geral', 'Homens', 'Mulheres', 'Casais', 'Jovens'].map((f) => ({
+        label: f, onPick: () => this.setCellFilter(f),
+        style: f === s.cellFilter ? 'background:var(--color-accent-800);color:var(--color-accent-100)' : 'background:var(--color-neutral-800);color:var(--color-neutral-300)',
+      })),
+      filteredCells: this.cells.filter((c) => s.cellFilter === 'Todas' || c.category === s.cellFilter).map((c) => ({
+        ...c, requested: !!s.cellRequests[c.id], joinLabel: s.cellRequests[c.id] ? 'Solicitação enviada' : 'Quero participar', onJoin: () => this.requestCell(c.id),
+      })),
+      churchServe: s.tab === 'church' && s.churchView === 'serve',
+      ministries: this.ministries.map((m) => ({ ...m, interested: !!s.ministryInterest[m.id], onOpen: () => this.openServeForm(m.id) })),
+      serveFormOpen: s.serveFormMinistryId != null,
+      serveFormMinistry: (this.ministries.find((m) => m.id === s.serveFormMinistryId) || {}).name,
+      serveForm: s.serveForm, setServeNome: this.setServeNome, setServeContacto: this.setServeContacto, setServeMotivo: this.setServeMotivo,
+      submitServe: this.submitServe, closeServeForm: this.closeServeForm,
+      churchGiving: s.tab === 'church' && s.churchView === 'giving',
+      givingMethods: { mbway: '+351 912 345 678', iban: 'PT50 0000 0000 0000 0000 0000 0' },
+      copyMbway: this.copyMbway, copyIban: this.copyIban,
+      openBaptism: this.openBaptism, churchBaptism: s.tab === 'church' && s.churchView === 'baptism',
+      baptismForm: s.baptismForm, setBaptismNome: this.setBaptismNome, setBaptismTelefone: this.setBaptismTelefone, setBaptismEmail: this.setBaptismEmail, setBaptismObs: this.setBaptismObs,
+      baptismDisabled: !s.baptismForm.nome.trim() || !s.baptismForm.email.trim(), submitBaptism: this.submitBaptism,
+      baptismSent: s.baptismSent, baptismNotSent: !s.baptismSent,
+      openTestimonies: this.openTestimonies, churchTestimonies: s.tab === 'church' && s.churchView === 'testimonies',
+      testimonies: this.testimonies, testimonySent: s.testimonySent,
+      testimonyFormOpen: s.testimonyFormOpen && !s.testimonySent, testimonyFormClosed: !s.testimonyFormOpen && !s.testimonySent, openTestimonyForm: this.openTestimonyForm,
+      testimonyForm: s.testimonyForm, setTestimonyTitle: this.setTestimonyTitle, setTestimonyText: this.setTestimonyText, setTestimonyName: this.setTestimonyName,
+      testimonyDisabled: !s.testimonyForm.title.trim() || !s.testimonyForm.text.trim(), submitTestimony: this.submitTestimony,
+      openNewcomer: this.openNewcomer, churchNewcomer: s.tab === 'church' && s.churchView === 'newcomer',
+      newcomerForm: s.newcomerForm, setNewcomerNome: this.setNewcomerNome, setNewcomerTelefone: this.setNewcomerTelefone, setNewcomerEmail: this.setNewcomerEmail, setNewcomerComoConheceu: this.setNewcomerComoConheceu,
+      toggleNewcomerFirstTime: this.toggleNewcomerFirstTime, toggleNewcomerContact: this.toggleNewcomerContact,
+      newcomerFirstTimeStyle: s.newcomerForm.firstTime ? 'color:var(--color-accent);border:1px solid var(--color-accent)' : 'border:1px solid var(--color-divider)',
+      newcomerWantsContactStyle: s.newcomerForm.wantsContact ? 'color:var(--color-accent);border:1px solid var(--color-accent)' : 'border:1px solid var(--color-divider)',
+      newcomerDisabled: !s.newcomerForm.nome.trim() || !s.newcomerForm.email.trim(), submitNewcomer: this.submitNewcomer,
+      newcomerSent: s.newcomerSent, newcomerNotSent: !s.newcomerSent,
+      tabMessages: s.tab === 'messages',
+      messagesList: s.tab === 'messages' && s.messagesView === 'list',
+      messagesDetail: s.tab === 'messages' && s.messagesView === 'detail',
+      sermonFilters, filteredSermons, selectedSermon, backMessages: this.backMessages,
+      tabProfile: s.tab === 'profile',
+      profileMain: s.tab === 'profile' && s.profileView === 'profile',
+      profileAdmin: s.tab === 'profile' && s.profileView === 'admin',
+      profileEdit: s.tab === 'profile' && s.profileView === 'edit',
+      profileFavorites: s.tab === 'profile' && s.profileView === 'favorites',
+      profileNotes: s.tab === 'profile' && s.profileView === 'notes',
+      profileHistory: s.tab === 'profile' && s.profileView === 'history',
+      profilePrayers: s.tab === 'profile' && s.profileView === 'prayers',
+      profileMinhaRedencao: s.tab === 'profile' && s.profileView === 'minhaRedencao',
+      profilePlans: s.tab === 'profile' && s.profileView === 'plans',
+      profileHelp: s.tab === 'profile' && s.profileView === 'help',
+      profileInstall: s.tab === 'profile' && s.profileView === 'install',
+      openInstall: this.openInstall, handleInstallClick: this.handleInstallClick, requestNotifPermission: this.requestNotifPermission,
+      isInstalled: !!s.isInstalled,
+      installUnavailable: !this.deferredInstallPrompt,
+      showInstallAndroid: !s.isInstalled && s.device === 'android',
+      showInstallIOS: !s.isInstalled && s.device === 'ios',
+      showInstallDesktop: !s.isInstalled && s.device !== 'android' && s.device !== 'ios',
+      installRowLabel: s.isInstalled ? '✓ Redenção Church instalada' : '📱 Instalar Redenção Church',
+      installRowSub: s.isInstalled ? 'Aplicação instalada neste dispositivo' : 'Adicione a aplicação à tela inicial →',
+      notifPermissionLabel: s.notifPermission === 'granted' ? 'Notificações ativadas' : s.notifPermission === 'denied' ? 'Bloqueadas nas configurações do dispositivo' : s.notifPermission === 'unsupported' ? 'Não suportadas neste navegador' : 'Desativadas',
+      notifPermissionCanAsk: s.notifPermission !== 'granted' && s.notifPermission !== 'denied' && s.notifPermission !== 'unsupported',
+      isGuest: s.isGuest, isMember: !s.isGuest,
+      userName: s.userName, userEmail: s.userEmail,
+      userInitials: s.userName.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase(),
+      openEditProfile: this.openEditProfile, editName: s.editName, editEmail: s.editEmail,
+      setEditName: this.setEditName, setEditEmail: this.setEditEmail, saveProfile: this.saveProfile,
+      openPhotoMenu: this.openPhotoMenu, closePhotoMenu: this.closePhotoMenu, showPhotoMenu: s.showPhotoMenu,
+      toastMsg: s.toastMsg,
+      myAreaRows, caminhadaRows, notifToggles, isAdmin: s.isAdmin,
+      openMinhaRedencao: this.openMinhaRedencao, minhaRedencaoCards,
+      openPlans: this.openPlans, readingPlans,
+      openHelp: this.openHelp, helpTopics: ['Problemas de login', 'Recuperar senha', 'Notificações', 'Sobre a Bíblia no app', 'Contacto com a equipa'],
+      feedbackText: s.feedbackText, setFeedbackText: this.setFeedbackText, feedbackDisabled: !s.feedbackText.trim(), submitFeedback: this.submitFeedback,
+      favFilters, filteredFavorites, favEmpty: filteredFavorites.length === 0,
+      noteRefDraft: s.noteRefDraft, noteTextDraft: s.noteTextDraft, setNoteRefDraft: this.setNoteRefDraft, setNoteTextDraft: this.setNoteTextDraft,
+      noteDraftInvalid: !s.noteRefDraft.trim() || !s.noteTextDraft.trim(), addNote: this.addNote,
+      notes: notesWithHandlers, notesEmpty: s.notes.length === 0,
+      historyGroups, continueRef: 'João 4:23', continueReadingFromHistory: () => this.setState({ tab: 'bible', bibleStage: 'reader', selectedBook: 'João', selectedChapter: 4 }),
+      myPrayers: myPrayersDisplay, prayersEmpty: s.myPrayers.length === 0,
+      shortcutPrayerFromProfile: () => this.setState({ tab: 'church', churchView: 'prayer' }),
+      isDark: s.theme === 'dark', isLight: s.theme === 'light', setThemeDark: this.setThemeDark, setThemeLight: this.setThemeLight,
+      deviceIsIOS: s.device === 'ios', deviceIsAndroid: s.device === 'android', setDeviceIOS: this.setDeviceIOS, setDeviceAndroid: this.setDeviceAndroid,
+      doLogout: this.doLogout, backProfile: this.backProfile,
+      adminStats: [
+        { label: 'Membros ativos', value: '428' },
+        { label: 'Leituras hoje', value: '312' },
+        { label: 'Devocionais concluídos', value: '189' },
+        { label: 'Pedidos de oração', value: '14' },
+        { label: 'Eventos futuros', value: '6' },
+      ],
+      adminContent: [
+        { label: 'Fé que Move Montanhas', value: '312', pct: 90 },
+        { label: 'Caminhando com Deus — Dia 7', value: '248', pct: 72 },
+        { label: 'Versículo do dia', value: '201', pct: 58 },
+        { label: 'Agenda — Culto de Celebração', value: '164', pct: 47 },
+      ],
+      showTabBar: s.stage === 'app',
+      tabs,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
