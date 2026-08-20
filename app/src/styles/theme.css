@@ -1,0 +1,139 @@
+/*
+* Redenção Church App — theme layer on top of Nocturne tokens.
+*
+* --rc-faint / --rc-muted / --rc-body2 and the light-mode remap are pulled
+* verbatim from the design prototype (app file, theme toggle block) so the
+* light/dark values match the reference pixel-for-pixel rather than being
+* re-guessed.
+*/
+
+:root,
+[data-theme='dark'] {
+--rc-faint: var(--color-neutral-400);
+--rc-muted: var(--color-neutral-500);
+--rc-body2: var(--color-neutral-300);
+}
+
+[data-theme='light'] {
+--color-bg: var(--color-neutral-100);
+--color-surface: var(--color-neutral-200);
+--color-text: var(--color-neutral-900);
+--color-divider: color-mix(in srgb, var(--color-neutral-900) 14%, transparent);
+--rc-faint: var(--color-neutral-700);
+--rc-muted: var(--color-neutral-600);
+--rc-body2: var(--color-neutral-800);
+}
+
+html,
+body,
+#root {
+height: 100%;
+}
+
+body {
+background: var(--color-bg);
+color: var(--color-text);
+transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#root {
+max-width: 480px;
+margin: 0 auto;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+background: var(--color-bg);
+}
+
+.rc-app-header {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 24px 24px 8px;
+}
+
+.rc-app-header img {
+width: 40px;
+height: 40px;
+border-radius: 12px;
+object-fit: cover;
+box-shadow: var(--shadow-sm);
+}
+
+.rc-app-header .rc-brand {
+font-family: var(--font-heading);
+font-weight: 500;
+font-size: 18px;
+letter-spacing: -0.01em;
+}
+
+.rc-app-header .rc-tagline {
+font-size: 11px;
+color: var(--rc-muted);
+letter-spacing: 0.06em;
+text-transform: uppercase;
+}
+
+.rc-field-error {
+font-size: 12px;
+color: #e08a8a;
+margin-top: -4px;
+}
+
+.rc-form-note {
+font-size: 13px;
+color: var(--rc-muted);
+line-height: 1.5;
+}
+
+.rc-link-btn {
+background: none;
+border: none;
+padding: 0;
+color: var(--color-accent);
+font-size: 13px;
+cursor: pointer;
+text-decoration: underline;
+text-underline-offset: 3px;
+}
+
+.rc-toast {
+position: fixed;
+left: 50%;
+bottom: 28px;
+transform: translateX(-50%);
+background: var(--color-surface);
+color: var(--color-text);
+border: 1px solid var(--color-divider);
+border-radius: var(--radius-md);
+padding: 10px 16px;
+font-size: 13px;
+box-shadow: var(--shadow-md);
+z-index: 50;
+max-width: calc(100% - 48px);
+text-align: center;
+}
+
+.rc-avatar {
+width: 72px;
+height: 72px;
+border-radius: 50%;
+object-fit: cover;
+background: var(--color-surface);
+box-shadow: var(--shadow-sm);
+}
+
+.rc-avatar-placeholder {
+width: 72px;
+height: 72px;
+border-radius: 50%;
+background: var(--color-surface);
+box-shadow: var(--shadow-sm);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 500;
+font-size: 24px;
+color: var(--rc-faint);
+}
