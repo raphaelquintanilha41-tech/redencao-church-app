@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { hasSeenOnboarding } from '../lib/onboarding';
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
 const { session, loading } = useAuth();
@@ -13,6 +14,9 @@ return (
 );
 }
 
-if (!session) return <Navigate to="/auth" replace />;
+if (!session) {
+if (!hasSeenOnboarding()) return <Navigate to="/onboarding" replace />;
+return <Navigate to="/auth" replace />;
+}
 return <>{children}</>;
 }
