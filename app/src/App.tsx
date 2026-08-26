@@ -5,6 +5,7 @@ import { ForgotPasswordScreen } from './screens/ForgotPasswordScreen';
 import { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { ProtectedRoute } from './screens/ProtectedRoute';
+import { OnboardingScreen } from './screens/OnboardingScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
 
 function ConfigWarningBanner() {
@@ -32,6 +33,7 @@ export default function App() {
       <AuthProvider>
         <ConfigWarningBanner />
         <Routes>
+          <Route path="/onboarding" element={<OnboardingScreen />} />
           <Route path="/auth" element={<AuthScreen />} />
           <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
           <Route path="/reset-password" element={<ResetPasswordScreen />} />
