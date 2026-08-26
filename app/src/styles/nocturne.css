@@ -1,6 +1,3 @@
-Aqui está o conteúdo completo para copiar direto (no mobile às vezes é mais fácil que abrir o arquivo):
-
-```css
 /* Nocturne — Redenção Church design-system tokens.
    Fonte de verdade: design_handoff_redencao_church/README.md
    Corrige a paleta/tipografia que estava incorreta (era um template
@@ -118,6 +115,3 @@ h1, h2, h3, h4,
   padding-left: var(--space-6);
   padding-right: var(--space-6);
 }
-```
-
-**Onde colar:** GitHub → `app/src/styles/nocturne.css` → ícone de lápis → apagar tudo → colar isso → commit.
