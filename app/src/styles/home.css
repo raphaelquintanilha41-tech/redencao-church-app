@@ -84,9 +84,11 @@
   gap: var(--space-3);
   margin-top: var(--space-3);
 }
-/* Dentro do card navy, .btn-secondary herdava texto escuro (--color-text)
-   sobre fundo escuro — ficava quase invisível. Sobrescreve para claro. */
-.home-verse-actions .btn-secondary {
+/* Dentro do card navy (Palavra do dia), .btn-secondary herdava texto escuro
+   (--color-text) sobre fundo escuro — ficava quase invisível. Restrito ao
+   .home-verse-card para não vazar para outros cards claros que reusam
+   .home-verse-actions só pelo layout (ex: Próximo encontro). */
+.home-verse-card .btn-secondary {
   color: #EDE7DB;
   border-color: rgba(237, 231, 219, 0.28);
 }
