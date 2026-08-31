@@ -6,6 +6,7 @@ import { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PerfilScreen } from './screens/PerfilScreen';
 import { EmBreveScreen } from './screens/EmBreveScreen';
+import { IgrejaScreen } from './screens/IgrejaScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
@@ -73,7 +74,7 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AppShell>
-                  <EmBreveScreen title="Igreja" />
+                  <IgrejaScreen />
                 </AppShell>
               </ProtectedRoute>
             }
