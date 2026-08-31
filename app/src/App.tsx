@@ -5,10 +5,11 @@ import { ForgotPasswordScreen } from './screens/ForgotPasswordScreen';
 import { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PerfilScreen } from './screens/PerfilScreen';
+import { EmBreveScreen } from './screens/EmBreveScreen';
+import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
-
 function ConfigWarningBanner() {
   if (isSupabaseConfigured) return null;
   return (
@@ -27,7 +28,6 @@ function ConfigWarningBanner() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -42,7 +42,9 @@ export default function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <HomeScreen />
+                <AppShell>
+                  <HomeScreen />
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -50,7 +52,29 @@ export default function App() {
             path="/perfil"
             element={
               <ProtectedRoute>
-                <PerfilScreen />
+                <AppShell>
+                  <PerfilScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/biblia"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <EmBreveScreen title="Bíblia" />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/igreja"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <EmBreveScreen title="Igreja" />
+                </AppShell>
               </ProtectedRoute>
             }
           />
