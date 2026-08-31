@@ -5,12 +5,14 @@ import { ForgotPasswordScreen } from './screens/ForgotPasswordScreen';
 import { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PerfilScreen } from './screens/PerfilScreen';
-import { EmBreveScreen } from './screens/EmBreveScreen';
 import { IgrejaScreen } from './screens/IgrejaScreen';
+import { BibliaIndiceScreen } from './screens/BibliaIndiceScreen';
+import { BibliaLeituraScreen } from './screens/BibliaLeituraScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
+
 function ConfigWarningBanner() {
   if (isSupabaseConfigured) return null;
   return (
@@ -29,6 +31,7 @@ function ConfigWarningBanner() {
     </div>
   );
 }
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -64,7 +67,17 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AppShell>
-                  <EmBreveScreen title="Bíblia" />
+                  <BibliaIndiceScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/biblia/:bookAbbrev/:chapter"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <BibliaLeituraScreen />
                 </AppShell>
               </ProtectedRoute>
             }
