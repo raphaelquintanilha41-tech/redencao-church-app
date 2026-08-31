@@ -1,0 +1,68 @@
+.igreja-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6) var(--space-8);
+}
+.igreja-header {
+  padding: var(--space-2) 0 var(--space-1);
+}
+.igreja-title {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--color-text);
+  margin: 0;
+}
+.igreja-highlight {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.igreja-highlight-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #8E9AB2;
+  margin: var(--space-1) 0 0;
+}
+.igreja-highlight-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 500;
+  color: #EDE7DB;
+  margin-top: var(--space-1);
+}
+.igreja-highlight-meta {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #8E9AB2;
+}
+.igreja-group {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.igreja-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-line);
+  padding: 13px 2px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+}
+.igreja-group .igreja-row:first-of-type {
+  border-top: none;
+}
+.igreja-row svg {
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
