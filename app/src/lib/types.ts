@@ -68,3 +68,21 @@ export interface UserDailyProgress {
   read_bible: boolean;
   did_devotional: boolean;
 }
+
+// Mirrors public.bible_books / bible_verses.
+export interface BibleBook {
+  id: number;
+  abbrev: string;
+  name: string;
+  testament: 'VT' | 'NT';
+  position: number;
+  chapter_count: number;
+}
+
+export interface BibleVerse {
+  id: number;
+  book_id: number;
+  chapter: number;
+  verse: number;
+  text: string;
+}
