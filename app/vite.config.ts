@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -13,8 +12,8 @@ export default defineConfig({
         name: 'Redenção Church',
         short_name: 'Redenção',
         description: 'Palavra, comunhão e propósito — num só lugar.',
-        theme_color: '#161826',
-        background_color: '#161826',
+        theme_color: '#0A1120',
+        background_color: '#0A1120',
         display: 'standalone',
         start_url: '/',
         scope: '/',
