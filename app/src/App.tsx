@@ -6,6 +6,7 @@ import { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PerfilScreen } from './screens/PerfilScreen';
 import { IgrejaScreen } from './screens/IgrejaScreen';
+import { AgendaScreen } from './screens/AgendaScreen';
 import { BibliaIndiceScreen } from './screens/BibliaIndiceScreen';
 import { BibliaLeituraScreen } from './screens/BibliaLeituraScreen';
 import { AppShell } from './screens/AppShell';
@@ -88,6 +89,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <IgrejaScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/agenda"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <AgendaScreen />
                 </AppShell>
               </ProtectedRoute>
             }
