@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchAvailableChapters, fetchBookByAbbrev, fetchChapter } from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
+import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
 import type { BibleBook, BibleVerse } from '../lib/types';
 
 const HIGHLIGHT_COLORS = ['#D6B473', '#8FBF8F', '#8FB4D9', '#D98F8F', '#C79ED9'];
@@ -17,7 +18,14 @@ export function BibliaLeituraScreen() {
   const [availableChapters, setAvailableChapters] = useState<number[]>([]);
   const [verses, setVerses] = useState<BibleVerse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fontSize, setFontSize] = useState(17);
+  const [fontSize, setFontSizeState] = useState(getBibleFontSize);
+  const setFontSize = (updater: number | ((s: number) => number)) => {
+    setFontSizeState((prev) => {
+      const next = typeof updater === 'function' ? (updater as (s: number) => number)(prev) : updater;
+      setBibleFontSize(next);
+      return next;
+    });
+  };
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
