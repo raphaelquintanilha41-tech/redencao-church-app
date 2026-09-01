@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 
 const ADDRESS = 'Beco do Caetaninho 9, Carnaxide, Oeiras - Lisboa';
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`;
+const INSTAGRAM_HANDLE = 'redencaochurchportugal';
+const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 export function VisiteNosScreen() {
   const navigate = useNavigate();
@@ -31,8 +33,10 @@ export function VisiteNosScreen() {
       <section className="card perfil-section">
         <h3 className="home-section-title">Redes sociais</h3>
         <p className="static-body-text">
-          Instagram: @redençãochurchportugal (link direto pendente — handles do Instagram não aceitam acentos; avise
-          o usuário exato sem "ã" quando tiver).
+          Instagram:{' '}
+          <a className="rc-link-btn" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+            @{INSTAGRAM_HANDLE}
+          </a>
         </p>
         <p className="home-event-meta">YouTube: em breve.</p>
       </section>
