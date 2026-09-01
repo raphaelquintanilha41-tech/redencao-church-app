@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchNextService } from '../lib/home';
 import type { ChurchEvent } from '../lib/types';
+
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
   return (
@@ -9,10 +11,12 @@ function formatEventDate(iso: string): string {
     d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
   );
 }
+
 type Group = {
   title: string;
   items: string[];
 };
+
 const groups: Group[] = [
   {
     title: 'Sua caminhada',
@@ -27,10 +31,17 @@ const groups: Group[] = [
     items: ['Agenda', 'Dízimos e ofertas', 'Sou novo aqui', 'Visite-nos', 'Sobre nós'],
   },
 ];
+
+const ITEM_ROUTES: Record<string, string> = {
+  Agenda: '/agenda',
+};
+
 export function IgrejaScreen() {
+  const navigate = useNavigate();
   const [nextService, setNextService] = useState<ChurchEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+
   useEffect(() => {
     let mounted = true;
     fetchNextService()
@@ -44,15 +55,18 @@ export function IgrejaScreen() {
       mounted = false;
     };
   }, []);
+
   const showToast = (item: string) => {
     setToast(`${item} chega numa próxima fase.`);
     setTimeout(() => setToast(null), 3000);
   };
+
   return (
     <div className="igreja-screen">
       <header className="igreja-header">
         <h1 className="igreja-title">Igreja</h1>
       </header>
+
       <section className="card-navy igreja-highlight">
         <span className="home-verse-kicker">PRÓXIMO CULTO</span>
         {loading ? (
@@ -67,6 +81,7 @@ export function IgrejaScreen() {
           <p className="igreja-highlight-text">Nenhum culto agendado no momento.</p>
         )}
       </section>
+
       {groups.map((group) => (
         <section key={group.title} className="card igreja-group">
           <h3 className="home-section-title">{group.title}</h3>
@@ -75,7 +90,11 @@ export function IgrejaScreen() {
               key={item}
               type="button"
               className="igreja-row"
-              onClick={() => showToast(item)}
+              onClick={() => {
+                const route = ITEM_ROUTES[item];
+                if (route) navigate(route);
+                else showToast(item);
+              }}
             >
               <span>{item}</span>
               <ChevronIcon />
@@ -83,10 +102,12 @@ export function IgrejaScreen() {
           ))}
         </section>
       ))}
+
       {toast && <div className="rc-toast">{toast}</div>}
     </div>
   );
 }
+
 function ChevronIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
