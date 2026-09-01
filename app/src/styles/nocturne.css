@@ -58,6 +58,11 @@ body {
      background: var(--color-bg);
      color: var(--color-text);
      font-family: var(--font-body);
+     /* Herdado por todos os elementos — corrige algarismos old-style da
+        Cormorant Garamond em qualquer título, inclusive os que usam
+        classes próprias (ex: .biblia-leitura-title) em vez de h1-h4. */
+  font-variant-numeric: lining-nums;
+     font-feature-settings: "lnum" 1, "onum" 0;
 }
 
 h1, h2, h3, h4,
