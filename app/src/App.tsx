@@ -7,6 +7,10 @@ import { HomeScreen } from './screens/HomeScreen';
 import { PerfilScreen } from './screens/PerfilScreen';
 import { IgrejaScreen } from './screens/IgrejaScreen';
 import { AgendaScreen } from './screens/AgendaScreen';
+import { GenerosidadeScreen } from './screens/GenerosidadeScreen';
+import { SouNovoAquiScreen } from './screens/SouNovoAquiScreen';
+import { VisiteNosScreen } from './screens/VisiteNosScreen';
+import { SobreNosScreen } from './screens/SobreNosScreen';
 import { BibliaIndiceScreen } from './screens/BibliaIndiceScreen';
 import { BibliaLeituraScreen } from './screens/BibliaLeituraScreen';
 import { AppShell } from './screens/AppShell';
@@ -99,6 +103,46 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <AgendaScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generosidade"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <GenerosidadeScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sou-novo-aqui"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <SouNovoAquiScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/visite-nos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <VisiteNosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sobre-nos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <SobreNosScreen />
                 </AppShell>
               </ProtectedRoute>
             }

@@ -34,6 +34,10 @@ const groups: Group[] = [
 
 const ITEM_ROUTES: Record<string, string> = {
   Agenda: '/agenda',
+  'Dízimos e ofertas': '/generosidade',
+  'Sou novo aqui': '/sou-novo-aqui',
+  'Visite-nos': '/visite-nos',
+  'Sobre nós': '/sobre-nos',
 };
 
 export function IgrejaScreen() {
@@ -66,7 +70,6 @@ export function IgrejaScreen() {
       <header className="igreja-header">
         <h1 className="igreja-title">Igreja</h1>
       </header>
-
       <section className="card-navy igreja-highlight">
         <span className="home-verse-kicker">PRÓXIMO CULTO</span>
         {loading ? (
@@ -81,7 +84,6 @@ export function IgrejaScreen() {
           <p className="igreja-highlight-text">Nenhum culto agendado no momento.</p>
         )}
       </section>
-
       {groups.map((group) => (
         <section key={group.title} className="card igreja-group">
           <h3 className="home-section-title">{group.title}</h3>
@@ -102,7 +104,6 @@ export function IgrejaScreen() {
           ))}
         </section>
       ))}
-
       {toast && <div className="rc-toast">{toast}</div>}
     </div>
   );
