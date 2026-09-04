@@ -11,13 +11,19 @@ import { GenerosidadeScreen } from './screens/GenerosidadeScreen';
 import { SouNovoAquiScreen } from './screens/SouNovoAquiScreen';
 import { VisiteNosScreen } from './screens/VisiteNosScreen';
 import { SobreNosScreen } from './screens/SobreNosScreen';
+import { CaminhandoComDeusScreen } from './screens/CaminhandoComDeusScreen';
+import { PrecisoDeOracaoScreen } from './screens/PrecisoDeOracaoScreen';
+import { ProximosPassosScreen } from './screens/ProximosPassosScreen';
+import { CelulasScreen } from './screens/CelulasScreen';
+import { QueroServirScreen } from './screens/QueroServirScreen';
+import { BatismoScreen } from './screens/BatismoScreen';
+import { TestemunhosScreen } from './screens/TestemunhosScreen';
 import { BibliaIndiceScreen } from './screens/BibliaIndiceScreen';
 import { BibliaLeituraScreen } from './screens/BibliaLeituraScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
-
 function ConfigWarningBanner() {
   if (isSupabaseConfigured) return null;
   return (
@@ -36,7 +42,6 @@ function ConfigWarningBanner() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -143,6 +148,76 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <SobreNosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/caminhando-com-deus"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <CaminhandoComDeusScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/preciso-de-oracao"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <PrecisoDeOracaoScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proximos-passos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <ProximosPassosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/celulas"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <CelulasScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quero-servir"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <QueroServirScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/batismo"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <BatismoScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/testemunhos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <TestemunhosScreen />
                 </AppShell>
               </ProtectedRoute>
             }
