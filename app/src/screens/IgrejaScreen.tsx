@@ -37,6 +37,7 @@ const ITEM_ROUTES: Record<string, string> = {
   'Caminhando com Deus': '/caminhando-com-deus',
   'Preciso de oração': '/preciso-de-oracao',
   'Próximos passos': '/proximos-passos',
+  Discipulado: '/discipulado',
   'Células': '/celulas',
   'Quero servir': '/quero-servir',
   Batismo: '/batismo',
