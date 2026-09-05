@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchNextService } from '../lib/home';
 import type { ChurchEvent } from '../lib/types';
-
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
   return (
@@ -11,12 +10,10 @@ function formatEventDate(iso: string): string {
     d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
   );
 }
-
 type Group = {
   title: string;
   items: string[];
 };
-
 const groups: Group[] = [
   {
     title: 'Sua caminhada',
@@ -31,21 +28,25 @@ const groups: Group[] = [
     items: ['Agenda', 'Dízimos e ofertas', 'Sou novo aqui', 'Visite-nos', 'Sobre nós'],
   },
 ];
-
 const ITEM_ROUTES: Record<string, string> = {
   Agenda: '/agenda',
   'Dízimos e ofertas': '/generosidade',
   'Sou novo aqui': '/sou-novo-aqui',
   'Visite-nos': '/visite-nos',
   'Sobre nós': '/sobre-nos',
+  'Caminhando com Deus': '/caminhando-com-deus',
+  'Preciso de oração': '/preciso-de-oracao',
+  'Próximos passos': '/proximos-passos',
+  'Células': '/celulas',
+  'Quero servir': '/quero-servir',
+  Batismo: '/batismo',
+  Testemunhos: '/testemunhos',
 };
-
 export function IgrejaScreen() {
   const navigate = useNavigate();
   const [nextService, setNextService] = useState<ChurchEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
-
   useEffect(() => {
     let mounted = true;
     fetchNextService()
@@ -59,12 +60,10 @@ export function IgrejaScreen() {
       mounted = false;
     };
   }, []);
-
   const showToast = (item: string) => {
     setToast(`${item} chega numa próxima fase.`);
     setTimeout(() => setToast(null), 3000);
   };
-
   return (
     <div className="igreja-screen">
       <header className="igreja-header">
@@ -108,7 +107,6 @@ export function IgrejaScreen() {
     </div>
   );
 }
-
 function ChevronIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">

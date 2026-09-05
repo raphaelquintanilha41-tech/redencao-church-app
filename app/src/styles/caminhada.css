@@ -1,0 +1,143 @@
+.caminhada-streak-card {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    text-align: center;
+}
+.caminhada-streak-number {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    font-weight: 500;
+    color: #D6B473;
+    line-height: 1;
+}
+.caminhada-streak-label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: #8E9AB2;
+}
+.caminhada-week-row {
+    display: flex;
+    gap: 8px;
+    margin-top: var(--space-3);
+}
+.caminhada-day {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: #8E9AB2;
+    border: 1px solid rgba(237, 231, 219, 0.24);
+}
+.caminhada-day-active {
+    background: #D6B473;
+    color: var(--color-navy);
+    border-color: #D6B473;
+    font-weight: 700;
+}
+.caminhada-done-badge {
+    text-align: center;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+}
+.caminhada-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.caminhada-chip {
+    flex: 0 0 auto;
+}
+.caminhada-textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.caminhada-toggle-row {
+    cursor: pointer;
+}
+.caminhada-toggle-row input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-accent);
+}
+.caminhada-disclaimer {
+    padding: 0 2px;
+    line-height: 1.5;
+}
+.caminhada-error {
+    color: #B3453D;
+    font-family: var(--font-body);
+    font-size: 13px;
+}
+.caminhada-confirm {
+    align-items: center;
+    text-align: center;
+    padding-top: 15vh;
+    gap: var(--space-3);
+}
+.caminhada-confirm-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+}
+.caminhada-step-card {
+    padding: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+.caminhada-step-number {
+        width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+.caminhada-step-body {
+    flex: 1;
+    min-width: 0;
+}
+.caminhada-cell-card {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.caminhada-empty-state {
+    padding: var(--space-6);
+    background: var(--color-soft);
+    border-radius: var(--radius-card);
+    text-align: center;
+}
