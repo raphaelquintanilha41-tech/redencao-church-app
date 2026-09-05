@@ -14,6 +14,7 @@ import { SobreNosScreen } from './screens/SobreNosScreen';
 import { CaminhandoComDeusScreen } from './screens/CaminhandoComDeusScreen';
 import { PrecisoDeOracaoScreen } from './screens/PrecisoDeOracaoScreen';
 import { ProximosPassosScreen } from './screens/ProximosPassosScreen';
+import { DiscipuladoScreen } from './screens/DiscipuladoScreen';
 import { CelulasScreen } from './screens/CelulasScreen';
 import { QueroServirScreen } from './screens/QueroServirScreen';
 import { BatismoScreen } from './screens/BatismoScreen';
@@ -178,6 +179,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <ProximosPassosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/discipulado"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <DiscipuladoScreen />
                 </AppShell>
               </ProtectedRoute>
             }

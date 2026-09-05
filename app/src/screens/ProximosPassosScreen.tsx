@@ -12,7 +12,7 @@ const steps: Step[] = [
   { n: 3, title: 'Células', description: 'Encontre um grupo pequeno para crescer em comunhão.', route: '/celulas' },
   { n: 4, title: 'Batismo', description: 'Dê o passo público da sua fé em Cristo.', route: '/batismo' },
   { n: 5, title: 'Quero servir', description: 'Descubra um ministério onde você pode contribuir.', route: '/quero-servir' },
-  { n: 6, title: 'Discipulado', description: 'Aprofunde-se na fé com acompanhamento próximo.' },
+  { n: 6, title: 'Discipulado', description: 'Aprofunde-se na fé com acompanhamento próximo.', route: '/discipulado' },
 ];
 export function ProximosPassosScreen() {
   const navigate = useNavigate();

@@ -111,3 +111,26 @@ export async function submitPrayerRequest(
     const { error } = await supabase.from('prayer_requests').insert({ user_id: userId, ...fields });
     if (error) throw error;
 }
+// ── Discipulado ──────────────────────────────────────────────────────
+export interface DiscipleshipTrack {
+    id: string;
+    name: string;
+    description: string | null;
+    leader: string | null;
+    day_time: string | null;
+    level: number;
+}
+export async function fetchDiscipleshipTracks(): Promise<DiscipleshipTrack[]> {
+    const { data, error } = await supabase.from('discipleship_tracks').select('*').order('level').order('name');
+    if (error) throw error;
+    return (data ?? []) as DiscipleshipTrack[];
+}
+export async function fetchMyDiscipleshipRequests(userId: string): Promise<Set<string>> {
+    const { data, error } = await supabase.from('discipleship_requests').select('track_id').eq('user_id', userId);
+    if (error) throw error;
+    return new Set((data ?? []).map((r: { track_id: string }) => r.track_id));
+}
+export async function requestDiscipleshipTrack(userId: string, trackId: string): Promise<void> {
+    const { error } = await supabase.from('discipleship_requests').insert({ user_id: userId, track_id: trackId });
+    if (error) throw error;
+}
