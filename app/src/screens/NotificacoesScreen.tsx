@@ -7,6 +7,7 @@ import {
   markNotificationRead,
   type AppNotification,
 } from '../lib/notifications';
+import { updateAppBadge } from '../lib/push';
 
 function formatNotifiedAt(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }) +
@@ -40,6 +41,11 @@ export function NotificacoesScreen() {
   }, [user]);
 
   const unreadCount = items.filter((n) => !n.read_at).length;
+
+  useEffect(() => {
+    if (loading) return;
+    updateAppBadge(unreadCount);
+  }, [unreadCount, loading]);
 
   const readOne = async (n: AppNotification) => {
     if (n.read_at) return;

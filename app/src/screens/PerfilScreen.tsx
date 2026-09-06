@@ -5,6 +5,7 @@ import { updateOwnProfile, uploadAvatar } from '../lib/profiles';
 import { fetchStreak, fetchUpcomingRegisteredCount } from '../lib/profile-stats';
 import { fetchActiveReadingPlanProgress } from '../lib/home';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/preferences';
+import { getPushSubscriptionState, subscribeToPush, unsubscribeFromPush, type PushSubscriptionState } from '../lib/push';
 import type { ReadingPlan, UserPlanProgress } from '../lib/types';
 
 type InstallState = 'unknown' | 'installable' | 'installed' | 'unsupported';
@@ -24,6 +25,8 @@ export function PerfilScreen() {
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [installState, setInstallState] = useState<InstallState>('unknown');
+  const [pushState, setPushState] = useState<PushSubscriptionState>('unsupported');
+  const [pushBusy, setPushBusy] = useState(false);
 
   const firstName = (profile?.full_name ?? user?.email ?? '').split(' ')[0];
 
@@ -70,6 +73,12 @@ export function PerfilScreen() {
       window.removeEventListener('beforeinstallprompt', handler);
       clearTimeout(timer);
     };
+  }, []);
+
+  useEffect(() => {
+    getPushSubscriptionState()
+      .then(setPushState)
+      .catch(() => setPushState('unsupported'));
   }, []);
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -124,6 +133,28 @@ export function PerfilScreen() {
       showToast('App instalado.');
     }
     setInstallPrompt(null);
+  };
+
+  const handleTogglePush = async () => {
+    if (!user) return;
+    setPushBusy(true);
+    try {
+      if (pushState === 'subscribed') {
+        await unsubscribeFromPush(user.id);
+        setPushState('not-subscribed');
+        showToast('Notificações push desativadas.');
+      } else {
+        await subscribeToPush(user.id);
+        setPushState('subscribed');
+        showToast('Notificações push ativadas.');
+      }
+    } catch (err) {
+      showToast(`Falha: ${err instanceof Error ? err.message : String(err)}`);
+      const current = await getPushSubscriptionState();
+      setPushState(current);
+    } finally {
+      setPushBusy(false);
+    }
   };
 
   const minhaAreaItems = [
@@ -256,14 +287,29 @@ export function PerfilScreen() {
             ))}
           </div>
         </div>
-        <button
-          type="button"
-          className="perfil-config-row perfil-config-row-btn"
-          onClick={() => showToast('Notificações chegam numa próxima fase (ainda não há envio push).')}
-        >
-          <span>Notificações</span>
-          <ChevronIcon />
-        </button>
+        <div className="perfil-config-row">
+          <span>Notificações push</span>
+          {pushState === 'unsupported' ? (
+            <span className="home-event-meta">Não suportado</span>
+          ) : pushState === 'denied' ? (
+            <span className="home-event-meta">Bloqueado no navegador</span>
+          ) : (
+            <button
+              type="button"
+              className="btn-secondary perfil-small-btn"
+              disabled={pushBusy}
+              onClick={handleTogglePush}
+            >
+              {pushBusy
+                ? pushState === 'subscribed'
+                  ? 'A desativar…'
+                  : 'A ativar…'
+                : pushState === 'subscribed'
+                  ? 'Desativar'
+                  : 'Ativar'}
+            </button>
+          )}
+        </div>
         <button
           type="button"
           className="perfil-config-row perfil-config-row-btn"

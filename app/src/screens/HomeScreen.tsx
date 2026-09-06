@@ -12,6 +12,7 @@ import {
   markTodayProgress,
 } from '../lib/home';
 import { fetchUnreadNotificationCount } from '../lib/notifications';
+import { updateAppBadge } from '../lib/push';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -103,6 +104,10 @@ export function HomeScreen() {
       mounted = false;
     };
   }, [user]);
+
+  useEffect(() => {
+    updateAppBadge(unreadNotifications);
+  }, [unreadNotifications]);
 
   const toggleProgress = async (field: 'read_bible' | 'did_devotional') => {
     if (!user) return;
