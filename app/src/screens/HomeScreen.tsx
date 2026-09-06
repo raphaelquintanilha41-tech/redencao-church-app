@@ -11,6 +11,7 @@ import {
   fetchUpcomingEvents,
   markTodayProgress,
 } from '../lib/home';
+import { fetchUnreadNotificationCount } from '../lib/notifications';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -48,6 +49,7 @@ export function HomeScreen() {
   const [plan, setPlan] = useState<{ plan: ReadingPlan; progress: UserPlanProgress } | null>(null);
   const [dailyProgress, setDailyProgress] = useState<UserDailyProgress | null>(null);
   const [lastRead, setLastRead] = useState<ReadingHistoryItem | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -91,6 +93,17 @@ export function HomeScreen() {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    let mounted = true;
+    fetchUnreadNotificationCount(user.id)
+      .then((n) => mounted && setUnreadNotifications(n))
+      .catch((err) => console.error('[HomeScreen] falha ao carregar notificações:', err));
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
+
   const toggleProgress = async (field: 'read_bible' | 'did_devotional') => {
     if (!user) return;
     const next = { ...dailyProgress, [field]: !dailyProgress?.[field] };
@@ -115,9 +128,9 @@ export function HomeScreen() {
           <div className="home-header-name">Olá, {firstName || 'membro'}</div>
           <div className="home-header-tagline">Que a Palavra conduza o seu dia.</div>
         </div>
-        <Link to="/perfil" className="home-header-icon-btn" aria-label="Notificações">
-          {/* Sino — badge dourado aparece quando houver um sistema de notificações real ligado. */}
+        <Link to="/notificacoes" className="home-header-icon-btn" aria-label="Notificações">
           <BellIcon />
+          {unreadNotifications > 0 && <span className="home-notif-badge" />}
         </Link>
       </header>
 
