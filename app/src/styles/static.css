@@ -126,3 +126,14 @@
 .static-field-title {
   margin-top: var(--space-4);
 }
+
+/* ── Generosidade: métodos de contribuição ───────────────────────── */
+
+.static-qr-image {
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-card);
+  background: #fff;
+  align-self: flex-start;
+  object-fit: contain;
+}
