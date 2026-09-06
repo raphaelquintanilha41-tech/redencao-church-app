@@ -86,3 +86,28 @@ export interface BibleVerse {
   verse: number;
   text: string;
 }
+
+// Mirrors public.favorites / bible_notes / reading_history (Fase 2 do
+// handoff original: favoritos, notas e histórico de leitura por usuário).
+
+export interface Favorite {
+  user_id: string;
+  verse_id: number;
+  created_at: string;
+}
+
+export interface BibleNote {
+  user_id: string;
+  verse_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReadingHistoryEntry {
+  id: string;
+  user_id: string;
+  book_id: number;
+  chapter: number;
+  read_at: string;
+}
