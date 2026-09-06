@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchAvailableChapters, fetchBookByAbbrev, fetchChapter } from '../lib/bible';
+import {
+  addFavorite,
+  deleteNote,
+  fetchAvailableChapters,
+  fetchBookByAbbrev,
+  fetchChapter,
+  fetchFavoritedVerseIds,
+  fetchNote,
+  fetchNotedVerseIds,
+  logReadingHistory,
+  removeFavorite,
+  saveNote,
+} from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
 import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
 import type { BibleBook, BibleVerse } from '../lib/types';
@@ -27,6 +39,11 @@ export function BibliaLeituraScreen() {
     });
   };
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
+  const [favoritedIds, setFavoritedIds] = useState<Set<number>>(new Set());
+  const [notedIds, setNotedIds] = useState<Set<number>>(new Set());
+  const [noteEditorVerse, setNoteEditorVerse] = useState<number | null>(null);
+  const [noteDraft, setNoteDraft] = useState('');
+  const [savingNote, setSavingNote] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -38,6 +55,10 @@ export function BibliaLeituraScreen() {
     let mounted = true;
     setLoading(true);
     setSelectedVerse(null);
+    setNoteEditorVerse(null);
+    setNoteDraft('');
+    setFavoritedIds(new Set());
+    setNotedIds(new Set());
     fetchBookByAbbrev(bookAbbrev)
       .then(async (b) => {
         if (!mounted || !b) return;
@@ -47,7 +68,22 @@ export function BibliaLeituraScreen() {
         setAvailableChapters(chapters);
         if (chapters.includes(chapter)) {
           const v = await fetchChapter(b.id, chapter);
-          if (mounted) setVerses(v);
+          if (!mounted) return;
+          setVerses(v);
+          if (user) {
+            const verseIds = v.map((verse) => verse.id);
+            const [favIds, noteIds] = await Promise.all([
+              fetchFavoritedVerseIds(user.id, verseIds),
+              fetchNotedVerseIds(user.id, verseIds),
+            ]);
+            if (mounted) {
+              setFavoritedIds(favIds);
+              setNotedIds(noteIds);
+            }
+            logReadingHistory(user.id, b.id, chapter).catch((err) =>
+              console.error('[BibliaLeitura] falha ao registar histórico:', err),
+            );
+          }
         } else {
           setVerses([]);
         }
@@ -57,7 +93,86 @@ export function BibliaLeituraScreen() {
     return () => {
       mounted = false;
     };
-  }, [bookAbbrev, chapter]);
+  }, [bookAbbrev, chapter, user]);
+
+  const toggleFavorite = async (verseId: number) => {
+    if (!user) return;
+    const wasFavorited = favoritedIds.has(verseId);
+    try {
+      if (wasFavorited) {
+        await removeFavorite(user.id, verseId);
+        setFavoritedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(verseId);
+          return next;
+        });
+        showToast('Removido dos favoritos.');
+      } else {
+        await addFavorite(user.id, verseId);
+        setFavoritedIds((prev) => new Set(prev).add(verseId));
+        showToast('Adicionado aos favoritos.');
+      }
+    } catch (err) {
+      showToast(`Falha ao favoritar: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  };
+
+  const openNoteEditor = async (verseId: number) => {
+    setNoteEditorVerse(verseId);
+    setNoteDraft('');
+    if (!user) return;
+    try {
+      const note = await fetchNote(user.id, verseId);
+      setNoteDraft(note?.content ?? '');
+    } catch (err) {
+      showToast(`Falha ao carregar nota: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  };
+
+  const closeNoteEditor = () => {
+    setNoteEditorVerse(null);
+    setNoteDraft('');
+  };
+
+  const submitNote = async (verseId: number) => {
+    if (!user) return;
+    setSavingNote(true);
+    try {
+      await saveNote(user.id, verseId, noteDraft);
+      const hasContent = noteDraft.trim().length > 0;
+      setNotedIds((prev) => {
+        const next = new Set(prev);
+        if (hasContent) next.add(verseId);
+        else next.delete(verseId);
+        return next;
+      });
+      showToast(hasContent ? 'Nota guardada.' : 'Nota removida.');
+      closeNoteEditor();
+    } catch (err) {
+      showToast(`Falha ao guardar nota: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
+  const removeNoteForVerse = async (verseId: number) => {
+    if (!user) return;
+    setSavingNote(true);
+    try {
+      await deleteNote(user.id, verseId);
+      setNotedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(verseId);
+        return next;
+      });
+      showToast('Nota removida.');
+      closeNoteEditor();
+    } catch (err) {
+      showToast(`Falha ao remover nota: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setSavingNote(false);
+    }
+  };
 
   const markChapterRead = async () => {
     if (!user) return;
@@ -149,11 +264,11 @@ export function BibliaLeituraScreen() {
       {!chapterAvailable ? (
         <div className="biblia-chapter-missing">
           <p>
-            O texto de {book.name} {chapter} ainda não foi importado — a importação da Bíblia está em andamento.
+            Não encontramos o texto de {book.name} {chapter}.
           </p>
           {availableChapters.length > 0 && (
             <p className="home-event-meta">
-              Capítulos já disponíveis de {book.name}: {availableChapters.join(', ')}.
+              Capítulos disponíveis de {book.name}: {availableChapters.join(', ')}.
             </p>
           )}
         </div>
@@ -166,7 +281,11 @@ export function BibliaLeituraScreen() {
                 className={`biblia-verse${selectedVerse === v.id ? ' biblia-verse-selected' : ''}`}
                 onClick={() => setSelectedVerse(selectedVerse === v.id ? null : v.id)}
               >
-                <sup className="biblia-verse-num">{v.verse}</sup>
+                <sup className="biblia-verse-num">
+                  {v.verse}
+                  {favoritedIds.has(v.id) ? ' ★' : ''}
+                  {notedIds.has(v.id) ? ' ✎' : ''}
+                </sup>
                 {v.text}{' '}
               </span>
             ))}
@@ -177,7 +296,35 @@ export function BibliaLeituraScreen() {
         </>
       )}
 
-      {selectedVerse && (
+      {selectedVerse && noteEditorVerse === selectedVerse && (
+        <div className="biblia-action-bar">
+          <div className="biblia-note-editor">
+            <textarea
+              className="biblia-note-textarea"
+              rows={3}
+              placeholder="Escreva sua nota sobre este versículo…"
+              value={noteDraft}
+              onChange={(e) => setNoteDraft(e.target.value)}
+              autoFocus
+            />
+            <div className="biblia-note-editor-actions">
+              <button type="button" onClick={closeNoteEditor} disabled={savingNote}>
+                Cancelar
+              </button>
+              {notedIds.has(selectedVerse) && (
+                <button type="button" onClick={() => removeNoteForVerse(selectedVerse)} disabled={savingNote}>
+                  Excluir
+                </button>
+              )}
+              <button type="button" onClick={() => submitNote(selectedVerse)} disabled={savingNote}>
+                {savingNote ? 'A guardar…' : 'Guardar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedVerse && noteEditorVerse !== selectedVerse && (
         <div className="biblia-action-bar">
           <div className="biblia-color-swatches">
             {HIGHLIGHT_COLORS.map((c) => (
@@ -192,11 +339,19 @@ export function BibliaLeituraScreen() {
             ))}
           </div>
           <div className="biblia-action-buttons">
-            <button type="button" onClick={() => showToast('Favoritos chegam numa próxima fase.')}>
-              Favoritar
+            <button
+              type="button"
+              className={favoritedIds.has(selectedVerse) ? 'biblia-action-active' : ''}
+              onClick={() => toggleFavorite(selectedVerse)}
+            >
+              {favoritedIds.has(selectedVerse) ? '★ Favoritado' : 'Favoritar'}
             </button>
-            <button type="button" onClick={() => showToast('Notas chegam numa próxima fase.')}>
-              Nota
+            <button
+              type="button"
+              className={notedIds.has(selectedVerse) ? 'biblia-action-active' : ''}
+              onClick={() => openNoteEditor(selectedVerse)}
+            >
+              {notedIds.has(selectedVerse) ? 'Editar nota' : 'Nota'}
             </button>
             <button
               type="button"

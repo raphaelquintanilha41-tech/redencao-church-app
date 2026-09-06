@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { fetchLastRead, type ReadingHistoryItem } from '../lib/bible';
 import {
   fetchActiveReadingPlanProgress,
   fetchDailyVerse,
@@ -36,6 +37,7 @@ function formatDuration(seconds: number | null): string {
 }
 
 export function HomeScreen() {
+  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const firstName = (profile?.full_name ?? user?.email ?? '').split(' ')[0];
 
@@ -45,6 +47,7 @@ export function HomeScreen() {
   const [sermon, setSermon] = useState<Sermon | null>(null);
   const [plan, setPlan] = useState<{ plan: ReadingPlan; progress: UserPlanProgress } | null>(null);
   const [dailyProgress, setDailyProgress] = useState<UserDailyProgress | null>(null);
+  const [lastRead, setLastRead] = useState<ReadingHistoryItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -64,8 +67,9 @@ export function HomeScreen() {
       fetchLatestSermon(),
       fetchActiveReadingPlanProgress(user.id),
       fetchTodayProgress(user.id),
+      fetchLastRead(user.id),
     ])
-      .then(([v, d, e, s, p, dp]) => {
+      .then(([v, d, e, s, p, dp, lr]) => {
         if (!mounted) return;
         setVerse(v);
         setDevotional(d);
@@ -73,6 +77,7 @@ export function HomeScreen() {
         setSermon(s);
         setPlan(p);
         setDailyProgress(dp);
+        setLastRead(lr);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
@@ -163,6 +168,23 @@ export function HomeScreen() {
               <span>Fiz o devocional hoje</span>
             </label>
           </section>
+
+          {/* Continue de onde parou */}
+          {lastRead && (
+            <section className="card home-section">
+              <h3 className="home-section-title">Continue de onde parou</h3>
+              <div className="home-plan-title">
+                {lastRead.book_name} {lastRead.chapter}
+              </div>
+              <button
+                type="button"
+                className="btn-primary home-verse-btn"
+                onClick={() => navigate(`/biblia/${lastRead.book_abbrev}/${lastRead.chapter}`)}
+              >
+                Continuar leitura
+              </button>
+            </section>
+          )}
 
           {/* Próximo encontro */}
           {nextEvent && (
@@ -273,7 +295,7 @@ export function HomeScreen() {
 function BellIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 8a6 6 0 1 0-12 0c0 7 -3 9 -3 9H18" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M13.73 21a2 2 0 0 1-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );

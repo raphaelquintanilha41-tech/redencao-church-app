@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateOwnProfile, uploadAvatar } from '../lib/profiles';
 import { fetchStreak, fetchUpcomingRegisteredCount } from '../lib/profile-stats';
@@ -9,6 +10,7 @@ import type { ReadingPlan, UserPlanProgress } from '../lib/types';
 type InstallState = 'unknown' | 'installable' | 'installed' | 'unsupported';
 
 export function PerfilScreen() {
+  const navigate = useNavigate();
   const { user, profile, signOut, refreshProfile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -125,10 +127,10 @@ export function PerfilScreen() {
   };
 
   const minhaAreaItems = [
-    { label: 'Favoritos' },
-    { label: 'Notas' },
-    { label: 'Histórico' },
-    { label: 'Pedidos' },
+    { label: 'Favoritos', route: '/favoritos' },
+    { label: 'Notas', route: '/notas' },
+    { label: 'Histórico', route: '/historico' },
+    { label: 'Pedidos', route: null },
   ];
 
   return (
@@ -207,7 +209,7 @@ export function PerfilScreen() {
               key={item.label}
               type="button"
               className="perfil-grid-item"
-              onClick={() => showToast(`${item.label} chega numa próxima fase.`)}
+              onClick={() => (item.route ? navigate(item.route) : showToast(`${item.label} chega numa próxima fase.`))}
             >
               {item.label}
             </button>
