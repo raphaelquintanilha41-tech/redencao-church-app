@@ -24,6 +24,7 @@ import { BibliaLeituraScreen } from './screens/BibliaLeituraScreen';
 import { FavoritosScreen } from './screens/FavoritosScreen';
 import { NotasScreen } from './screens/NotasScreen';
 import { HistoricoScreen } from './screens/HistoricoScreen';
+import { NotificacoesScreen } from './screens/NotificacoesScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
@@ -262,6 +263,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <HistoricoScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notificacoes"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <NotificacoesScreen />
                 </AppShell>
               </ProtectedRoute>
             }
