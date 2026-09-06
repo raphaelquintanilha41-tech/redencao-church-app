@@ -289,3 +289,42 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.biblia-action-buttons button.biblia-action-active {
+  color: var(--color-accent);
+}
+
+.biblia-note-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.biblia-note-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(237, 231, 219, 0.3);
+  background: rgba(237, 231, 219, 0.08);
+  color: #EDE7DB;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+}
+
+.biblia-note-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-4);
+}
+
+.biblia-note-editor-actions button {
+  background: none;
+  border: none;
+  color: #EDE7DB;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
