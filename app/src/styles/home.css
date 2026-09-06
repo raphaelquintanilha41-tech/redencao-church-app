@@ -32,6 +32,7 @@
   color: var(--color-muted);
 }
 .home-header-icon-btn {
+  position: relative;
   color: var(--color-text);
   display: flex;
   align-items: center;
@@ -40,6 +41,16 @@
   height: 40px;
   border-radius: var(--radius-circle);
   background: var(--color-soft);
+}
+.home-notif-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
 }
 .home-loading {
   flex: 1;
