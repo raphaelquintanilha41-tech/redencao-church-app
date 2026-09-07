@@ -125,6 +125,28 @@ export function HomeScreen() {
     }
   };
 
+  const handleShareVerse = async () => {
+    if (!verse) return;
+    const shareText = `"${verse.text}"\n${verse.reference}\n\nRedenção Church`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Palavra do dia — Redenção Church',
+          text: shareText,
+        });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareText);
+        showToast('Versículo copiado para a área de transferência.');
+      } else {
+        showToast('Compartilhamento não é suportado neste navegador.');
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        showToast('Não foi possível compartilhar agora.');
+      }
+    }
+  };
+
   const nextEvent = events[0];
 
   return (
@@ -147,7 +169,17 @@ export function HomeScreen() {
         <div className="home-content">
           {/* Palavra do dia */}
           <section className="card-navy home-verse-card">
-            <span className="home-verse-kicker">PALAVRA DO DIA</span>
+            <div className="home-verse-header">
+              <span className="home-verse-kicker">PALAVRA DO DIA</span>
+              <button
+                type="button"
+                className="home-verse-share-btn"
+                aria-label="Compartilhar versículo"
+                onClick={handleShareVerse}
+              >
+                <ShareIcon />
+              </button>
+            </div>
             <p className="home-verse-text">"{verse?.text ?? 'Sem versículo disponível hoje.'}"</p>
             {verse && <span className="home-verse-ref">{verse.reference}</span>}
             <div className="home-verse-actions">
@@ -360,6 +392,16 @@ function CloseIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 7.5L12 3l4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
