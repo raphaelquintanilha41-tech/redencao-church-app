@@ -34,6 +34,7 @@ function formatEventDate(iso: string): string {
 
 function formatDuration(seconds: number | null): string {
   if (!seconds) return '';
+  if (seconds < 60) return `${seconds} s`;
   const m = Math.round(seconds / 60);
   return `${m} min`;
 }
@@ -53,6 +54,7 @@ export function HomeScreen() {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -268,7 +270,12 @@ export function HomeScreen() {
               <button
                 type="button"
                 className="home-sermon-thumb"
-                onClick={() => showToast('Reprodução de vídeo chega numa próxima fase.')}
+                style={sermon.thumbnail_url ? { backgroundImage: `url(${sermon.thumbnail_url})` } : undefined}
+                onClick={() =>
+                  sermon.video_url
+                    ? setVideoOpen(true)
+                    : showToast('Reprodução de vídeo chega numa próxima fase.')
+                }
               >
                 <PlayIcon />
                 <span className="home-sermon-duration">{formatDuration(sermon.duration_seconds)}</span>
@@ -306,6 +313,28 @@ export function HomeScreen() {
       )}
 
       {toast && <div className="rc-toast">{toast}</div>}
+
+      {videoOpen && sermon?.video_url && (
+        <div className="home-video-modal" onClick={() => setVideoOpen(false)}>
+          <button
+            type="button"
+            className="home-video-modal-close"
+            aria-label="Fechar"
+            onClick={() => setVideoOpen(false)}
+          >
+            <CloseIcon />
+          </button>
+          <video
+            className="home-video-modal-player"
+            src={sermon.video_url}
+            poster={sermon.thumbnail_url ?? undefined}
+            controls
+            autoPlay
+            playsInline
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -323,6 +352,14 @@ function PlayIcon() {
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
       <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
     </svg>
   );
 }
