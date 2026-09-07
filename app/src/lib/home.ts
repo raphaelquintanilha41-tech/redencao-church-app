@@ -1,3 +1,4 @@
+import { fetchBookByName, fetchVerseRange, parseVerseReference } from './bible';
 import { supabase } from './supabaseClient';
 import type {
   ChurchEvent,
@@ -18,6 +19,33 @@ export async function fetchDailyVerse(): Promise<DailyVerse | null> {
     .maybeSingle();
   if (error) throw error;
   return data as DailyVerse | null;
+}
+
+export interface ResolvedDailyVerse {
+  bookAbbrev: string;
+  chapter: number;
+  verseIds: number[];
+}
+
+/**
+ * Resolve a referência textual da Palavra do dia (ex.: "Lamentações 3:22-23")
+ * para o livro/capítulo/versículos reais em bible_books/bible_verses, para
+ * permitir "Ler capítulo" (navegação) e "Salvar" (favoritar) a partir do
+ * card da Home. Retorna null se a referência não puder ser resolvida —
+ * quem chama deve tratar isso com um aviso, sem quebrar a tela.
+ */
+export async function resolveDailyVerseRef(verse: DailyVerse): Promise<ResolvedDailyVerse | null> {
+  const parsed = parseVerseReference(verse.reference);
+  if (!parsed) return null;
+  const book = await fetchBookByName(parsed.bookName);
+  if (!book) return null;
+  const verses = await fetchVerseRange(book.id, parsed.chapter, parsed.verseStart, parsed.verseEnd);
+  if (verses.length === 0) return null;
+  return {
+    bookAbbrev: book.abbrev,
+    chapter: parsed.chapter,
+    verseIds: verses.map((v) => v.id),
+  };
 }
 export async function fetchRecommendedDevotional(): Promise<Devotional | null> {
   const { data, error } = await supabase

@@ -65,6 +65,57 @@ export async function fetchBookByAbbrev(abbrev: string): Promise<BibleBook | nul
   return data as BibleBook | null;
 }
 
+export async function fetchBookByName(name: string): Promise<BibleBook | null> {
+  const { data, error } = await supabase
+    .from('bible_books')
+    .select('*')
+    .eq('name', name)
+    .maybeSingle();
+  if (error) throw error;
+  return data as BibleBook | null;
+}
+
+export async function fetchVerseRange(
+  bookId: number,
+  chapter: number,
+  verseStart: number,
+  verseEnd: number,
+): Promise<BibleVerse[]> {
+  const { data, error } = await supabase
+    .from('bible_verses')
+    .select('*')
+    .eq('book_id', bookId)
+    .eq('chapter', chapter)
+    .gte('verse', verseStart)
+    .lte('verse', verseEnd)
+    .order('verse');
+  if (error) throw error;
+  return (data ?? []) as BibleVerse[];
+}
+
+export interface ParsedReference {
+  bookName: string;
+  chapter: number;
+  verseStart: number;
+  verseEnd: number;
+}
+
+/**
+ * Extrai livro/capítulo/versículo(s) de referências no formato usado em
+ * daily_verses.reference, ex.: "João 3:16" ou "Lamentações 3:22-23".
+ */
+export function parseVerseReference(reference: string): ParsedReference | null {
+  const match = reference.trim().match(/^(.+?)\s+(\d+):(\d+)(?:-(\d+))?$/);
+  if (!match) return null;
+  const [, bookName, chapter, verseStart, verseEnd] = match;
+  return {
+    bookName,
+    chapter: parseInt(chapter, 10),
+    verseStart: parseInt(verseStart, 10),
+    verseEnd: verseEnd ? parseInt(verseEnd, 10) : parseInt(verseStart, 10),
+  };
+}
+
 // ── Favoritos ──────────────────────────────────────────────────────────
 
 export async function fetchFavoritedVerseIds(userId: string, verseIds: number[]): Promise<Set<number>> {
