@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchLastRead, type ReadingHistoryItem } from '../lib/bible';
+import { addFavorite, fetchFavoritedVerseIds, fetchLastRead, removeFavorite, type ReadingHistoryItem } from '../lib/bible';
 import {
   fetchActiveReadingPlanProgress,
   fetchDailyVerse,
@@ -10,6 +10,8 @@ import {
   fetchTodayProgress,
   fetchUpcomingEvents,
   markTodayProgress,
+  resolveDailyVerseRef,
+  type ResolvedDailyVerse,
 } from '../lib/home';
 import { fetchUnreadNotificationCount } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
@@ -55,6 +57,8 @@ export function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [verseRef, setVerseRef] = useState<ResolvedDailyVerse | null>(null);
+  const [verseFavorited, setVerseFavorited] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -111,6 +115,30 @@ export function HomeScreen() {
     updateAppBadge(unreadNotifications);
   }, [unreadNotifications]);
 
+  useEffect(() => {
+    let mounted = true;
+    if (!verse) {
+      setVerseRef(null);
+      setVerseFavorited(false);
+      return;
+    }
+    resolveDailyVerseRef(verse)
+      .then(async (ref) => {
+        if (!mounted) return;
+        setVerseRef(ref);
+        if (ref && user) {
+          const favIds = await fetchFavoritedVerseIds(user.id, ref.verseIds);
+          if (mounted) setVerseFavorited(ref.verseIds.every((id) => favIds.has(id)));
+        } else {
+          setVerseFavorited(false);
+        }
+      })
+      .catch((err) => console.error('[HomeScreen] falha ao resolver referência do versículo:', err));
+    return () => {
+      mounted = false;
+    };
+  }, [verse, user]);
+
   const toggleProgress = async (field: 'read_bible' | 'did_devotional') => {
     if (!user) return;
     const next = { ...dailyProgress, [field]: !dailyProgress?.[field] };
@@ -144,6 +172,39 @@ export function HomeScreen() {
       if (err instanceof Error && err.name !== 'AbortError') {
         showToast('Não foi possível compartilhar agora.');
       }
+    }
+  };
+
+  const handleReadChapter = () => {
+    if (!verseRef) {
+      showToast('Não foi possível localizar este versículo na Bíblia.');
+      return;
+    }
+    navigate(`/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}`);
+  };
+
+  const handleSaveVerse = async () => {
+    if (!user) return;
+    if (!verseRef) {
+      showToast('Não foi possível localizar este versículo na Bíblia.');
+      return;
+    }
+    try {
+      const favIds = await fetchFavoritedVerseIds(user.id, verseRef.verseIds);
+      const allFavorited = verseRef.verseIds.every((id) => favIds.has(id));
+      if (allFavorited) {
+        await Promise.all(verseRef.verseIds.map((id) => removeFavorite(user.id, id)));
+        setVerseFavorited(false);
+        showToast('Removido dos favoritos.');
+      } else {
+        await Promise.all(
+          verseRef.verseIds.filter((id) => !favIds.has(id)).map((id) => addFavorite(user.id, id)),
+        );
+        setVerseFavorited(true);
+        showToast('Adicionado aos favoritos.');
+      }
+    } catch (err) {
+      showToast(`Falha ao favoritar: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
@@ -183,18 +244,10 @@ export function HomeScreen() {
             <p className="home-verse-text">"{verse?.text ?? 'Sem versículo disponível hoje.'}"</p>
             {verse && <span className="home-verse-ref">{verse.reference}</span>}
             <div className="home-verse-actions">
-              <button
-                type="button"
-                className="btn-secondary home-verse-btn"
-                onClick={() => showToast('Favoritos chega numa próxima fase.')}
-              >
-                Salvar
+              <button type="button" className="btn-secondary home-verse-btn" onClick={handleSaveVerse}>
+                {verseFavorited ? '★ Salvo' : 'Salvar'}
               </button>
-              <button
-                type="button"
-                className="btn-primary home-verse-btn"
-                onClick={() => showToast('Leitura da Bíblia chega numa próxima fase.')}
-              >
+              <button type="button" className="btn-primary home-verse-btn" onClick={handleReadChapter}>
                 Ler capítulo
               </button>
             </div>
