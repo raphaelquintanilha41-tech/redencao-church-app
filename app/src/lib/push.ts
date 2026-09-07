@@ -36,6 +36,20 @@ export async function getPushSubscriptionState(): Promise<PushSubscriptionState>
   }
 }
 
+function describeSubscribeError(err: unknown): string {
+  const name = err instanceof DOMException ? err.name : '';
+  const message = err instanceof Error ? err.message : String(err);
+  if (name === 'NotAllowedError') {
+    return 'Permissão de notificações não concedida.';
+  }
+  if (name === 'AbortError' || /could not retrieve the public key/i.test(message)) {
+    // Chrome lança isto quando não consegue falar com o serviço de push
+    // (perfil sem sessão Google, rede/política a bloquear o FCM, etc.).
+    return 'Este navegador não conseguiu registar-se no serviço de notificações. Tente noutro dispositivo ou navegador.';
+  }
+  return `Não foi possível ativar as notificações (${message}).`;
+}
+
 export async function subscribeToPush(userId: string): Promise<void> {
   if (!isPushSupported()) {
     throw new Error('Este navegador não suporta notificações push.');
@@ -49,10 +63,17 @@ export async function subscribeToPush(userId: string): Promise<void> {
   const registration = await navigator.serviceWorker.ready;
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
-    });
+    try {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+      });
+    } catch (err) {
+      // Mantém o erro original no console para diagnóstico; ao utilizador
+      // mostra-se uma mensagem legível em vez do texto técnico do browser.
+      console.error('[push] pushManager.subscribe falhou:', err);
+      throw new Error(describeSubscribeError(err), { cause: err });
+    }
   }
 
   const json = subscription.toJSON();
