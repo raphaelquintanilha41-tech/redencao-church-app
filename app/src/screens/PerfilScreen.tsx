@@ -30,9 +30,9 @@ export function PerfilScreen() {
 
   const firstName = (profile?.full_name ?? user?.email ?? '').split(' ')[0];
 
-  const showToast = (msg: string) => {
+  const showToast = (msg: string, durationMs = 2500) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 2500);
+    setTimeout(() => setToast(null), durationMs);
   };
 
   useEffect(() => {
@@ -149,7 +149,8 @@ export function PerfilScreen() {
         showToast('Notificações push ativadas.');
       }
     } catch (err) {
-      showToast(`Falha: ${err instanceof Error ? err.message : String(err)}`);
+      console.error('[push] toggle falhou:', err);
+      showToast(err instanceof Error ? err.message : String(err), 6000);
       const current = await getPushSubscriptionState();
       setPushState(current);
     } finally {

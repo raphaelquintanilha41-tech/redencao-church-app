@@ -100,7 +100,8 @@ text-underline-offset: 3px;
 .rc-toast {
 position: fixed;
 left: 50%;
-bottom: 28px;
+/* acima da barra de navegação inferior (56px) para não ficar tapado */
+bottom: calc(68px + env(safe-area-inset-bottom, 0px));
 transform: translateX(-50%);
 background: var(--color-surface);
 color: var(--color-text);
