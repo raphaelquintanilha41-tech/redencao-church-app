@@ -335,7 +335,11 @@ export function HomeScreen() {
 
           {/* Continue sua caminhada */}
           {plan && (
-            <section className="card home-section">
+            <button
+              type="button"
+              className="card home-section home-devotional-card-btn"
+              onClick={() => navigate(`/planos/${plan.plan.id}`)}
+            >
               <h3 className="home-section-title">Continue sua caminhada</h3>
               <div className="home-plan-title">{plan.plan.title}</div>
               <div className="home-progress-track">
@@ -347,9 +351,11 @@ export function HomeScreen() {
                 />
               </div>
               <div className="home-event-meta">
-                Dia {plan.progress.current_day} de {plan.plan.total_days}
+                {plan.progress.current_day > 0
+                  ? `Dia ${plan.progress.current_day} de ${plan.plan.total_days}`
+                  : `Começar · ${plan.plan.total_days} dias`}
               </div>
-            </section>
+            </button>
           )}
 
           {/* Para você */}

@@ -1,0 +1,64 @@
+/* ── Planos de leitura (PlanosScreen / PlanoLeituraScreen) ───────────── */
+
+.plan-day-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.plan-day-nav-btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+.plan-day-title {
+    padding-right: 0;
+}
+
+.plan-day-verse-block {
+    padding: var(--space-3);
+    border-radius: var(--radius-card);
+    background: var(--color-soft);
+    border-left: 3px solid var(--color-accent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.plan-day-verse-block p {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    line-height: 1.6;
+    font-style: italic;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.plan-day-prayer {
+    padding: var(--space-3);
+    border-radius: var(--radius-card);
+    background: var(--color-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.plan-day-prayer-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.plan-day-prayer p {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    font-style: italic;
+    color: var(--color-text);
+    margin: 0;
+}

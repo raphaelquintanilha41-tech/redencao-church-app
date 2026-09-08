@@ -17,7 +17,7 @@ type Group = {
 const groups: Group[] = [
   {
     title: 'Sua caminhada',
-    items: ['Caminhando com Deus', 'Preciso de oração', 'Próximos passos', 'Discipulado'],
+    items: ['Caminhando com Deus', 'Planos de leitura', 'Preciso de oração', 'Próximos passos', 'Discipulado'],
   },
   {
     title: 'Faça parte',
@@ -35,6 +35,7 @@ const ITEM_ROUTES: Record<string, string> = {
   'Visite-nos': '/visite-nos',
   'Sobre nós': '/sobre-nos',
   'Caminhando com Deus': '/caminhando-com-deus',
+  'Planos de leitura': '/planos',
   'Preciso de oração': '/preciso-de-oracao',
   'Próximos passos': '/proximos-passos',
   Discipulado: '/discipulado',

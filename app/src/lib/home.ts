@@ -120,11 +120,13 @@ export async function fetchActiveReadingPlanProgress(
     if (planError) throw planError;
     return { plan: plan as ReadingPlan, progress };
   }
-  // Sem progresso registado ainda: mostra o primeiro plano disponível,
-  // com progresso 0, para o usuário poder começar.
+  // Sem progresso registado ainda: mostra o primeiro plano disponível
+  // (por display_order, para ser determinístico), com progresso 0, para
+  // o usuário poder começar.
   const { data: firstPlan, error: firstPlanError } = await supabase
     .from('reading_plans')
     .select('*')
+    .order('display_order', { ascending: true })
     .limit(1)
     .maybeSingle();
   if (firstPlanError) throw firstPlanError;
