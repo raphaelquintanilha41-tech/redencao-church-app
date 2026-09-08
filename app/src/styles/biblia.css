@@ -229,7 +229,7 @@
 }
 
 .biblia-verse-selected {
-  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 
 .biblia-verse-num {
@@ -273,6 +273,20 @@
   border: 2px solid rgba(237, 231, 219, 0.4);
   cursor: pointer;
   padding: 0;
+}
+
+.biblia-color-swatch-active {
+  border-color: #EDE7DB;
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.biblia-color-swatch-inline {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  cursor: default;
+  border-width: 1px;
 }
 
 .biblia-action-buttons {

@@ -122,6 +122,14 @@ export interface BibleNote {
   updated_at: string;
 }
 
+export interface Highlight {
+  user_id: string;
+  verse_id: number;
+  color: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ReadingHistoryEntry {
   id: string;
   user_id: string;
