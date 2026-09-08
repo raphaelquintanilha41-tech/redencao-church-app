@@ -400,7 +400,7 @@ export function HomeScreen() {
           <button
             type="button"
             className="home-prayer-banner"
-            onClick={() => showToast('Envio de pedidos de oração chega numa próxima fase.')}
+            onClick={() => navigate('/preciso-de-oracao')}
           >
             Podemos orar por você?
           </button>
