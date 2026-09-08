@@ -161,6 +161,7 @@ export function PerfilScreen() {
   const minhaAreaItems = [
     { label: 'Favoritos', route: '/favoritos' },
     { label: 'Notas', route: '/notas' },
+    { label: 'Destaques', route: '/destaques' },
     { label: 'Histórico', route: '/historico' },
     { label: 'Pedidos', route: null },
   ];
