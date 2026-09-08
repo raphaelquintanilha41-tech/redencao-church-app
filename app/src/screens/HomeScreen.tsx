@@ -454,11 +454,19 @@ export function HomeScreen() {
             </button>
             <span className="home-verse-kicker">PARA VOCÊ</span>
             <h2 className="home-devotional-modal-title">{devotional.title}</h2>
-            {devotional.author && <div className="home-event-meta">{devotional.author}</div>}
-            <p className="home-devotional-modal-body">{devotional.summary}</p>
-            {devotional.duration_minutes && (
-              <div className="home-event-meta">{devotional.duration_minutes} min de leitura</div>
-            )}
+            <div className="home-event-meta">
+              {devotional.author}
+              {devotional.author && devotional.duration_minutes ? ' · ' : ''}
+              {devotional.duration_minutes ? `${devotional.duration_minutes} min de leitura` : ''}
+            </div>
+            <div className="home-devotional-modal-body">
+              {(devotional.content ?? devotional.summary)
+                .split(/\n{2,}/)
+                .filter((paragraph) => paragraph.trim().length > 0)
+                .map((paragraph, index) => (
+                  <p key={index}>{paragraph.trim()}</p>
+                ))}
+            </div>
             <button type="button" className="btn-primary home-verse-btn" onClick={handleCompleteDevotional}>
               {dailyProgress?.did_devotional ? 'Concluído ✓' : 'Marcar como concluído'}
             </button>
