@@ -55,6 +55,22 @@ export interface ReadingPlan {
   id: string;
   title: string;
   total_days: number;
+  description: string | null;
+  theme: string | null;
+  image_url: string | null;
+  display_order: number;
+}
+
+export interface ReadingPlanDay {
+  id: string;
+  plan_id: string;
+  day_number: number;
+  title: string;
+  verse_reference: string;
+  verse_text: string;
+  content: string;
+  prayer: string;
+  created_at: string;
 }
 
 export interface UserPlanProgress {
