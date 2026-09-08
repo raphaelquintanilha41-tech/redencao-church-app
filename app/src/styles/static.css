@@ -137,3 +137,12 @@
   align-self: flex-start;
   object-fit: contain;
 }
+
+/* ── Batismo: imagem de destaque ─────────────────────────────────── */
+
+.static-hero-image {
+  width: 100%;
+  border-radius: var(--radius-card);
+  display: block;
+  object-fit: cover;
+}
