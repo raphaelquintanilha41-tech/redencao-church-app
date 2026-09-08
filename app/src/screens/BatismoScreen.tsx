@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { fetchMyBaptismRequest, requestBaptism } from '../lib/caminhada';
 import { fetchUpcomingEvents } from '../lib/home';
 import type { ChurchEvent } from '../lib/types';
+
+const baptismPoster = '/batismo-poster.jpg';
+
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
   return (
@@ -56,6 +59,7 @@ export function BatismoScreen() {
         </button>
         <h1 className="igreja-title">Batismo</h1>
       </header>
+      <img src={baptismPoster} alt="Batismo — Nova vida em Cristo" className="static-hero-image" />
       <section className="card perfil-section">
         <p className="static-body-text">
           O batismo nas águas é o passo público de quem decidiu seguir Jesus — um sinal de que a vida antiga morreu e
