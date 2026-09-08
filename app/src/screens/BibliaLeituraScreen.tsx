@@ -8,11 +8,14 @@ import {
   fetchBookByAbbrev,
   fetchChapter,
   fetchFavoritedVerseIds,
+  fetchHighlightedVerseColors,
   fetchNote,
   fetchNotedVerseIds,
   logReadingHistory,
   removeFavorite,
+  removeHighlight,
   saveNote,
+  setHighlight,
 } from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
 import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
@@ -41,6 +44,7 @@ export function BibliaLeituraScreen() {
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [favoritedIds, setFavoritedIds] = useState<Set<number>>(new Set());
   const [notedIds, setNotedIds] = useState<Set<number>>(new Set());
+  const [highlightedColors, setHighlightedColors] = useState<Map<number, string>>(new Map());
   const [noteEditorVerse, setNoteEditorVerse] = useState<number | null>(null);
   const [noteDraft, setNoteDraft] = useState('');
   const [savingNote, setSavingNote] = useState(false);
@@ -59,6 +63,7 @@ export function BibliaLeituraScreen() {
     setNoteDraft('');
     setFavoritedIds(new Set());
     setNotedIds(new Set());
+    setHighlightedColors(new Map());
     fetchBookByAbbrev(bookAbbrev)
       .then(async (b) => {
         if (!mounted || !b) return;
@@ -72,13 +77,15 @@ export function BibliaLeituraScreen() {
           setVerses(v);
           if (user) {
             const verseIds = v.map((verse) => verse.id);
-            const [favIds, noteIds] = await Promise.all([
+            const [favIds, noteIds, highlightColors] = await Promise.all([
               fetchFavoritedVerseIds(user.id, verseIds),
               fetchNotedVerseIds(user.id, verseIds),
+              fetchHighlightedVerseColors(user.id, verseIds),
             ]);
             if (mounted) {
               setFavoritedIds(favIds);
               setNotedIds(noteIds);
+              setHighlightedColors(highlightColors);
             }
             logReadingHistory(user.id, b.id, chapter).catch((err) =>
               console.error('[BibliaLeitura] falha ao registar histórico:', err),
@@ -114,6 +121,28 @@ export function BibliaLeituraScreen() {
       }
     } catch (err) {
       showToast(`Falha ao favoritar: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  };
+
+  const toggleHighlight = async (verseId: number, color: string) => {
+    if (!user) return;
+    const wasSameColor = highlightedColors.get(verseId) === color;
+    try {
+      if (wasSameColor) {
+        await removeHighlight(user.id, verseId);
+        setHighlightedColors((prev) => {
+          const next = new Map(prev);
+          next.delete(verseId);
+          return next;
+        });
+        showToast('Destaque removido.');
+      } else {
+        await setHighlight(user.id, verseId, color);
+        setHighlightedColors((prev) => new Map(prev).set(verseId, color));
+        showToast('Versículo destacado.');
+      }
+    } catch (err) {
+      showToast(`Falha ao destacar: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
@@ -279,6 +308,7 @@ export function BibliaLeituraScreen() {
               <span
                 key={v.id}
                 className={`biblia-verse${selectedVerse === v.id ? ' biblia-verse-selected' : ''}`}
+                style={highlightedColors.has(v.id) ? { backgroundColor: highlightedColors.get(v.id) } : undefined}
                 onClick={() => setSelectedVerse(selectedVerse === v.id ? null : v.id)}
               >
                 <sup className="biblia-verse-num">
@@ -331,10 +361,10 @@ export function BibliaLeituraScreen() {
               <button
                 key={c}
                 type="button"
-                className="biblia-color-swatch"
+                className={`biblia-color-swatch${highlightedColors.get(selectedVerse) === c ? ' biblia-color-swatch-active' : ''}`}
                 style={{ background: c }}
                 aria-label="Destacar"
-                onClick={() => showToast('Destaques chegam numa próxima fase.')}
+                onClick={() => toggleHighlight(selectedVerse, c)}
               />
             ))}
           </div>
