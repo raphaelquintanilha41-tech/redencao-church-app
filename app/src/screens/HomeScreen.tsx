@@ -57,6 +57,7 @@ export function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [devotionalOpen, setDevotionalOpen] = useState(false);
   const [verseRef, setVerseRef] = useState<ResolvedDailyVerse | null>(null);
   const [verseFavorited, setVerseFavorited] = useState(false);
 
@@ -208,6 +209,21 @@ export function HomeScreen() {
     }
   };
 
+  const handleCompleteDevotional = async () => {
+    if (!user) return;
+    try {
+      const updated = await markTodayProgress(user.id, {
+        read_bible: dailyProgress?.read_bible ?? false,
+        did_devotional: true,
+      });
+      setDailyProgress(updated);
+      showToast('Devocional marcado como concluído.');
+      setDevotionalOpen(false);
+    } catch (err) {
+      showToast(`Falha ao guardar: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  };
+
   const nextEvent = events[0];
 
   return (
@@ -338,14 +354,18 @@ export function HomeScreen() {
 
           {/* Para você */}
           {devotional && (
-            <section className="card home-section">
+            <button
+              type="button"
+              className="card home-section home-devotional-card-btn"
+              onClick={() => setDevotionalOpen(true)}
+            >
               <h3 className="home-section-title">Para você</h3>
               <div className="home-plan-title">{devotional.title}</div>
               <p className="home-event-meta">{devotional.summary}</p>
               {devotional.duration_minutes && (
                 <div className="home-event-meta">{devotional.duration_minutes} min de leitura</div>
               )}
-            </section>
+            </button>
           )}
 
           {/* Última mensagem */}
@@ -418,6 +438,31 @@ export function HomeScreen() {
             playsInline
             onClick={(e) => e.stopPropagation()}
           />
+        </div>
+      )}
+
+      {devotionalOpen && devotional && (
+        <div className="home-devotional-modal" onClick={() => setDevotionalOpen(false)}>
+          <div className="home-devotional-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="home-devotional-modal-close"
+              aria-label="Fechar"
+              onClick={() => setDevotionalOpen(false)}
+            >
+              <CloseIcon />
+            </button>
+            <span className="home-verse-kicker">PARA VOCÊ</span>
+            <h2 className="home-devotional-modal-title">{devotional.title}</h2>
+            {devotional.author && <div className="home-event-meta">{devotional.author}</div>}
+            <p className="home-devotional-modal-body">{devotional.summary}</p>
+            {devotional.duration_minutes && (
+              <div className="home-event-meta">{devotional.duration_minutes} min de leitura</div>
+            )}
+            <button type="button" className="btn-primary home-verse-btn" onClick={handleCompleteDevotional}>
+              {dailyProgress?.did_devotional ? 'Concluído ✓' : 'Marcar como concluído'}
+            </button>
+          </div>
         </div>
       )}
     </div>
