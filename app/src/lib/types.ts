@@ -24,6 +24,7 @@ export interface Devotional {
   id: string;
   title: string;
   summary: string;
+  content: string | null;
   author: string | null;
   duration_minutes: number | null;
   image_url: string | null;
