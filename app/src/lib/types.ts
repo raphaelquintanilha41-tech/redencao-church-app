@@ -28,6 +28,7 @@ export interface Devotional {
   duration_minutes: number | null;
   image_url: string | null;
   published_at: string;
+  active_date: string | null;
 }
 
 export interface ChurchEvent {

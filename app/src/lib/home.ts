@@ -51,11 +51,22 @@ export async function fetchRecommendedDevotional(): Promise<Devotional | null> {
   const { data, error } = await supabase
     .from('devotionals')
     .select('*')
-    .order('published_at', { ascending: false })
+    .lte('active_date', new Date().toISOString().slice(0, 10))
+    .order('active_date', { ascending: false })
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as Devotional | null;
+  if (data) return data as Devotional;
+  // Sem devocional com active_date até hoje (ex.: antes do início da rotação):
+  // cai para o mais recente publicado, mantendo o comportamento antigo como reserva.
+  const { data: fallback, error: fallbackError } = await supabase
+    .from('devotionals')
+    .select('*')
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (fallbackError) throw fallbackError;
+  return fallback as Devotional | null;
 }
 export async function fetchNextService(): Promise<ChurchEvent | null> {
   const { data, error } = await supabase
