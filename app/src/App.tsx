@@ -16,6 +16,8 @@ import { PrecisoDeOracaoScreen } from './screens/PrecisoDeOracaoScreen';
 import { ProximosPassosScreen } from './screens/ProximosPassosScreen';
 import { DiscipuladoScreen } from './screens/DiscipuladoScreen';
 import { CelulasScreen } from './screens/CelulasScreen';
+import { PlanosScreen } from './screens/PlanosScreen';
+import { PlanoLeituraScreen } from './screens/PlanoLeituraScreen';
 import { QueroServirScreen } from './screens/QueroServirScreen';
 import { BatismoScreen } from './screens/BatismoScreen';
 import { TestemunhosScreen } from './screens/TestemunhosScreen';
@@ -203,6 +205,26 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <CelulasScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/planos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <PlanosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/planos/:planId"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <PlanoLeituraScreen />
                 </AppShell>
               </ProtectedRoute>
             }
