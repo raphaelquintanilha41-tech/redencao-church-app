@@ -231,6 +231,62 @@ export async function fetchNotes(userId: string): Promise<NoteWithVerse[]> {
     }));
 }
 
+// ── Destaques ──────────────────────────────────────────────────────────
+
+export async function fetchHighlightedVerseColors(
+  userId: string,
+  verseIds: number[],
+): Promise<Map<number, string>> {
+  if (verseIds.length === 0) return new Map();
+  const { data, error } = await supabase
+    .from('highlights')
+    .select('verse_id, color')
+    .eq('user_id', userId)
+    .in('verse_id', verseIds);
+  if (error) throw error;
+  return new Map((data ?? []).map((r: { verse_id: number; color: string }) => [r.verse_id, r.color]));
+}
+
+export async function setHighlight(userId: string, verseId: number, color: string): Promise<void> {
+  const { error } = await supabase
+    .from('highlights')
+    .upsert(
+      { user_id: userId, verse_id: verseId, color, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,verse_id' },
+    );
+  if (error) throw error;
+}
+
+export async function removeHighlight(userId: string, verseId: number): Promise<void> {
+  const { error } = await supabase.from('highlights').delete().eq('user_id', userId).eq('verse_id', verseId);
+  if (error) throw error;
+}
+
+export interface HighlightedVerse extends BibleVerse {
+  book_name: string;
+  book_abbrev: string;
+  highlight_color: string;
+  highlighted_at: string;
+}
+
+export async function fetchHighlights(userId: string): Promise<HighlightedVerse[]> {
+  const { data, error } = await supabase
+    .from('highlights')
+    .select('color, updated_at, bible_verses(*, bible_books(name, abbrev))')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? [])
+    .filter((row: any) => row.bible_verses)
+    .map((row: any) => ({
+      ...row.bible_verses,
+      book_name: row.bible_verses.bible_books?.name ?? '',
+      book_abbrev: row.bible_verses.bible_books?.abbrev ?? '',
+      highlight_color: row.color,
+      highlighted_at: row.updated_at,
+    }));
+}
+
 // ── Histórico de leitura ─────────────────────────────────────────────
 
 export async function logReadingHistory(userId: string, bookId: number, chapter: number): Promise<void> {
