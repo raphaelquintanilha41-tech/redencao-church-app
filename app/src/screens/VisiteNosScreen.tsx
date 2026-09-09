@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ADDRESS = 'Beco do Caetaninho 9, Carnaxide, Oeiras - Lisboa';
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`;
+const MAPS_EMBED_URL = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
 const INSTAGRAM_HANDLE = 'redencaochurchportugal';
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
@@ -15,7 +16,14 @@ export function VisiteNosScreen() {
         </button>
         <h1 className="igreja-title">Visite-nos</h1>
       </header>
-      <div className="static-map-placeholder">Mapa</div>
+      <div className="static-map-embed">
+        <iframe
+          title="Mapa de localização da Redenção Church"
+          src={MAPS_EMBED_URL}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
       <section className="card perfil-section">
         <h3 className="home-section-title">Endereço</h3>
         <p className="static-body-text">{ADDRESS}</p>
