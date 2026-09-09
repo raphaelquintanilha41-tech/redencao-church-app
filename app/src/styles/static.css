@@ -48,17 +48,19 @@
   font-size: 13px;
 }
 
-.static-map-placeholder {
+.static-map-embed {
   width: 100%;
-  height: 140px;
+  height: 180px;
   border-radius: var(--radius-card);
   background: var(--color-soft);
-  color: var(--color-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-body);
-  font-size: 13px;
+  overflow: hidden;
+}
+
+.static-map-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
 
 .static-actions-row {
