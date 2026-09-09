@@ -104,12 +104,30 @@ export async function submitTestimony(userId: string, content: string): Promise<
     if (error) throw error;
 }
 // ── Pedidos de oração ────────────────────────────────────────────────
+export interface PrayerRequest {
+    id: string;
+    category: string | null;
+    content: string;
+    is_anonymous: boolean;
+    is_confidential: boolean;
+    status: string;
+    created_at: string;
+}
 export async function submitPrayerRequest(
     userId: string,
     fields: { category: string | null; content: string; is_anonymous: boolean; is_confidential: boolean },
   ): Promise<void> {
     const { error } = await supabase.from('prayer_requests').insert({ user_id: userId, ...fields });
     if (error) throw error;
+}
+export async function fetchMyPrayerRequests(userId: string): Promise<PrayerRequest[]> {
+    const { data, error } = await supabase
+      .from('prayer_requests')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as PrayerRequest[];
 }
 // ── Discipulado ──────────────────────────────────────────────────────
 export interface DiscipleshipTrack {

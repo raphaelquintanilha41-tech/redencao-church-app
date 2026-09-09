@@ -163,7 +163,7 @@ export function PerfilScreen() {
     { label: 'Notas', route: '/notas' },
     { label: 'Destaques', route: '/destaques' },
     { label: 'Histórico', route: '/historico' },
-    { label: 'Pedidos', route: null },
+    { label: 'Pedidos', route: '/pedidos' },
   ];
 
   return (
