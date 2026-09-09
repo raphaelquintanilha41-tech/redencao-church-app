@@ -29,6 +29,7 @@ import { DestaquesScreen } from './screens/DestaquesScreen';
 import { HistoricoScreen } from './screens/HistoricoScreen';
 import { PedidosScreen } from './screens/PedidosScreen';
 import { NotificacoesScreen } from './screens/NotificacoesScreen';
+import { PrivacidadeScreen } from './screens/PrivacidadeScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
@@ -317,6 +318,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <NotificacoesScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/privacidade"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <PrivacidadeScreen />
                 </AppShell>
               </ProtectedRoute>
             }
