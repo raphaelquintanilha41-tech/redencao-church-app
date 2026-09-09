@@ -7,7 +7,7 @@ const logo = '/redencao-logo.jpeg'; // servido de public/ — copie o ficheiro d
 type Mode = 'login' | 'signup';
 
 export function AuthScreen() {
-const { signIn, signUp } = useAuth();
+const { signIn, signUp, signInAsGuest } = useAuth();
 const navigate = useNavigate();
 
 const [mode, setMode] = useState<Mode>('login');
@@ -29,6 +29,20 @@ if (password.length < 6) return 'A palavra-passe deve ter pelo menos 6 caractere
 if (isSignup && password !== confirmPassword) return 'As palavras-passe não coincidem.';
 return null;
 };
+
+const handleGuest = async () => {
+    setError(null);
+    setInfo(null);
+    setSubmitting(true);
+    try {
+      await signInAsGuest();
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(translateAuthError(err instanceof Error ? err.message : String(err)));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
 const handleSubmit = async (e: FormEvent) => {
 e.preventDefault();
@@ -215,14 +229,14 @@ Continuar com Apple
 </div>
 
 <button
-className="btn btn-ghost"
-style={{ alignSelf: 'center' }}
-type="button"
-disabled
-title="Em breve — navegação como visitante ainda não implementada nesta fase."
->
-Continuar como visitante
-</button>
+        className="btn btn-ghost"
+        style={{ alignSelf: 'center' }}
+        type="button"
+        onClick={handleGuest}
+        disabled={submitting}
+      >
+        {submitting ? 'A processar…' : 'Continuar como visitante'}
+      </button>
 </form>
 </div>
 );
