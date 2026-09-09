@@ -27,6 +27,7 @@ import { FavoritosScreen } from './screens/FavoritosScreen';
 import { NotasScreen } from './screens/NotasScreen';
 import { DestaquesScreen } from './screens/DestaquesScreen';
 import { HistoricoScreen } from './screens/HistoricoScreen';
+import { PedidosScreen } from './screens/PedidosScreen';
 import { NotificacoesScreen } from './screens/NotificacoesScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
@@ -296,6 +297,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <HistoricoScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pedidos"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <PedidosScreen />
                 </AppShell>
               </ProtectedRoute>
             }
