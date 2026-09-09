@@ -323,7 +323,7 @@ export function PerfilScreen() {
         <button
           type="button"
           className="perfil-config-row perfil-config-row-btn"
-          onClick={() => showToast('Privacidade chega numa próxima fase.')}
+          onClick={() => navigate('/privacidade')}
         >
           <span>Privacidade</span>
           <ChevronIcon />
