@@ -41,6 +41,47 @@ function formatDuration(seconds: number | null): string {
   return `${m} min`;
 }
 
+function formatIcsDate(d: Date): string {
+  return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function escapeIcsText(s: string): string {
+  return s.replace(/([,;])/g, '\\$1').replace(/\n/g, '\\n');
+}
+
+function downloadEventToCalendar(event: ChurchEvent): void {
+  const start = new Date(event.event_date);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Redenção Church//App//PT',
+    'BEGIN:VEVENT',
+    `UID:${event.id}@redencao-church-app`,
+    `DTSTAMP:${formatIcsDate(new Date())}`,
+    `DTSTART:${formatIcsDate(start)}`,
+    `DTEND:${formatIcsDate(end)}`,
+    `SUMMARY:${escapeIcsText(event.title)}`,
+    event.location ? `LOCATION:${escapeIcsText(event.location)}` : null,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].filter((line): line is string => line !== null);
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${event.title.replace(/[^a-zA-Z0-9]+/g, '-')}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function openEventDirections(event: ChurchEvent): void {
+  const query = encodeURIComponent(event.location || event.title);
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${query}`, '_blank', 'noopener,noreferrer');
+}
+
 export function HomeScreen() {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
@@ -318,14 +359,14 @@ export function HomeScreen() {
                 <button
                   type="button"
                   className="btn-secondary home-verse-btn"
-                  onClick={() => showToast('Adicionar ao calendário chega numa próxima fase.')}
+                  onClick={() => downloadEventToCalendar(nextEvent)}
                 >
                   Calendário
                 </button>
                 <button
                   type="button"
                   className="btn-secondary home-verse-btn"
-                  onClick={() => showToast('Direções chegam numa próxima fase.')}
+                  onClick={() => openEventDirections(nextEvent)}
                 >
                   Direções
                 </button>
