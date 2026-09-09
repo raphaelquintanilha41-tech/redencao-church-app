@@ -31,6 +31,13 @@
     text-transform: uppercase;
 }
 
+.agenda-card-image {
+    width: 100%;
+    border-radius: var(--radius-card);
+    display: block;
+    object-fit: cover;
+}
+
 .agenda-card-category {
     align-self: flex-start;
     font-family: var(--font-body);

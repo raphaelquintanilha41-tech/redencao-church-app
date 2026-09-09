@@ -111,6 +111,9 @@ export function AgendaScreen() {
             const isRegistered = registered.has(ev.id);
             return (
               <div key={ev.id} className="card agenda-card">
+                {ev.image_url && (
+                  <img className="agenda-card-image" src={ev.image_url} alt={ev.title} loading="lazy" />
+                )}
                 <div className="agenda-card-date">{formatEventDate(ev.event_date)}</div>
                 <div className="home-event-title">{ev.title}</div>
                 {ev.location && <div className="home-event-meta">{ev.location}</div>}
