@@ -23,7 +23,8 @@ return 'Confirme o seu e-mail antes de entrar — verifique a sua caixa de entra
 }
 if (m.includes('rate limit')) {
 return 'Muitas tentativas seguidas. Aguarde um momento e tente novamente.';
-if (m.includes('anonymous sign-ins are disabled') || m.includes('anonymous_provider_disabled'))
+}
+if (m.includes('anonymous sign-ins are disabled') || m.includes('anonymous_provider_disabled')) {
 return 'O login como visitante ainda não está ativado neste projeto. Contacte o administrador da aplicação.';
 }
 if (m.includes('same password') || m.includes('should be different')) {
