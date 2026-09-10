@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabaseClient';
 import { updateOwnProfile, uploadAvatar } from '../lib/profiles';
 import { fetchStreak, fetchUpcomingRegisteredCount } from '../lib/profile-stats';
 import { fetchActiveReadingPlanProgress } from '../lib/home';
@@ -27,6 +28,7 @@ export function PerfilScreen() {
   const [installState, setInstallState] = useState<InstallState>('unknown');
   const [pushState, setPushState] = useState<PushSubscriptionState>('unsupported');
   const [pushBusy, setPushBusy] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const firstName = (profile?.full_name ?? user?.email ?? '').split(' ')[0];
 
@@ -165,6 +167,24 @@ export function PerfilScreen() {
     { label: 'Histórico', route: '/historico' },
     { label: 'Pedidos', route: '/pedidos' },
   ];
+
+const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      'Tem a certeza que quer eliminar a sua conta? Esta ação é irreversível: o seu perfil, pedidos de oração, destaques, notas, favoritos, inscrições e todo o histórico serão permanentemente apagados.',
+    );
+    if (!confirmed) return;
+    setDeletingAccount(true);
+    try {
+      const { error } = await supabase.functions.invoke('delete-account');
+      if (error) throw error;
+      await signOut();
+      navigate('/auth', { replace: true });
+    } catch (err) {
+      console.error('[PerfilScreen] falha ao eliminar conta:', err);
+      showToast('Não foi possível eliminar a conta. Tente novamente ou contacte a liderança.');
+      setDeletingAccount(false);
+    }
+  };
 
   return (
     <div className="perfil-screen">
@@ -356,11 +376,10 @@ export function PerfilScreen() {
       <button
         type="button"
         className="perfil-delete-account-btn"
-        onClick={() =>
-          showToast('Excluir conta exige uma etapa de servidor separada, ainda não configurada.')
-        }
+        onClick={handleDeleteAccount}
+        disabled={deletingAccount}
       >
-        Excluir conta
+        {deletingAccount ? 'A eliminar…' : 'Excluir conta'}
       </button>
 
       {toast && <div className="rc-toast">{toast}</div>}
