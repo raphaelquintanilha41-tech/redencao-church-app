@@ -33,6 +33,12 @@ return 'A nova palavra-passe deve ser diferente da atual.';
 if (m.includes('failed to fetch') || m.includes('networkerror')) {
 return 'Sem ligação ao servidor. Verifique a sua internet e tente novamente.';
 }
+if (m.includes('provider is not enabled') || m.includes('unsupported provider')) {
+return 'O login com Google ainda não está disponível. Tente novamente mais tarde ou use e-mail e palavra-passe.';
+}
+if (m.includes('access_denied')) {
+return 'Início de sessão com Google cancelado.';
+}
 
 return message;
 }
