@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { translateAuthError } from '../lib/authErrors';
@@ -7,7 +7,7 @@ const logo = '/redencao-logo.jpeg'; // servido de public/ — copie o ficheiro d
 type Mode = 'login' | 'signup';
 
 export function AuthScreen() {
-const { signIn, signUp, signInAsGuest } = useAuth();
+const { session, loading, signIn, signUp, signInAsGuest, signInWithGoogle } = useAuth();
 const navigate = useNavigate();
 
 const [mode, setMode] = useState<Mode>('login');
@@ -18,6 +18,25 @@ const [confirmPassword, setConfirmPassword] = useState('');
 const [error, setError] = useState<string | null>(null);
 const [info, setInfo] = useState<string | null>(null);
 const [submitting, setSubmitting] = useState(false);
+
+// Already signed in (e.g. just back from Google with ?code=, or from the
+// signup confirmation e-mail link) — go straight to Home.
+useEffect(() => {
+  if (!loading && session) navigate('/', { replace: true });
+}, [loading, session, navigate]);
+
+// OAuth failures come back on this URL as ?error=…&error_description=…
+// (or in the #hash). Surface them once instead of showing a blank form.
+useEffect(() => {
+  const search = new URLSearchParams(window.location.search);
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const desc = search.get('error_description') ?? hash.get('error_description');
+  const code = search.get('error') ?? hash.get('error');
+  if (desc || code) {
+    setError(translateAuthError((desc ?? code ?? '').replace(/\+/g, ' ')));
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+}, []);
 
 const isSignup = mode === 'signup';
 const heading = isSignup ? 'Criar conta' : 'Entrar';
@@ -40,6 +59,19 @@ const handleGuest = async () => {
     } catch (err) {
       setError(translateAuthError(err instanceof Error ? err.message : String(err)));
     } finally {
+      setSubmitting(false);
+    }
+  };
+
+const handleGoogle = async () => {
+    setError(null);
+    setInfo(null);
+    setSubmitting(true);
+    try {
+      await signInWithGoogle();
+      // No navigate() here: the browser is being redirected to Google.
+    } catch (err) {
+      setError(translateAuthError(err instanceof Error ? err.message : String(err)));
       setSubmitting(false);
     }
   };
@@ -213,8 +245,8 @@ ou
 <button
 className="btn btn-secondary btn-block"
 type="button"
-disabled
-title="Em breve — login social ainda não implementado nesta fase."
+onClick={handleGoogle}
+disabled={submitting}
 >
 Continuar com Google
 </button>

@@ -13,6 +13,7 @@ interface AuthContextValue {
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInAsGuest: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
@@ -28,6 +29,11 @@ const PASSWORD_RESET_REDIRECT = `${window.location.origin}/reset-password`;
 // explicitly instead of relying only on the Supabase dashboard's "Site URL",
 // which is a single fixed value and breaks across Vercel preview deploys.
 const EMAIL_CONFIRM_REDIRECT = `${window.location.origin}/auth`;
+
+// Where Google (OAuth) sends the user back to. /auth is already in the
+// Supabase "Redirect URLs" allow-list; AuthScreen forwards to Home as soon
+// as the session created from the ?code= is detected.
+const OAUTH_REDIRECT = `${window.location.origin}/auth`;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -97,6 +103,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signInAsGuest: async () => {
         const { error } = await supabase.auth.signInAnonymously();
+        if (error) throw error;
+      },
+      signInWithGoogle: async () => {
+        // Full-page redirect to Google; the promise resolves before the
+        // browser leaves, so callers must not navigate() afterwards.
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: OAUTH_REDIRECT },
+        });
         if (error) throw error;
       },
       signOut: async () => {
