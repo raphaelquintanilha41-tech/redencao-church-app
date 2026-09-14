@@ -120,6 +120,10 @@ export function BibliaIndiceScreen() {
               ))}
             </div>
           )}
+          {/* Attribution required by the CC BY 3.0 BR licence of the Bible text in use. */}
+          <p className="home-event-meta biblia-credit">
+            Texto bíblico: Bíblia Livre (biblialivre.org), licença Creative Commons Atribuição 3.0 Brasil.
+          </p>
         </>
       )}
     </div>
