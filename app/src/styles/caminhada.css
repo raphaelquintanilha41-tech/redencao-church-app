@@ -141,3 +141,23 @@
     border-radius: var(--radius-card);
     text-align: center;
 }
+
+/* ── Devocionais (lista de planos) ─────────────────────────────── */
+.planos-card-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.planos-card-image {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  border-radius: 18px;
+  object-fit: cover;
+  display: block;
+}
+
+.planos-card-text {
+  min-width: 0;
+}
