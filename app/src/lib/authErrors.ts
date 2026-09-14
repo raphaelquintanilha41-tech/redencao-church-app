@@ -39,6 +39,9 @@ return 'O login com Google ainda não está disponível. Tente novamente mais ta
 if (m.includes('access_denied')) {
 return 'Início de sessão com Google cancelado.';
 }
+if (m.includes('unable to exchange external code') || m.includes('server_error')) {
+return 'Não foi possível concluir o login com Google. Tente novamente; se persistir, use e-mail e palavra-passe e avise o administrador.';
+}
 
 return message;
 }
