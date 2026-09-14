@@ -241,6 +241,9 @@ ou
 <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
 </div>
 
+{/* Apple login intentionally not rendered: it requires a paid Apple Developer
+   account + Services ID/JWT secret in Supabase. Re-add the button only once
+   the provider is fully configured (see the standing rule for social logins). */}
 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 <button
 className="btn btn-secondary btn-block"
@@ -249,14 +252,6 @@ onClick={handleGoogle}
 disabled={submitting}
 >
 Continuar com Google
-</button>
-<button
-className="btn btn-secondary btn-block"
-type="button"
-disabled
-title="Em breve — login social ainda não implementado nesta fase."
->
-Continuar com Apple
 </button>
 </div>
 
