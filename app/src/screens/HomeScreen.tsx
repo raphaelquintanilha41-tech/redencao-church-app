@@ -374,14 +374,14 @@ export function HomeScreen() {
             </section>
           )}
 
-          {/* Continue sua caminhada */}
+          {/* Devocional (plano de leitura em curso) */}
           {plan && (
             <button
               type="button"
               className="card home-section home-devotional-card-btn"
               onClick={() => navigate(`/planos/${plan.plan.id}`)}
             >
-              <h3 className="home-section-title">Continue sua caminhada</h3>
+              <h3 className="home-section-title">Devocional</h3>
               <div className="home-plan-title">{plan.plan.title}</div>
               <div className="home-progress-track">
                 <div
