@@ -33,7 +33,7 @@ export function PlanosScreen() {
         <button type="button" className="biblia-back-btn" onClick={() => navigate('/')}>
           ← Início
         </button>
-        <h1 className="igreja-title">Planos de leitura</h1>
+        <h1 className="igreja-title">Devocionais</h1>
       </header>
       <p className="static-body-text">
         Trilhas de leitura guiada, dia a dia, para conhecer a vida de Jesus ou aprofundar um tema específico da sua
@@ -52,10 +52,17 @@ export function PlanosScreen() {
           const completed = !!progress && progress.current_day >= plan.total_days;
           const pct = progress ? Math.min(100, Math.round((progress.current_day / plan.total_days) * 100)) : 0;
           return (
-            <section key={plan.id} className="card caminhada-cell-card">
-              <div className="home-plan-title">{plan.title}</div>
+            <section key={plan.id} className="card caminhada-cell-card planos-card">
+              <div className="planos-card-head">
+                {plan.image_url && (
+                  <img className="planos-card-image" src={plan.image_url} alt="" aria-hidden="true" loading="lazy" />
+                )}
+                <div className="planos-card-text">
+                  <div className="home-plan-title">{plan.title}</div>
+                  <div className="home-event-meta">{plan.total_days} dias</div>
+                </div>
+              </div>
               {plan.description && <p className="static-body-text">{plan.description}</p>}
-              <div className="home-event-meta">{plan.total_days} dias</div>
               {started && (
                 <>
                   <div className="home-progress-track">

@@ -381,7 +381,7 @@ export function HomeScreen() {
               className="card home-section home-devotional-card-btn"
               onClick={() => navigate(`/planos/${plan.plan.id}`)}
             >
-              <h3 className="home-section-title">Devocional</h3>
+              <h3 className="home-section-title">Devocionais</h3>
               <div className="home-plan-title">{plan.plan.title}</div>
               <div className="home-progress-track">
                 <div
