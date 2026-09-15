@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchMyNewcomerContact, submitNewcomerContact, type NewcomerContact } from '../lib/newcomer';
+import { fetchServiceSchedule } from '../lib/schedule';
 
 const COMO_CONHECEU = ['Indicação de um amigo', 'Instagram', 'Google', 'Passando na rua', 'Outro'];
 
@@ -20,6 +21,20 @@ export function SouNovoAquiScreen() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [schedule, setSchedule] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchServiceSchedule()
+      .then((s) => mounted && setSchedule(s))
+      .catch((err) => {
+        console.error('[SouNovoAquiScreen] falha ao carregar horários:', err);
+        if (mounted) setSchedule([]);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -73,8 +88,17 @@ export function SouNovoAquiScreen() {
 
       <section className="card perfil-section">
         <h3 className="home-section-title">Horários dos cultos</h3>
-        <div className="home-event-title">Quintas-feiras, 20h</div>
-        <div className="home-event-title">Domingos, 10h</div>
+        {schedule === null ? (
+          <p className="home-event-meta">A carregar…</p>
+        ) : schedule.length === 0 ? (
+          <p className="home-event-meta">Consulte a Agenda para os próximos cultos.</p>
+        ) : (
+          schedule.map((line) => (
+            <div key={line} className="home-event-title">
+              {line}
+            </div>
+          ))
+        )}
       </section>
 
       <section className="card perfil-section">
