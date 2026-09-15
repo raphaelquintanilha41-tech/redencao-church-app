@@ -116,6 +116,40 @@ export function parseVerseReference(reference: string): ParsedReference | null {
   };
 }
 
+export interface ChapterReference {
+  book: BibleBook;
+  chapter: number;
+  verse: number | null;
+}
+
+const normalizeName = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+/**
+ * Reconhece referências digitadas na busca — "João 3", "João 3:16", "1 Co 13",
+ * "sl 23" — contra a lista de livros carregada (nome completo, abreviatura ou
+ * prefixo do nome, sem acentos/maiúsculas). Devolve null se não for referência.
+ */
+export function parseChapterReference(query: string, books: BibleBook[]): ChapterReference | null {
+  const match = query.trim().match(/^(\d?\s*[^\d:]+?)\s*(\d+)(?:[:.,]\s*(\d+))?$/u);
+  if (!match) return null;
+  const [, rawBook, chapterStr, verseStr] = match;
+  const wanted = normalizeName(rawBook);
+  if (!wanted) return null;
+  const book =
+    books.find((b) => normalizeName(b.name) === wanted || normalizeName(b.abbrev) === wanted) ??
+    books.find((b) => normalizeName(b.name).startsWith(wanted));
+  if (!book) return null;
+  const chapter = parseInt(chapterStr, 10);
+  if (!chapter || (book.chapter_count && chapter > book.chapter_count)) return null;
+  return { book, chapter, verse: verseStr ? parseInt(verseStr, 10) : null };
+}
+
 // ── Favoritos ──────────────────────────────────────────────────────────
 
 export async function fetchFavoritedVerseIds(userId: string, verseIds: number[]): Promise<Set<number>> {
