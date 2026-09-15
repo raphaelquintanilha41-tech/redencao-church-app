@@ -66,8 +66,8 @@ export function DiscipuladoScreen() {
       ) : tracks.length === 0 ? (
         <div className="caminhada-empty-state">
           <p className="static-body-text">
-            As turmas de discipulado ainda não foram cadastradas nesta tela. Assim que a lista real (turma, líder,
-            dia/horário) estiver disponível, ela aparece aqui.
+            Em breve: as turmas de discipulado vão aparecer aqui, com líder, dia e horário. Enquanto isso, fale com a
+            liderança no culto.
           </p>
         </div>
       ) : (

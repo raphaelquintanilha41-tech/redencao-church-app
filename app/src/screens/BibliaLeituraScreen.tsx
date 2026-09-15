@@ -100,7 +100,10 @@ export function BibliaLeituraScreen() {
     return () => {
       mounted = false;
     };
-  }, [bookAbbrev, chapter, user]);
+    // Depender de `user?.id` (e não do objeto `user`): cada refresh de token cria
+    // um novo objeto e recarregava o capítulo, limpava a seleção e duplicava o
+    // registo em reading_history.
+  }, [bookAbbrev, chapter, user?.id]);
 
   const toggleFavorite = async (verseId: number) => {
     if (!user) return;
@@ -216,10 +219,14 @@ export function BibliaLeituraScreen() {
   const copyVerse = (v: BibleVerse) => {
     const ref = `${book?.name} ${v.chapter}:${v.verse}`;
     const content = `"${v.text.trim()}" — ${ref}`;
-    navigator.clipboard
-      ?.writeText(content)
-      .then(() => showToast('Versículo copiado.'))
-      .catch(() => showToast('Não foi possível copiar.'));
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(content)
+        .then(() => showToast('Versículo copiado.'))
+        .catch(() => showToast('Não foi possível copiar.'));
+    } else {
+      showToast('Não foi possível copiar neste navegador.');
+    }
     setSelectedVerse(null);
   };
 
@@ -233,8 +240,12 @@ export function BibliaLeituraScreen() {
         // usuário cancelou o compartilhamento — sem ação necessária.
       }
     } else {
-      navigator.clipboard?.writeText(content);
-      showToast('Compartilhamento não suportado aqui — copiado para a área de transferência.');
+      try {
+        await navigator.clipboard.writeText(content);
+        showToast('Compartilhamento não suportado aqui — copiado para a área de transferência.');
+      } catch {
+        showToast('Compartilhamento não suportado neste navegador.');
+      }
     }
     setSelectedVerse(null);
   };

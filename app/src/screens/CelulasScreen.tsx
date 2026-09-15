@@ -72,8 +72,8 @@ export function CelulasScreen() {
       ) : groups.length === 0 ? (
         <div className="caminhada-empty-state">
           <p className="static-body-text">
-            As células ainda não foram cadastradas nesta tela. Assim que a lista real (líder, dia/horário, região)
-            estiver disponível, ela aparece aqui.
+            Em breve: as células da Redenção Church vão aparecer aqui, com líder, dia e zona. Enquanto isso, fale
+            conosco no culto ou pelo Instagram.
           </p>
         </div>
       ) : (

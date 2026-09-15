@@ -25,8 +25,12 @@ export function GenerosidadeScreen() {
   };
 
   const copy = (label: string, value: string) => {
+    if (!navigator.clipboard) {
+      showToast('Não foi possível copiar neste navegador.');
+      return;
+    }
     navigator.clipboard
-      ?.writeText(value)
+      .writeText(value)
       .then(() => showToast(`${label} copiado.`))
       .catch(() => showToast('Não foi possível copiar.'));
   };
