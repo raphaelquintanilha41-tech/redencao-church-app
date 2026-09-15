@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchServiceSchedule } from '../lib/schedule';
 
 const ADDRESS = 'Beco do Caetaninho 9, Carnaxide, Oeiras - Lisboa';
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`;
@@ -8,6 +10,19 @@ const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
 export function VisiteNosScreen() {
   const navigate = useNavigate();
+  const [schedule, setSchedule] = useState<string[] | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchServiceSchedule()
+      .then((s) => mounted && setSchedule(s))
+      .catch((err) => {
+        console.error('[VisiteNos] falha ao carregar horários:', err);
+        if (mounted) setSchedule([]);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
   return (
     <div className="static-screen">
       <header className="igreja-header">
@@ -30,8 +45,17 @@ export function VisiteNosScreen() {
       </section>
       <section className="card perfil-section">
         <h3 className="home-section-title">Horários</h3>
-        <div className="home-event-title">Quintas-feiras, 20h</div>
-        <div className="home-event-title">Domingos, 10h</div>
+        {schedule === null ? (
+          <p className="home-event-meta">A carregar…</p>
+        ) : schedule.length === 0 ? (
+          <p className="home-event-meta">Consulte a Agenda para os próximos cultos.</p>
+        ) : (
+          schedule.map((line) => (
+            <div key={line} className="home-event-title">
+              {line}
+            </div>
+          ))
+        )}
       </section>
       <div className="static-actions-row">
         <a className="btn-primary static-action-link" href={MAPS_URL} target="_blank" rel="noopener noreferrer">

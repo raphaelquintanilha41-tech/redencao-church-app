@@ -452,11 +452,17 @@ export function HomeScreen() {
               <h3 className="home-section-title home-carousel-title">Acontecendo na Redenção</h3>
               <div className="home-carousel">
                 {events.map((ev) => (
-                  <div key={ev.id} className="home-carousel-card">
+                  <button
+                    key={ev.id}
+                    type="button"
+                    className="home-carousel-card"
+                    onClick={() => navigate('/agenda')}
+                    aria-label={`Ver ${ev.title} na agenda`}
+                  >
                     <div className="home-carousel-date">{formatEventDate(ev.event_date)}</div>
                     <div className="home-carousel-event-title">{ev.title}</div>
                     {ev.location && <div className="home-carousel-location">{ev.location}</div>}
-                  </div>
+                  </button>
                 ))}
               </div>
             </section>

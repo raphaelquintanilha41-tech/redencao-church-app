@@ -335,14 +335,6 @@ const handleDeleteAccount = async () => {
         <button
           type="button"
           className="perfil-config-row perfil-config-row-btn"
-          onClick={() => showToast('O tamanho da fonte da Bíblia já é salvo automaticamente ao ajustar A-/A+ na leitura.')}
-        >
-          <span>Bíblia</span>
-          <ChevronIcon />
-        </button>
-        <button
-          type="button"
-          className="perfil-config-row perfil-config-row-btn"
           onClick={() => navigate('/privacidade')}
         >
           <span>Privacidade</span>
