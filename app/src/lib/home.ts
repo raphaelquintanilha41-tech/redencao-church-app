@@ -1,5 +1,6 @@
 import { fetchBookByName, fetchVerseRange, parseVerseReference } from './bible';
 import { supabase } from './supabaseClient';
+import { localDateKey } from './dates';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -13,7 +14,7 @@ export async function fetchDailyVerse(): Promise<DailyVerse | null> {
   const { data, error } = await supabase
     .from('daily_verses')
     .select('*')
-    .lte('active_date', new Date().toISOString().slice(0, 10))
+    .lte('active_date', localDateKey())
     .order('active_date', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -51,7 +52,7 @@ export async function fetchRecommendedDevotional(): Promise<Devotional | null> {
   const { data, error } = await supabase
     .from('devotionals')
     .select('*')
-    .lte('active_date', new Date().toISOString().slice(0, 10))
+    .lte('active_date', localDateKey())
     .order('active_date', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -137,7 +138,7 @@ export async function fetchActiveReadingPlanProgress(
   };
 }
 export async function fetchTodayProgress(userId: string): Promise<UserDailyProgress | null> {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   const { data, error } = await supabase
     .from('user_daily_progress')
     .select('*')
@@ -151,7 +152,7 @@ export async function markTodayProgress(
   userId: string,
   patch: Partial<Pick<UserDailyProgress, 'read_bible' | 'did_devotional'>>,
 ): Promise<UserDailyProgress> {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   const { data, error } = await supabase
     .from('user_daily_progress')
     .upsert(
