@@ -349,3 +349,7 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.biblia-search-result-ref {
+  border-color: var(--color-accent, #d6b473);
+}
