@@ -55,7 +55,7 @@ export function QueroServirScreen() {
       ) : ministries.length === 0 ? (
         <div className="caminhada-empty-state">
           <p className="static-body-text">
-            A lista de ministérios ainda não foi cadastrada. Assim que estiver disponível, aparece aqui.
+            Em breve: os ministérios da Redenção Church vão aparecer aqui.
           </p>
         </div>
       ) : (

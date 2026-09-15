@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { localDateKey } from './dates';
 
 /**
  * Sequência de dias consecutivos (streak) com pelo menos leitura da Bíblia
@@ -22,7 +23,7 @@ export async function fetchStreak(userId: string): Promise<number> {
   let streak = 0;
   const cursor = new Date();
   for (;;) {
-    const key = cursor.toISOString().slice(0, 10);
+    const key = localDateKey(cursor);
     if (activeDates.has(key)) {
       streak += 1;
       cursor.setDate(cursor.getDate() - 1);

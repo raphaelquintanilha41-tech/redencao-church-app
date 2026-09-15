@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { localDateKey } from './dates';
 // ── Caminhando com Deus ──────────────────────────────────────────────
 export interface DayProgress {
     date: string;
@@ -10,7 +11,7 @@ export async function fetchWeekProgress(userId: string): Promise<DayProgress[]> 
     for (let i = 6; i >= 0; i--) {
           const d = new Date(today);
           d.setDate(d.getDate() - i);
-          days.push(d.toISOString().slice(0, 10));
+          days.push(localDateKey(d));
     }
     const { data, error } = await supabase
       .from('user_daily_progress')

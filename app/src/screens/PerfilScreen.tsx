@@ -370,7 +370,7 @@ const handleDeleteAccount = async () => {
       </section>
 
       {/* Conta */}
-      <button className="btn-secondary perfil-signout-btn" onClick={() => signOut()}>
+      <button className="btn-secondary perfil-signout-btn" onClick={() => signOut().catch(() => showToast('Não foi possível sair agora. Verifique a ligação e tente novamente.'))}>
         Sair da conta
       </button>
       <button
