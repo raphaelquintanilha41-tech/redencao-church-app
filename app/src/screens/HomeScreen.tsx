@@ -509,7 +509,7 @@ export function HomeScreen() {
             type="button"
             className="home-video-modal-close"
             aria-label="Fechar"
-            onClick={() => setVideoOpen(false)}
+           onClick={() => setVideoOpen(false)}
           >
             <CloseIcon />
           </button>
