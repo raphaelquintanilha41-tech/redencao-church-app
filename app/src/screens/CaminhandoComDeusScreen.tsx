@@ -36,7 +36,7 @@ export function CaminhandoComDeusScreen() {
       mounted = false;
     };
   }, [user]);
-  const concluir = async () => {h
+  const concluir = async () => {
     if (!user) return;
     try {
       const updated = await markTodayProgress(user.id, { did_devotional: true });
