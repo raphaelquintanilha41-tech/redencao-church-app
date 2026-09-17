@@ -307,6 +307,25 @@
     font: inherit;
     color: inherit;
 }
+.home-devotional-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+.home-devotional-card-share {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-circle);
+    background: var(--color-soft);
+    border: none;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 .home-devotional-modal {
     position: fixed;
     inset: 0;
