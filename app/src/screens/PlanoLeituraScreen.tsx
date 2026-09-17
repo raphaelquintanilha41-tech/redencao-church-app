@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchPlanById, fetchPlanDay, fetchPlanProgress, setPlanProgress } from '../lib/plans';
+import { fetchAllPlans, fetchPlanById, fetchPlanDay, fetchPlanProgress, setPlanProgress } from '../lib/plans';
 import type { ReadingPlan, ReadingPlanDay, UserPlanProgress } from '../lib/types';
 
 export function PlanoLeituraScreen() {
@@ -17,11 +17,19 @@ export function PlanoLeituraScreen() {
   const [loadingDay, setLoadingDay] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [allPlans, setAllPlans] = useState<ReadingPlan[]>([]);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
   };
+
+  // Carrega todos os planos para o seletor.
+  useEffect(() => {
+    fetchAllPlans()
+      .then(setAllPlans)
+      .catch(() => { /* silently ignore */ });
+  }, []);
 
   // Carrega o plano e o progresso do usuário, define em qual dia abrir.
   useEffect(() => {
@@ -119,6 +127,26 @@ export function PlanoLeituraScreen() {
         </button>
         <h1 className="igreja-title">{plan.title}</h1>
       </header>
+
+      {allPlans.length > 1 && (
+        <div className="plan-switcher-section">
+          <div className="plan-switcher-scroll">
+            {allPlans.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={`plan-switcher-card${p.id === planId ? ' plan-switcher-card--active' : ''}`}
+                onClick={() => p.id !== planId && navigate(`/planos/${p.id}`)}
+              >
+                {p.image_url && (
+                  <img src={p.image_url} alt="" aria-hidden="true" className="plan-switcher-thumb" loading="lazy" />
+                )}
+                <span className="plan-switcher-label">{p.title}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="home-progress-track">
         <div className="home-progress-fill" style={{ width: `${pct}%` }} />
