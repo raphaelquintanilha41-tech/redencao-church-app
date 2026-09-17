@@ -10,6 +10,12 @@ export function PlanosScreen() {
   const [plans, setPlans] = useState<ReadingPlan[]>([]);
   const [progressByPlan, setProgressByPlan] = useState<Map<string, UserPlanProgress>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -26,6 +32,25 @@ export function PlanosScreen() {
       mounted = false;
     };
   }, [user]);
+
+  const handleSharePlan = async (plan: ReadingPlan) => {
+    const url = `${window.location.origin}/planos/${plan.id}`;
+    const shareText = `${plan.title}\n\n${plan.description ?? ''}\n\n— Redenção Church`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: plan.title, text: shareText, url });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        showToast('Ligação copiada para a área de transferência.');
+      } else {
+        showToast('Partilha não suportada neste navegador.');
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        showToast('Não foi possível partilhar agora.');
+      }
+    }
+  };
 
   return (
     <div className="static-screen">
@@ -61,6 +86,14 @@ export function PlanosScreen() {
                   <div className="home-plan-title">{plan.title}</div>
                   <div className="home-event-meta">{plan.total_days} dias</div>
                 </div>
+                <button
+                  type="button"
+                  className="home-devotional-card-share"
+                  aria-label={`Partilhar plano ${plan.title}`}
+                  onClick={(e) => { e.stopPropagation(); void handleSharePlan(plan); }}
+                >
+                  <ShareIcon />
+                </button>
               </div>
               {plan.description && <p className="static-body-text">{plan.description}</p>}
               {started && (
@@ -80,6 +113,17 @@ export function PlanosScreen() {
           );
         })
       )}
+      {toast && <div className="rc-toast">{toast}</div>}
     </div>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 7.5L12 3l4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
