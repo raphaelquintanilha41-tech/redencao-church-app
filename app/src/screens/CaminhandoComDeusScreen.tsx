@@ -50,6 +50,24 @@ export function CaminhandoComDeusScreen() {
       showToast(`Falha ao salvar: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
+  const handleShare = async () => {
+    if (!devotional) return;
+    const shareText = `"${devotional.summary}"\n\n— ${devotional.title}\n\nRedenção Church`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: devotional.title, text: shareText });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareText);
+        showToast('Devocional copiado para a área de transferência.');
+      } else {
+        showToast('Partilha não é suportada neste navegador.');
+      }
+    } catch (err) {
+     if (err instanceof Error && err.name !== 'AbortError') {
+        showToast('Não foi possível partilhar agora.');
+      }
+    }
+  };
   return (
     <div className="static-screen">
       <header className="igreja-header">
@@ -72,7 +90,17 @@ export function CaminhandoComDeusScreen() {
       </section>
       {devotional && (
         <section className="card perfil-section">
-          <h3 className="home-section-title">Devocional de hoje</h3>
+          <div className="home-devotional-card-header">
+            <h3 className="home-section-title">Devocional de hoje</h3>
+            <button
+              type="button"
+              className="home-devotional-card-share"
+              aria-label="Partilhar devocional"
+              onClick={handleShare}
+            >
+              <ShareIcon />
+            </button>
+          </div>
           <div className="home-plan-title">{devotional.title}</div>
           <p className="static-body-text">{devotional.summary}</p>
           {devotional.duration_minutes && (
@@ -89,5 +117,15 @@ export function CaminhandoComDeusScreen() {
       )}
       {toast && <div className="rc-toast">{toast}</div>}
     </div>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 7.5L12 3l4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }

@@ -30,7 +30,7 @@ const logo = '/redencao-logo.jpeg';
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString('pt-PT', { weekday: 'short', day: '2-digit', month: 'short' }) +
-    ' Â· ' +
+    ' · ' +
     d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -55,7 +55,7 @@ function downloadEventToCalendar(event: ChurchEvent): void {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//RedenÃ§Ã£o Church//App//PT',
+    'PRODID:-//Redenção Church//App//PT',
     'BEGIN:VEVENT',
     `UID:${event.id}@redencao-church-app`,
     `DTSTAMP:${formatIcsDate(new Date())}`,
@@ -133,7 +133,7 @@ export function HomeScreen() {
       .catch((err) => {
         // eslint-disable-next-line no-console
         console.error('[HomeScreen] falha ao carregar dados:', err);
-        showToast('NÃ£o foi possÃ­vel carregar todo o conteÃºdo agora.');
+        showToast('Não foi possível carregar todo o conteúdo agora.');
       })
       .finally(() => mounted && setLoading(false));
 
@@ -147,7 +147,7 @@ export function HomeScreen() {
     let mounted = true;
     fetchUnreadNotificationCount(user.id)
       .then((n) => mounted && setUnreadNotifications(n))
-      .catch((err) => console.error('[HomeScreen] falha ao carregar notificaÃ§Ãµes:', err));
+      .catch((err) => console.error('[HomeScreen] falha ao carregar notificações:', err));
     return () => {
       mounted = false;
     };
@@ -175,7 +175,7 @@ export function HomeScreen() {
           setVerseFavorited(false);
         }
       })
-      .catch((err) => console.error('[HomeScreen] falha ao resolver referÃªncia do versÃ­culo:', err));
+      .catch((err) => console.error('[HomeScreen] falha ao resolver referência do versículo:', err));
     return () => {
       mounted = false;
     };
@@ -197,22 +197,22 @@ export function HomeScreen() {
 
   const handleShareVerse = async () => {
     if (!verse) return;
-    const shareText = `"${verse.text}"\n${verse.reference}\n\nRedenÃ§Ã£o Church`;
+    const shareText = `"${verse.text}"\n${verse.reference}\n\nRedenção Church`;
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'Palavra do dia â RedenÃ§Ã£o Church',
+          title: 'Palavra do dia — Redenção Church',
           text: shareText,
         });
       } else if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareText);
-        showToast('VersÃ­culo copiado para a Ã¡rea de transferÃªncia.');
+        showToast('Versículo copiado para a área de transferência.');
       } else {
-        showToast('Compartilhamento nÃ£o Ã© suportado neste navegador.');
+        showToast('Compartilhamento não é suportado neste navegador.');
       }
     } catch (err) {
       if (err instanceof Error && err.name !== 'AbortError') {
-        showToast('NÃ£o foi possÃ­vel compartilhar agora.');
+        showToast('Não foi possível compartilhar agora.');
       }
     }
   };
@@ -238,7 +238,7 @@ export function HomeScreen() {
 
   const handleReadChapter = () => {
     if (!verseRef) {
-      showToast('NÃ£o foi possÃ­vel localizar este versÃ­culo na BÃ­blia.');
+      showToast('Não foi possível localizar este versículo na Bíblia.');
       return;
     }
     navigate(`/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}`);
@@ -247,7 +247,7 @@ export function HomeScreen() {
   const handleSaveVerse = async () => {
     if (!user) return;
     if (!verseRef) {
-      showToast('NÃ£o foi possÃ­vel localizar este versÃ­culo na BÃ­blia.');
+      showToast('Não foi possível localizar este versículo na Bíblia.');
       return;
     }
     try {
@@ -277,7 +277,7 @@ export function HomeScreen() {
         did_devotional: true,
       });
       setDailyProgress(updated);
-      showToast('Devocional marcado como concluÃ­do.');
+      showToast('Devocional marcado como concluído.');
       setDevotionalOpen(false);
     } catch (err) {
       showToast(`Falha ao guardar: ${err instanceof Error ? err.message : String(err)}`);
@@ -289,19 +289,19 @@ export function HomeScreen() {
   return (
     <div className="home-screen">
       <header className="home-header">
-        <img src={logo} alt="RedenÃ§Ã£o Church" className="home-header-logo" />
+        <img src={logo} alt="Redenção Church" className="home-header-logo" />
         <div className="home-header-greeting">
-          <div className="home-header-name">OlÃ¡, {firstName || 'membro'}</div>
+          <div className="home-header-name">Olá, {firstName || 'membro'}</div>
           <div className="home-header-tagline">Que a Palavra conduza o seu dia.</div>
         </div>
-        <Link to="/notificacoes" className="home-header-icon-btn" aria-label="NotificaÃ§Ãµes">
+        <Link to="/notificacoes" className="home-header-icon-btn" aria-label="Notificações">
           <BellIcon />
           {unreadNotifications > 0 && <span className="home-notif-badge" />}
         </Link>
       </header>
 
       {loading ? (
-        <div className="home-loading">A carregarâ¦</div>
+        <div className="home-loading">A carregar…</div>
       ) : (
         <div className="home-content">
           {/* Palavra do dia */}
@@ -311,20 +311,20 @@ export function HomeScreen() {
               <button
                 type="button"
                 className="home-verse-share-btn"
-                aria-label="Compartilhar versÃ­culo"
+                aria-label="Compartilhar versículo"
                 onClick={handleShareVerse}
               >
                 <ShareIcon />
               </button>
             </div>
-            <p className="home-verse-text">"{verse?.text ?? 'Sem versÃ­culo disponÃ­vel hoje.'}"</p>
+            <p className="home-verse-text">"{verse?.text ?? 'Sem versículo disponível hoje.'}"</p>
             {verse && <span className="home-verse-ref">{verse.reference}</span>}
             <div className="home-verse-actions">
               <button type="button" className="btn-secondary home-verse-btn" onClick={handleSaveVerse}>
-                {verseFavorited ? 'â Salvo' : 'Salvar'}
+                {verseFavorited ? '✓ Salvo' : 'Salvar'}
               </button>
               <button type="button" className="btn-primary home-verse-btn" onClick={handleReadChapter}>
-                Ler capÃ­tulo
+                Ler capítulo
               </button>
             </div>
           </section>
@@ -338,7 +338,7 @@ export function HomeScreen() {
                 checked={dailyProgress?.read_bible ?? false}
                 onChange={() => toggleProgress('read_bible')}
               />
-              <span>Li a BÃ­blia hoje</span>
+              <span>Li a Bíblia hoje</span>
             </label>
             <label className="home-checkitem">
               <input
@@ -367,10 +367,10 @@ export function HomeScreen() {
             </section>
           )}
 
-          {/* PrÃ³ximo encontro */}
+          {/* Próximo encontro */}
           {nextEvent && (
             <section className="card home-section">
-              <h3 className="home-section-title">PrÃ³ximo encontro</h3>
+              <h3 className="home-section-title">Próximo encontro</h3>
               <div className="home-event-title">{nextEvent.title}</div>
               <div className="home-event-meta">{formatEventDate(nextEvent.event_date)}</div>
               {nextEvent.location && <div className="home-event-meta">{nextEvent.location}</div>}
@@ -380,14 +380,14 @@ export function HomeScreen() {
                   className="btn-secondary home-verse-btn"
                   onClick={() => downloadEventToCalendar(nextEvent)}
                 >
-                  CalendÃ¡rio
+                  Calendário
                 </button>
                 <button
                   type="button"
                   className="btn-secondary home-verse-btn"
                   onClick={() => openEventDirections(nextEvent)}
                 >
-                  DireÃ§Ãµes
+                  Direções
                 </button>
               </div>
             </section>
@@ -413,31 +413,43 @@ export function HomeScreen() {
               <div className="home-event-meta">
                 {plan.progress.current_day > 0
                   ? `Dia ${plan.progress.current_day} de ${plan.plan.total_days}`
-                  : `ComeÃ§ar Â· ${plan.plan.total_days} dias`}
+                  : `Começar · ${plan.plan.total_days} dias`}
               </div>
             </button>
           )}
 
-          {/* Para vocÃª */}
+          {/* Para você */}
           {devotional && (
-            <button
-              type="button"
+            <div
               className="card home-section home-devotional-card-btn"
               onClick={() => setDevotionalOpen(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setDevotionalOpen(true)}
             >
-              <h3 className="home-section-title">Para vocÃª</h3>
+              <div className="home-devotional-card-header">
+                <h3 className="home-section-title">Para você</h3>
+                <button
+                  type="button"
+                  className="home-devotional-card-share"
+                  aria-label="Partilhar devocional"
+                  onClick={(e) => { e.stopPropagation(); void handleShareDevotional(); }}
+                >
+                  <ShareIcon />
+                </button>
+              </div>
               <div className="home-plan-title">{devotional.title}</div>
               <p className="home-event-meta">{devotional.summary}</p>
               {devotional.duration_minutes && (
                 <div className="home-event-meta">{devotional.duration_minutes} min de leitura</div>
               )}
-            </button>
+            </div>
           )}
 
-          {/* Ãltima mensagem */}
+          {/* Última mensagem */}
           {sermon && (
             <section className="card home-section">
-              <h3 className="home-section-title">Ãltima mensagem</h3>
+              <h3 className="home-section-title">Última mensagem</h3>
               <button
                 type="button"
                 className="home-sermon-thumb"
@@ -445,7 +457,7 @@ export function HomeScreen() {
                 onClick={() =>
                   sermon.video_url
                     ? setVideoOpen(true)
-                    : showToast('ReproduÃ§Ã£o de vÃ­deo chega numa prÃ³xima fase.')
+                    : showToast('Reprodução de vídeo chega numa próxima fase.')
                 }
               >
                 <PlayIcon />
@@ -456,19 +468,19 @@ export function HomeScreen() {
             </section>
           )}
 
-          {/* Banner de oraÃ§Ã£o */}
+          {/* Banner de oração */}
           <button
             type="button"
             className="home-prayer-banner"
             onClick={() => navigate('/preciso-de-oracao')}
           >
-            Podemos orar por vocÃª?
+            Podemos orar por você?
           </button>
 
           {/* Carrossel horizontal */}
           {events.length > 0 && (
             <section className="home-section">
-              <h3 className="home-section-title home-carousel-title">Acontecendo na RedenÃ§Ã£o</h3>
+              <h3 className="home-section-title home-carousel-title">Acontecendo na Redenção</h3>
               <div className="home-carousel">
                 {events.map((ev) => (
                   <button
@@ -497,7 +509,7 @@ export function HomeScreen() {
             type="button"
             className="home-video-modal-close"
             aria-label="Fechar"
-            onClick={() => setVideoOpen(false)}
+           onClick={() => setVideoOpen(false)}
           >
             <CloseIcon />
           </button>
@@ -532,11 +544,11 @@ export function HomeScreen() {
             >
               <ShareIcon />
             </button>
-            <span className="home-verse-kicker">PARA VOCÃ</span>
+            <span className="home-verse-kicker">PARA VOCÊ</span>
             <h2 className="home-devotional-modal-title">{devotional.title}</h2>
             <div className="home-event-meta">
               {devotional.author}
-              {devotional.author && devotional.duration_minutes ? ' Â· ' : ''}
+              {devotional.author && devotional.duration_minutes ? ' · ' : ''}
               {devotional.duration_minutes ? `${devotional.duration_minutes} min de leitura` : ''}
             </div>
             <div className="home-devotional-modal-body">
@@ -548,7 +560,7 @@ export function HomeScreen() {
                 ))}
             </div>
             <button type="button" className="btn-primary home-verse-btn" onClick={handleCompleteDevotional}>
-              {dailyProgress?.did_devotional ? 'ConcluÃ­do â' : 'Marcar como concluÃ­do'}
+              {dailyProgress?.did_devotional ? 'Concluído ✓' : 'Marcar como concluído'}
             </button>
           </div>
         </div>
