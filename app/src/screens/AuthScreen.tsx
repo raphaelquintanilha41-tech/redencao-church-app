@@ -7,55 +7,61 @@ const logo = '/redencao-logo.jpeg'; // servido de public/ — copie o ficheiro d
 type Mode = 'login' | 'signup';
 
 export function AuthScreen() {
-const { session, loading, signIn, signUp, signInAsGuest, signInWithGoogle } = useAuth();
-const navigate = useNavigate();
+  const { session, loading, signIn, signUp, signInAsGuest, signInWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
-const [mode, setMode] = useState<Mode>('login');
-const [name, setName] = useState('');
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState('');
-const [confirmPassword, setConfirmPassword] = useState('');
-const [error, setError] = useState<string | null>(null);
-const [info, setInfo] = useState<string | null>(null);
-const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<Mode>('login');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-// Already signed in (e.g. just back from Google with ?code=, or from the
-// signup confirmation e-mail link) — go straight to Home.
-useEffect(() => {
-  if (!loading && session) navigate('/', { replace: true });
-}, [loading, session, navigate]);
+  // Already signed in (e.g. just back from Google with ?code=, or from the
+  // signup confirmation e-mail link) — go to the intended URL or Home.
+  useEffect(() => {
+    if (!loading && session) {
+      const redirect = sessionStorage.getItem('rc_redirect_after_login') || '/';
+      sessionStorage.removeItem('rc_redirect_after_login');
+      navigate(redirect, { replace: true });
+    }
+  }, [loading, session, navigate]);
 
-// OAuth failures come back on this URL as ?error=…&error_description=…
-// (or in the #hash). Surface them once instead of showing a blank form.
-useEffect(() => {
-  const search = new URLSearchParams(window.location.search);
-  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-  const desc = search.get('error_description') ?? hash.get('error_description');
-  const code = search.get('error') ?? hash.get('error');
-  if (desc || code) {
-    setError(translateAuthError((desc ?? code ?? '').replace(/\+/g, ' ')));
-    window.history.replaceState(null, '', window.location.pathname);
-  }
-}, []);
+  // OAuth failures come back on this URL as ?error=…&error_description=…
+  // (or in the #hash). Surface them once instead of showing a blank form.
+  useEffect(() => {
+    const search = new URLSearchParams(window.location.search);
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const desc = search.get('error_description') ?? hash.get('error_description');
+    const code = search.get('error') ?? hash.get('error');
+    if (desc || code) {
+      setError(translateAuthError((desc ?? code ?? '').replace(/\+/g, ' ')));
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
 
-const isSignup = mode === 'signup';
-const heading = isSignup ? 'Criar conta' : 'Entrar';
+  const isSignup = mode === 'signup';
+  const heading = isSignup ? 'Criar conta' : 'Entrar';
 
-const validate = (): string | null => {
-if (isSignup && name.trim().length < 2) return 'Introduza o seu nome.';
-if (!email.trim()) return 'Introduza o seu e-mail.';
-if (password.length < 6) return 'A palavra-passe deve ter pelo menos 6 caracteres.';
-if (isSignup && password !== confirmPassword) return 'As palavras-passe não coincidem.';
-return null;
-};
+  const validate = (): string | null => {
+    if (isSignup && name.trim().length < 2) return 'Introduza o seu nome.';
+    if (!email.trim()) return 'Introduza o seu e-mail.';
+    if (password.length < 6) return 'A palavra-passe deve ter pelo menos 6 caracteres.';
+    if (isSignup && password !== confirmPassword) return 'As palavras-passe não coincidem.';
+    return null;
+  };
 
-const handleGuest = async () => {
+  const handleGuest = async () => {
     setError(null);
     setInfo(null);
     setSubmitting(true);
     try {
       await signInAsGuest();
-      navigate('/', { replace: true });
+      const redirect = sessionStorage.getItem('rc_redirect_after_login') || '/';
+      sessionStorage.removeItem('rc_redirect_after_login');
+      navigate(redirect, { replace: true });
     } catch (err) {
       setError(translateAuthError(err instanceof Error ? err.message : String(err)));
     } finally {
@@ -63,7 +69,7 @@ const handleGuest = async () => {
     }
   };
 
-const handleGoogle = async () => {
+  const handleGoogle = async () => {
     setError(null);
     setInfo(null);
     setSubmitting(true);
@@ -76,195 +82,197 @@ const handleGoogle = async () => {
     }
   };
 
-const handleSubmit = async (e: FormEvent) => {
-e.preventDefault();
-setError(null);
-setInfo(null);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setInfo(null);
 
-const validationError = validate();
-if (validationError) {
-setError(validationError);
-return;
-}
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
-setSubmitting(true);
-try {
-if (isSignup) {
-await signUp(name.trim(), email.trim(), password);
-setInfo(
-'Conta criada. Se a confirmação de e-mail estiver ativa no projeto Supabase, verifique a sua caixa de entrada antes de entrar.',
-);
-setMode('login');
-} else {
-await signIn(email.trim(), password);
-navigate('/', { replace: true });
-}
-} catch (err) {
-setError(translateAuthError(err instanceof Error ? err.message : String(err)));
-} finally {
-setSubmitting(false);
-}
-};
+    setSubmitting(true);
+    try {
+      if (isSignup) {
+        await signUp(name.trim(), email.trim(), password);
+        setInfo(
+          'Conta criada. Se a confirmação de e-mail estiver ativa no projeto Supabase, verifique a sua caixa de entrada antes de entrar.',
+        );
+        setMode('login');
+      } else {
+        await signIn(email.trim(), password);
+        const redirect = sessionStorage.getItem('rc_redirect_after_login') || '/';
+        sessionStorage.removeItem('rc_redirect_after_login');
+        navigate(redirect, { replace: true });
+      }
+    } catch (err) {
+      setError(translateAuthError(err instanceof Error ? err.message : String(err)));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-return (
-<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-<div className="rc-app-header">
-<img src={logo} alt="Redenção Church" />
-<div>
-<div className="rc-brand">Redenção Church</div>
-<div className="rc-tagline">Palavra · Comunhão · Propósito</div>
-</div>
-</div>
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="rc-app-header">
+        <img src={logo} alt="Redenção Church" />
+        <div>
+          <div className="rc-brand">Redenção Church</div>
+          <div className="rc-tagline">Palavra · Comunhão · Propósito</div>
+        </div>
+      </div>
 
-<form
-onSubmit={handleSubmit}
-style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 24px 24px', gap: 20 }}
->
-<div>
-<h2 style={{ fontSize: 24, marginBottom: 4 }}>{heading}</h2>
-<p className="rc-form-note">Palavra, comunhão e propósito — num só lugar.</p>
-</div>
-
-<div className="seg" style={{ alignSelf: 'flex-start' }} role="tablist" aria-label="Entrar ou criar conta">
-<label className="seg-opt">
-<input
-type="radio"
-name="auth-mode"
-checked={mode === 'login'}
-onChange={() => {
-setMode('login');
-setError(null);
-setInfo(null);
-}}
-/>
-<span className="dot" />
-Entrar
-</label>
-<label className="seg-opt">
-<input
-type="radio"
-name="auth-mode"
-checked={mode === 'signup'}
-onChange={() => {
-setMode('signup');
-setError(null);
-setInfo(null);
-}}
-/>
-<span className="dot" />
-Criar conta
-</label>
-</div>
-
-<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-{isSignup && (
-<div className="field">
-<label htmlFor="name">Nome</label>
-<input
-id="name"
-className="input"
-type="text"
-placeholder="O seu nome"
-autoComplete="name"
-value={name}
-onChange={(e) => setName(e.target.value)}
-/>
-</div>
-)}
-
-<div className="field">
-<label htmlFor="email">E-mail</label>
-<input
-id="email"
-className="input"
-type="email"
-placeholder="voce@email.com"
-autoComplete="email"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-/>
-</div>
-
-<div className="field">
-<label htmlFor="password">Palavra-passe</label>
-<input
-id="password"
-className="input"
-type="password"
-placeholder="••••••••"
-autoComplete={isSignup ? 'new-password' : 'current-password'}
-value={password}
-onChange={(e) => setPassword(e.target.value)}
-/>
-</div>
-
-{isSignup && (
-<div className="field">
-<label htmlFor="confirm-password">Confirmar palavra-passe</label>
-<input
-id="confirm-password"
-className="input"
-type="password"
-placeholder="••••••••"
-autoComplete="new-password"
-value={confirmPassword}
-onChange={(e) => setConfirmPassword(e.target.value)}
-/>
-</div>
-)}
-
-{!isSignup && (
-<Link to="/forgot-password" className="rc-link-btn" style={{ alignSelf: 'flex-end' }}>
-Esqueceu-se da palavra-passe?
-</Link>
-)}
-</div>
-
-{error && <div className="rc-field-error">{error}</div>}
-{info && <div className="rc-form-note">{info}</div>}
-
-<button className="btn btn-primary btn-block" type="submit" disabled={submitting}>
-{submitting ? 'A processar…' : heading}
-</button>
-
-<div
-style={{
-display: 'flex',
-alignItems: 'center',
-gap: 10,
-color: 'var(--color-neutral-600)',
-fontSize: 12,
-}}
->
-<div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
-ou
-<div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
-</div>
-
-{/* Apple login intentionally not rendered: it requires a paid Apple Developer
-   account + Services ID/JWT secret in Supabase. Re-add the button only once
-   the provider is fully configured (see the standing rule for social logins). */}
-<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-<button
-className="btn btn-secondary btn-block"
-type="button"
-onClick={handleGoogle}
-disabled={submitting}
->
-Continuar com Google
-</button>
-</div>
-
-<button
-        className="btn btn-ghost"
-        style={{ alignSelf: 'center' }}
-        type="button"
-        onClick={handleGuest}
-        disabled={submitting}
+      <form
+        onSubmit={handleSubmit}
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 24px 24px', gap: 20 }}
       >
-        {submitting ? 'A processar…' : 'Continuar como visitante'}
-      </button>
-</form>
-</div>
-);
+        <div>
+          <h2 style={{ fontSize: 24, marginBottom: 4 }}>{heading}</h2>
+          <p className="rc-form-note">Palavra, comunhão e propósito — num só lugar.</p>
+        </div>
+
+        <div className="seg" style={{ alignSelf: 'flex-start' }} role="tablist" aria-label="Entrar ou criar conta">
+          <label className="seg-opt">
+            <input
+              type="radio"
+              name="auth-mode"
+              checked={mode === 'login'}
+              onChange={() => {
+                setMode('login');
+                setError(null);
+                setInfo(null);
+              }}
+            />
+            <span className="dot" />
+            Entrar
+          </label>
+          <label className="seg-opt">
+            <input
+              type="radio"
+              name="auth-mode"
+              checked={mode === 'signup'}
+              onChange={() => {
+                setMode('signup');
+                setError(null);
+                setInfo(null);
+              }}
+            />
+            <span className="dot" />
+            Criar conta
+          </label>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {isSignup && (
+            <div className="field">
+              <label htmlFor="name">Nome</label>
+              <input
+                id="name"
+                className="input"
+                type="text"
+                placeholder="O seu nome"
+                autoComplete="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="field">
+            <label htmlFor="email">E-mail</label>
+            <input
+              id="email"
+              className="input"
+              type="email"
+              placeholder="voce@email.com"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="password">Palavra-passe</label>
+            <input
+              id="password"
+              className="input"
+              type="password"
+              placeholder="••••••••"
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {isSignup && (
+            <div className="field">
+              <label htmlFor="confirm-password">Confirmar palavra-passe</label>
+              <input
+                id="confirm-password"
+                className="input"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          )}
+
+          {!isSignup && (
+            <Link to="/forgot-password" className="rc-link-btn" style={{ alignSelf: 'flex-end' }}>
+              Esqueceu-se da palavra-passe?
+            </Link>
+          )}
+        </div>
+
+        {error && <div className="rc-field-error">{error}</div>}
+        {info && <div className="rc-form-note">{info}</div>}
+
+        <button className="btn btn-primary btn-block" type="submit" disabled={submitting}>
+          {submitting ? 'A processar…' : heading}
+        </button>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            color: 'var(--color-neutral-600)',
+            fontSize: 12,
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+          ou
+          <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+        </div>
+
+        {/* Apple login intentionally not rendered: it requires a paid Apple Developer
+            account + Services ID/JWT secret in Supabase. Re-add the button only once
+            the provider is fully configured (see the standing rule for social logins). */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <button
+            className="btn btn-secondary btn-block"
+            type="button"
+            onClick={handleGoogle}
+            disabled={submitting}
+          >
+            Continuar com Google
+          </button>
+        </div>
+
+        <button
+          className="btn btn-ghost"
+          style={{ alignSelf: 'center' }}
+          type="button"
+          onClick={handleGuest}
+          disabled={submitting}
+        >
+          {submitting ? 'A processar…' : 'Continuar como visitante'}
+        </button>
+      </form>
+    </div>
+  );
 }
