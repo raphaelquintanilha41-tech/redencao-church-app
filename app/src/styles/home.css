@@ -345,12 +345,27 @@
     justify-content: center;
     cursor: pointer;
 }
+.home-devotional-modal-share {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-circle);
+    background: var(--color-soft);
+    border: none;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 .home-devotional-modal-title {
     font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 500;
     margin: var(--space-2) 0 0;
-    padding-right: var(--space-6);
+    padding-inline: var(--space-6);
 }
 .home-devotional-modal-body {
     display: flex;
