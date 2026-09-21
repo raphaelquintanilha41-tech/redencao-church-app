@@ -44,7 +44,9 @@ export function BatismoScreen() {
   };
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/batismo`;
-    const quando = nextDate ? formatEventDate(nextDate.event_date) : null;
+    const quando = nextDate
+      ? formatEventDate(nextDate.event_date) + (nextDate.location ? ` · ${nextDate.location}` : '')
+      : null;
     const shareTitle = 'Batismo — Redenção Church';
     const shareText = quando
       ? `Vai haver batismo na Redenção Church: ${quando}.\n\nAbre na app e inscreve-te:`
@@ -111,6 +113,20 @@ export function BatismoScreen() {
           <>
             <div className="igreja-highlight-title">{nextDate.title}</div>
             <div className="igreja-highlight-meta">{formatEventDate(nextDate.event_date)}</div>
+            {nextDate.location && (
+              <>
+                <div className="igreja-highlight-meta">{nextDate.location}</div>
+                <a
+                  className="igreja-highlight-meta"
+                  style={{ color: 'inherit', textDecoration: 'underline' }}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(nextDate.location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Como chegar ↗
+                </a>
+              </>
+            )}
           </>
         ) : (
           <p className="home-event-meta">Nenhuma data de batismo agendada no momento.</p>
