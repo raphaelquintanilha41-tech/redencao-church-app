@@ -38,6 +38,32 @@ export function BatismoScreen() {
       mounted = false;
     };
   }, [user]);
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/batismo`;
+    const quando = nextDate ? formatEventDate(nextDate.event_date) : null;
+    const shareTitle = 'Batismo — Redenção Church';
+    const shareText = quando
+      ? `Vai haver batismo na Redenção Church: ${quando}.\n\nAbre na app e inscreve-te:`
+      : 'Batismo na Redenção Church.\n\nAbre na app para saberes mais:';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        showToast('Ligação copiada para a área de transferência.');
+      } else {
+        showToast('Partilha não é suportada neste navegador.');
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        showToast('Não foi possível partilhar agora.');
+      }
+    }
+  };
   const confirmar = async () => {
     if (!user) return;
     setSending(true);
@@ -68,7 +94,17 @@ export function BatismoScreen() {
         </p>
       </section>
       <section className="card-navy static-welcome-card">
-        <span className="home-verse-kicker">PRÓXIMA DATA</span>
+        <div className="home-verse-header">
+          <span className="home-verse-kicker">PRÓXIMA DATA</span>
+          <button
+            type="button"
+            className="home-verse-share-btn"
+            aria-label="Compartilhar o batismo"
+            onClick={handleShare}
+          >
+            <ShareIcon />
+          </button>
+        </div>
         {loading ? (
           <p className="static-welcome-text">A carregar…</p>
         ) : nextDate ? (
@@ -89,5 +125,15 @@ export function BatismoScreen() {
       )}
       {toast && <div className="rc-toast">{toast}</div>}
     </div>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 7.5L12 3l4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
