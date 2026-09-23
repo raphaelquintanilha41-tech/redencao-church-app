@@ -318,7 +318,7 @@ export function BibliaLeituraScreen() {
             {verses.map((v) => (
               <span
                 key={v.id}
-                className={`biblia-verse${selectedVerse === v.id ? ' biblia-verse-selected' : ''}`}
+                className={`biblia-verse${selectedVerse === v.id ? ' biblia-verse-selected' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
                 style={highlightedColors.has(v.id) ? { backgroundColor: highlightedColors.get(v.id) } : undefined}
                 onClick={() => setSelectedVerse(selectedVerse === v.id ? null : v.id)}
               >

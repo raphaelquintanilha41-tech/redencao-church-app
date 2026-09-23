@@ -41,7 +41,7 @@ return (
 
 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 24px 24px', gap: 20 }}>
 <div>
-<h2 style={{ fontSize: 24, marginBottom: 4 }}>Recuperar palavra-passe</h2>
+<h2 style={{ fontSize: 27, marginBottom: 4 }}>Recuperar palavra-passe</h2>
 <p className="rc-form-note">
 Introduza o e-mail da sua conta. Vamos enviar um link para definir uma nova palavra-passe.
 </p>
