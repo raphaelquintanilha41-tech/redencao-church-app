@@ -41,7 +41,7 @@ export function getBibleFontSize(): number {
   } catch {
     // localStorage indisponível — usa o padrão.
   }
-  return 17;
+  return 19;
 }
 
 export function setBibleFontSize(size: number) {
