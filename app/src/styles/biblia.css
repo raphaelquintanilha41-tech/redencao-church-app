@@ -19,7 +19,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   box-sizing: border-box;
 }
 
@@ -43,14 +43,14 @@
 
 .biblia-search-ref {
   font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 15px;
   color: var(--color-accent);
 }
 
 .biblia-search-snippet {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
   line-height: 1.4;
 }
@@ -68,8 +68,8 @@
   background: transparent;
   color: var(--color-muted);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -107,13 +107,13 @@
 
 .biblia-book-name {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
 }
 
 .biblia-book-meta {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 15px;
   color: var(--color-muted);
 }
 
@@ -125,7 +125,7 @@
 .biblia-credit {
   margin-top: 24px;
   text-align: center;
-  font-size: 12px;
+  font-size: 15px;
   opacity: 0.7;
 }
 
@@ -151,16 +151,16 @@
   border: none;
   color: var(--color-accent);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   padding: 4px 0;
 }
 
 .biblia-leitura-title {
   font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 21px;
+  font-weight: 600;
   color: var(--color-text);
   flex: 1;
   text-align: center;
@@ -179,7 +179,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -200,7 +200,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 15px;
   cursor: pointer;
 }
 
@@ -216,7 +216,7 @@
   border-radius: var(--radius-card);
   padding: var(--space-4);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
   display: flex;
   flex-direction: column;
@@ -233,6 +233,21 @@
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.15s ease;
+}
+
+/* Versículo destacado: as cores de destaque são tons médios, por isso o
+   texto passa sempre a tinta escura (contraste ≥ 6:1 em todas as cores,
+   também no modo escuro, onde o texto normal é creme). */
+.biblia-verse-highlighted {
+  color: #141F35;
+  padding: 1px 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.biblia-verse-highlighted .biblia-verse-num {
+  color: #141F35;
+  opacity: 0.75;
 }
 
 .biblia-verse-selected {
@@ -306,8 +321,8 @@
   border: none;
   color: #EDE7DB;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -329,7 +344,7 @@
   background: rgba(237, 231, 219, 0.08);
   color: #EDE7DB;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   padding: var(--space-2) var(--space-3);
   resize: vertical;
 }
@@ -345,8 +360,8 @@
   border: none;
   color: #EDE7DB;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
 }
 

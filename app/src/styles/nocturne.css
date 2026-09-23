@@ -3,7 +3,9 @@
    Corrige a paleta/tipografia que estava incorreta (era um template
    genérico não relacionado ao design da igreja). */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Figtree:wght@400;500;600;700&display=swap');
+/* Arimo = clone métrico da Arial com pesos intermédios (500/600), para que
+   o texto fique mais grosso também em iPhone/PC, onde a Arial só tem 400/700. */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400..700&display=swap');
 
 :root {
      /* Light (padrão) */
@@ -17,9 +19,9 @@
      --color-soft: #F1EBDE;
      --color-navy: #0A1120;      /* navy sólido — cards de destaque, headers */
 
-  --font-heading: "Cormorant Garamond", Georgia, serif;
-     --font-heading-weight: 500;
-     --font-body: "Figtree", system-ui, sans-serif;
+  --font-heading: "Arimo", Arial, Helvetica, sans-serif;
+     --font-heading-weight: 700;
+     --font-body: "Arimo", Arial, Helvetica, sans-serif;
 
   --space-1: 4px;
      --space-2: 8px;
@@ -58,11 +60,18 @@ body {
      background: var(--color-bg);
      color: var(--color-text);
      font-family: var(--font-body);
+     font-size: 18px;   /* texto base maior (antes 16px do browser) */
+     font-weight: 550;  /* texto base mais grosso (antes 400) */
      /* Herdado por todos os elementos — corrige algarismos old-style da
         Cormorant Garamond em qualquer título, inclusive os que usam
         classes próprias (ex: .biblia-leitura-title) em vez de h1-h4. */
   font-variant-numeric: lining-nums;
      font-feature-settings: "lnum" 1, "onum" 0;
+}
+
+button, input, textarea, select {
+     font-family: inherit;
+     font-weight: inherit;
 }
 
 h1, h2, h3, h4,
@@ -94,7 +103,7 @@ h1, h2, h3, h4,
      border: none;
      border-radius: var(--radius-pill);
      font-family: var(--font-body);
-     font-weight: 600;
+     font-weight: 700;
      padding: 14px 28px;
 }
 
@@ -104,7 +113,7 @@ h1, h2, h3, h4,
      border: 1px solid var(--color-line);
      border-radius: var(--radius-pill);
      font-family: var(--font-body);
-     font-weight: 600;
+     font-weight: 700;
      padding: 14px 28px;
 }
 

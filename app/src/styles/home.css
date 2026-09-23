@@ -22,13 +22,13 @@
 }
 .home-header-name {
     font-family: var(--font-heading);
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 23px;
+    font-weight: 600;
     color: var(--color-text);
 }
 .home-header-tagline {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 16px;
     color: var(--color-muted);
 }
 .home-header-icon-btn {
@@ -80,8 +80,8 @@
 }
 .home-verse-kicker {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     letter-spacing: 0.14em;
     color: #D6B473;
 }
@@ -103,13 +103,13 @@
 }
 .home-verse-text {
     font-family: var(--font-heading);
-    font-size: 20px;
+    font-size: 23px;
     line-height: 1.4;
     margin: var(--space-2) 0 0;
 }
 .home-verse-ref {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 16px;
     color: #8E9AB2;
 }
 .home-verse-actions {
@@ -124,7 +124,7 @@
 .home-verse-btn {
     flex: 1;
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: 17px;
 }
 .home-section {
     padding: var(--space-4);
@@ -134,8 +134,8 @@
 }
 .home-section-title {
     font-family: var(--font-heading);
-    font-size: 17px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 600;
     margin: 0 0 var(--space-1);
     color: var(--color-text);
 }
@@ -144,7 +144,7 @@
     align-items: center;
     gap: var(--space-2);
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 17px;
     color: var(--color-text);
 }
 .home-checkitem input {
@@ -155,13 +155,13 @@
 .home-event-title,
 .home-plan-title {
     font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 18px;
     color: var(--color-text);
 }
 .home-event-meta {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 16px;
     color: var(--color-muted);
 }
 .home-progress-track {
@@ -208,7 +208,7 @@
     bottom: 8px;
     right: 10px;
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 15px;
     background: rgba(0, 0, 0, 0.55);
     padding: 2px 8px;
     border-radius: var(--radius-pill);
@@ -221,8 +221,8 @@
     background: var(--color-accent-soft);
     color: var(--color-text);
     font-family: var(--font-heading);
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 19px;
+    font-weight: 600;
     cursor: pointer;
 }
 .home-carousel-title {
@@ -253,20 +253,20 @@
 }
 .home-carousel-date {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     color: var(--color-accent);
     text-transform: uppercase;
 }
 .home-carousel-event-title {
     font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 17px;
     color: var(--color-text);
 }
 .home-carousel-location {
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 15px;
     color: var(--color-muted);
 }
 .home-video-modal {
@@ -381,8 +381,8 @@
 }
 .home-devotional-modal-title {
     font-family: var(--font-heading);
-    font-size: 22px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: 600;
     margin: var(--space-2) 0 0;
     padding-inline: var(--space-6);
 }
@@ -394,7 +394,7 @@
 }
 .home-devotional-modal-body p {
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 18px;
     line-height: 1.6;
     color: var(--color-text);
     margin: 0;

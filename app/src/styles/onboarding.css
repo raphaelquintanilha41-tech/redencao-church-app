@@ -22,8 +22,8 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-pill);
   font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: var(--color-accent);
   cursor: pointer;
 }
@@ -53,8 +53,8 @@
 
 .onboarding-overline {
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -63,7 +63,7 @@
 .onboarding-title {
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  font-size: 26px;
+  font-size: 29px;
   line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--color-text);
@@ -72,7 +72,7 @@
 
 .onboarding-subtitle {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.5;
   color: var(--color-muted);
   max-width: 280px;

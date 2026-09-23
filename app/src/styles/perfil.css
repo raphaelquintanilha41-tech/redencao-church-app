@@ -35,8 +35,8 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-heading);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 25px;
+  font-weight: 700;
 }
 
 .perfil-header-info {
@@ -55,8 +55,8 @@
   border: none;
   color: var(--color-accent);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   padding: 0;
   cursor: pointer;
 }
@@ -74,7 +74,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .perfil-name-edit-actions {
@@ -84,7 +84,7 @@
 
 .perfil-small-btn {
   padding: 6px 14px;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .perfil-section {
@@ -107,8 +107,8 @@
   background: var(--color-soft);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
 }
@@ -126,14 +126,14 @@
 
 .perfil-stat-number {
   font-family: var(--font-heading);
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 25px;
+  font-weight: 600;
   color: var(--color-accent);
 }
 
 .perfil-stat-label {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 14px;
   color: var(--color-muted);
   margin-top: 2px;
 }
@@ -145,7 +145,7 @@
   padding: 12px 2px;
   border-top: 1px solid var(--color-line);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
 }
 
@@ -180,8 +180,8 @@
   background: none;
   color: var(--color-muted);
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -201,8 +201,8 @@
   border: none;
   color: #B3453D;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   padding: var(--space-2);
   cursor: pointer;
 }
