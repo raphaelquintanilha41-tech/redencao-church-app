@@ -129,7 +129,7 @@ export function AuthScreen() {
         style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 24px 24px', gap: 20 }}
       >
         <div>
-          <h2 style={{ fontSize: 24, marginBottom: 4 }}>{heading}</h2>
+          <h2 style={{ fontSize: 27, marginBottom: 4 }}>{heading}</h2>
           <p className="rc-form-note">Palavra, comunhão e propósito — num só lugar.</p>
         </div>
 
@@ -241,7 +241,7 @@ export function AuthScreen() {
             alignItems: 'center',
             gap: 10,
             color: 'var(--color-neutral-600)',
-            fontSize: 12,
+            fontSize: 15,
           }}
         >
           <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />

@@ -69,7 +69,7 @@ return (
 
 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 24px 24px', gap: 20 }}>
 <div>
-<h2 style={{ fontSize: 24, marginBottom: 4 }}>Definir nova palavra-passe</h2>
+<h2 style={{ fontSize: 27, marginBottom: 4 }}>Definir nova palavra-passe</h2>
 <p className="rc-form-note">Escolha uma nova palavra-passe para a sua conta.</p>
 </div>
 

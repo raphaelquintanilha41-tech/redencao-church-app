@@ -7,7 +7,7 @@
 
 .static-body-text {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.6;
   color: var(--color-text);
   margin: 0;
@@ -22,7 +22,7 @@
 
 .static-welcome-text {
   font-family: var(--font-heading);
-  font-size: 17px;
+  font-size: 20px;
   line-height: 1.5;
   color: #EDE7DB;
   margin: 0;
@@ -37,15 +37,15 @@
 
 .static-payment-value {
   font-family: var(--font-heading);
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 25px;
+  font-weight: 600;
   color: var(--color-text);
 }
 
 .static-copy-btn {
   align-self: flex-start;
   padding: 8px 18px;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .static-map-embed {
@@ -73,14 +73,14 @@
   text-align: center;
   text-decoration: none;
   padding: 12px;
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .static-values-list {
   margin: 0;
   padding-left: 18px;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
   display: flex;
   flex-direction: column;
@@ -108,8 +108,8 @@
 
 .static-field label {
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--color-muted);
 }
 
@@ -122,7 +122,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .static-field-title {

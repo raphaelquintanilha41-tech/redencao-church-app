@@ -9,8 +9,8 @@
 }
 .igreja-title {
   font-family: var(--font-heading);
-  font-weight: 500;
-  font-size: 26px;
+  font-weight: 600;
+  font-size: 29px;
   color: var(--color-text);
   margin: 0;
 }
@@ -22,20 +22,20 @@
 }
 .igreja-highlight-text {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: #8E9AB2;
   margin: var(--space-1) 0 0;
 }
 .igreja-highlight-title {
   font-family: var(--font-heading);
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 23px;
+  font-weight: 600;
   color: #EDE7DB;
   margin-top: var(--space-1);
 }
 .igreja-highlight-meta {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 16px;
   color: #8E9AB2;
 }
 .igreja-group {
@@ -54,7 +54,7 @@
   border-top: 1px solid var(--color-line);
   padding: 13px 2px;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 17px;
   color: var(--color-text);
   cursor: pointer;
   text-align: left;

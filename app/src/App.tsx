@@ -41,7 +41,7 @@ function ConfigWarningBanner() {
       style={{
         background: '#3a2a1a',
         color: '#f0c98a',
-        fontSize: 12,
+        fontSize: 15,
         padding: '8px 16px',
         textAlign: 'center',
         lineHeight: 1.4,
