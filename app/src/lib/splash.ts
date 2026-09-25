@@ -2,7 +2,7 @@
 // Fica visível até a app estar pronta a mostrar conteúdo e, no mínimo,
 // MIN_VISIBLE_MS desde o arranque — para a apresentação não "piscar".
 
-const MIN_VISIBLE_MS = 1400;
+const MIN_VISIBLE_MS = 3000; // pelo menos 3 s de apresentação
 const FADE_MS = 500;
 
 let hidden = false;
