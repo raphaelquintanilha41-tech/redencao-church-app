@@ -15,6 +15,7 @@ import {
 } from '../lib/home';
 import { fetchUnreadNotificationCount } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
+import { signalHomeReady } from '../lib/splash';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -135,7 +136,10 @@ export function HomeScreen() {
         console.error('[HomeScreen] falha ao carregar dados:', err);
         showToast('Não foi possível carregar todo o conteúdo agora.');
       })
-      .finally(() => mounted && setLoading(false));
+      .finally(() => {
+        if (mounted) setLoading(false);
+        signalHomeReady();
+      });
 
     return () => {
       mounted = false;
