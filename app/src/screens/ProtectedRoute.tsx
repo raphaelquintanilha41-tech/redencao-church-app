@@ -5,13 +5,9 @@ import { hasSeenOnboarding } from '../lib/onboarding';
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
-  if (loading) {
-    return (
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span className="rc-form-note">A carregar…</span>
-      </div>
-    );
-  }
+  // Enquanto a sessão é verificada, o ecrã de abertura com o logo
+  // (index.html, #rc-splash) cobre a app — não mostrar texto de espera.
+  if (loading) return null;
   if (!session) {
     const dest = window.location.pathname + window.location.search;
     if (dest !== '/' && !dest.startsWith('/auth') && !dest.startsWith('/onboarding')) {

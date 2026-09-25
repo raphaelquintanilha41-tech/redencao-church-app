@@ -33,6 +33,7 @@ import { PrivacidadeScreen } from './screens/PrivacidadeScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
+import { SplashController } from './screens/SplashController';
 import { isSupabaseConfigured } from './lib/supabaseClient';
 function ConfigWarningBanner() {
   if (isSupabaseConfigured) return null;
@@ -57,6 +58,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ConfigWarningBanner />
+        <SplashController />
         <Routes>
           <Route path="/onboarding" element={<OnboardingScreen />} />
           <Route path="/auth" element={<AuthScreen />} />
