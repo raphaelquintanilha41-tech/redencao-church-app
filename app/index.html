@@ -8,8 +8,108 @@
     <meta name="theme-color" content="#0A1120" />
     <meta name="description" content="Redenção Church — palavra, comunhão e propósito, num só lugar." />
     <title>Redenção Church</title>
+    <link rel="preload" as="image" href="/splash-logo.webp" type="image/webp" />
+    <!-- Ecrã de abertura: aparece antes de o JavaScript carregar e é retirado
+         por src/lib/splash.ts quando a sessão (e a Home) estiverem prontas. -->
+    <style>
+      #rc-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
+        background: radial-gradient(circle at 50% 42%, #0d1d3d 0%, #061127 48%, #020a19 100%);
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+      #rc-splash.rc-splash-hide {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .rc-splash-logo {
+        width: min(72vw, 340px);
+        aspect-ratio: 1;
+        background: url('/splash-logo.webp') center / contain no-repeat;
+        -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 71%);
+        mask-image: radial-gradient(circle, #000 58%, transparent 71%);
+        opacity: 0;
+        animation: rc-splash-in 0.9s ease-out 0.1s forwards,
+          rc-splash-breathe 2.8s ease-in-out 1s infinite;
+      }
+      .rc-splash-verse {
+        margin: 0;
+        max-width: 300px;
+        color: #d6b473;
+        font: 600 16px/1.45 Arial, Helvetica, sans-serif;
+        letter-spacing: 0.02em;
+        text-align: center;
+        opacity: 0;
+        animation: rc-splash-fade 0.8s ease-out 0.6s forwards;
+      }
+      .rc-splash-verse small {
+        display: block;
+        margin-top: 4px;
+        color: #8e9ab2;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .rc-splash-bar {
+        position: relative;
+        width: 140px;
+        height: 3px;
+        border-radius: 3px;
+        overflow: hidden;
+        background: rgba(214, 180, 115, 0.18);
+      }
+      .rc-splash-bar::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 40%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, transparent, #d6b473, transparent);
+        animation: rc-splash-slide 1.3s ease-in-out infinite;
+      }
+      @keyframes rc-splash-in {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      @keyframes rc-splash-breathe {
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(214, 180, 115, 0)); }
+        50% { transform: scale(1.03); filter: drop-shadow(0 0 18px rgba(214, 180, 115, 0.35)); }
+      }
+      @keyframes rc-splash-fade {
+        to { opacity: 1; }
+      }
+      @keyframes rc-splash-slide {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(250%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .rc-splash-logo, .rc-splash-verse { animation: none; opacity: 1; }
+        .rc-splash-bar::after { animation-duration: 3s; }
+      }
+    </style>
   </head>
   <body>
+    <div id="rc-splash" role="status" aria-label="A abrir a aplicação Redenção Church">
+      <div class="rc-splash-logo" aria-hidden="true"></div>
+      <p class="rc-splash-verse">
+        “Eu sou o caminho, a verdade e a vida.”
+        <small>João 14:6</small>
+      </p>
+      <div class="rc-splash-bar" aria-hidden="true"></div>
+    </div>
+    <script>
+      // Segurança: se algo falhar no arranque, o ecrã de abertura não fica preso.
+      setTimeout(function () {
+        var s = document.getElementById('rc-splash');
+        if (s) s.remove();
+      }, 12000);
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
