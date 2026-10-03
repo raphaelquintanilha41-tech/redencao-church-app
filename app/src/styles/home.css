@@ -16,6 +16,59 @@
     height: 64px;
     border-radius: var(--radius-circle);
     object-fit: cover;
+    display: block;
+}
+/* Logo em medalhão 3D: aro dourado biselado + relevo + reflexo de vidro */
+.home-header-logo-3d {
+    position: relative;
+    flex-shrink: 0;
+    display: block;
+    padding: 3px;
+    border-radius: var(--radius-circle);
+    background:
+        conic-gradient(from 210deg,
+            #7A5A22, #E9C57A, #FFF1C9, #C99A48, #7A5A22, #B88A3B, #FFF1C9, #E9C57A, #7A5A22);
+    box-shadow:
+        0 1px 0 rgba(255, 241, 201, 0.35) inset,
+        0 -2px 3px rgba(0, 0, 0, 0.45) inset,
+        0 3px 0 #4E3912,
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        0 0 18px rgba(214, 180, 115, 0.28);
+    transform: perspective(300px) rotateX(6deg);
+}
+.home-header-logo-3d .home-header-logo {
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+/* sombra interior (profundidade) + reflexo especular superior */
+.home-header-logo-3d::before,
+.home-header-logo-3d::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: var(--radius-circle);
+    pointer-events: none;
+}
+.home-header-logo-3d::before {
+    box-shadow:
+        inset 0 -6px 10px rgba(0, 0, 0, 0.55),
+        inset 0 4px 8px rgba(255, 255, 255, 0.18);
+}
+.home-header-logo-3d::after {
+    background:
+        radial-gradient(ellipse 70% 42% at 38% 18%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%),
+        linear-gradient(115deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 60%);
+    background-size: 100% 100%, 250% 100%;
+    background-position: 0 0, 120% 0;
+    animation: home-logo-shine 6s ease-in-out 1.2s infinite;
+}
+@keyframes home-logo-shine {
+    0%, 70% { background-position: 0 0, 120% 0; }
+    100% { background-position: 0 0, -120% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-header-logo-3d::after { animation: none; }
 }
 .home-header-greeting {
     flex: 1;

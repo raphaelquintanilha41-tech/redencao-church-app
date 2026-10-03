@@ -34,3 +34,91 @@
 .bottom-nav-item-active {
   color: var(--color-accent);
 }
+
+/* ---------- Ícones 3D brilhantes ---------- */
+.bottom-nav {
+  /* metal prata-azulado (inativo) — tema claro */
+  --nav3d-s0: #C9D3E6;
+  --nav3d-s1: #7F8EAD;
+  --nav3d-s2: #4E5D7C;
+  --nav3d-s3: #2C3852;
+  --nav3d-edge: rgba(10, 17, 32, 0.45);
+}
+:root.dark .bottom-nav,
+[data-theme="dark"] .bottom-nav {
+  --nav3d-s0: #F1F5FC;
+  --nav3d-s1: #AEBBD3;
+  --nav3d-s2: #6F7E9C;
+  --nav3d-s3: #3F4B66;
+  --nav3d-edge: rgba(0, 0, 0, 0.55);
+}
+.nav3d-s0 { stop-color: var(--nav3d-s0); }
+.nav3d-s1 { stop-color: var(--nav3d-s1); }
+.nav3d-s2 { stop-color: var(--nav3d-s2); }
+.nav3d-s3 { stop-color: var(--nav3d-s3); }
+
+.bottom-nav-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 34px;
+  transition: transform 0.25s ease;
+}
+/* halo luminoso atrás do ícone ativo */
+.bottom-nav-icon::before {
+  content: '';
+  position: absolute;
+  inset: -2px 2px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(233, 197, 122, 0.45), rgba(233, 197, 122, 0));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.bottom-nav-icon svg {
+  position: relative;
+  overflow: visible;
+  /* relevo: aresta inferior + sombra projetada */
+  filter:
+    drop-shadow(0 1.5px 0 var(--nav3d-edge))
+    drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+  transition: filter 0.25s ease;
+}
+.nav3d-fill {
+  fill: url(#rcNavSilver);
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 0.5;
+  paint-order: stroke;
+}
+.nav3d-shine {
+  fill: url(#rcNavGloss);
+  pointer-events: none;
+}
+
+.bottom-nav-item-active .bottom-nav-icon {
+  transform: translateY(-2px) scale(1.1);
+}
+.bottom-nav-item-active .bottom-nav-icon::before {
+  opacity: 1;
+}
+.bottom-nav-item-active .nav3d-fill {
+  fill: url(#rcNavGold);
+  stroke: rgba(255, 241, 201, 0.6);
+}
+.bottom-nav-item-active .bottom-nav-icon svg {
+  filter:
+    drop-shadow(0 1.5px 0 #5E4418)
+    drop-shadow(0 3px 5px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 6px rgba(233, 197, 122, 0.55));
+}
+.bottom-nav-item:active .bottom-nav-icon {
+  transform: translateY(0) scale(0.94);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav-icon,
+  .bottom-nav-icon::before,
+  .bottom-nav-icon svg {
+    transition: none;
+  }
+}
