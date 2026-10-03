@@ -293,7 +293,9 @@ export function HomeScreen() {
   return (
     <div className="home-screen">
       <header className="home-header">
-        <img src={logo} alt="Redenção Church" className="home-header-logo" />
+        <span className="home-header-logo-3d">
+          <img src={logo} alt="Redenção Church" className="home-header-logo" />
+        </span>
         <div className="home-header-greeting">
           <div className="home-header-name">Olá, {firstName || 'membro'}</div>
           <div className="home-header-tagline">Que a Palavra conduza o seu dia.</div>
