@@ -11,3 +11,14 @@ export function localDateKey(d: Date = new Date()): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
+
+/**
+ * Início do dia de hoje (00:00 hora local) em ISO, para filtrar eventos.
+ * Um evento de hoje continua visível como "próximo" até à meia-noite,
+ * mesmo depois de a hora de início ter passado.
+ */
+export function startOfTodayISO(): string {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}

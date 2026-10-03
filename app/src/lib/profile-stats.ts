@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { localDateKey } from './dates';
+import { localDateKey, startOfTodayISO } from './dates';
 
 /**
  * Sequência de dias consecutivos (streak) com pelo menos leitura da Bíblia
@@ -39,7 +39,7 @@ export async function fetchUpcomingRegisteredCount(userId: string): Promise<numb
     .from('event_registrations')
     .select('event_id, events!inner(event_date)', { count: 'exact', head: true })
     .eq('user_id', userId)
-    .gte('events.event_date', new Date().toISOString());
+    .gte('events.event_date', startOfTodayISO());
   if (error) throw error;
   return count ?? 0;
 }
