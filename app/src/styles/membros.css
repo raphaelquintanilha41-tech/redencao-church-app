@@ -1,0 +1,129 @@
+/* ── Rol de membros (liderança) ──────────────────────────────────── */
+
+.membros-summary {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.membros-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.membros-summary-item strong {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  color: var(--color-accent);
+  line-height: 1.1;
+}
+.membros-summary-item span {
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.membros-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+.membros-actions > button {
+  flex: 1;
+}
+
+.membros-filters {
+  margin-top: 2px;
+}
+
+.membros-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.membros-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 12px var(--space-4);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-line);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  text-align: left;
+  cursor: pointer;
+}
+.membros-row:first-child {
+  border-top: none;
+}
+.membros-row:active {
+  background: var(--color-accent-soft);
+}
+.membros-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: 18px;
+}
+.membros-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.membros-row-name {
+  font-size: 17px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.membros-row-meta {
+  font-size: 15px;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.membros-chevron {
+  font-size: 24px;
+  color: var(--color-muted);
+}
+.membros-badge {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-line);
+  color: var(--color-muted);
+}
+.membros-badge-ativo {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.membros-label {
+  font-size: 16px;
+}
+.membros-archived-card {
+  border: 1px solid var(--color-accent);
+}
+.membros-saved {
+  text-align: center;
+  color: var(--color-accent);
+}
+.membros-archive-box {
+  margin-top: var(--space-4);
+}
+
