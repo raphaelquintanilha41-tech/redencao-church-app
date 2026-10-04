@@ -137,7 +137,7 @@ export function BirthdayCard({ variant }: { variant: 'home' | 'perfil' }) {
           value={year}
           onChange={(e) => setYear(e.target.value)}
         >
-          <option value="">Ano (opcional)</option>
+          <option value="">Ano</option>
           {Array.from({ length: currentYear - 1919 }, (_, i) => currentYear - i).map((y) => (
             <option key={y} value={y}>
               {y}
