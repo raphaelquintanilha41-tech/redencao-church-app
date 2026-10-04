@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import { updateOwnProfile, uploadAvatar } from '../lib/profiles';
 import { fetchStreak, fetchUpcomingRegisteredCount } from '../lib/profile-stats';
 import { fetchActiveReadingPlanProgress } from '../lib/home';
+import { fetchIsChurchAdmin } from '../lib/members';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/preferences';
 import { getPushSubscriptionState, subscribeToPush, unsubscribeFromPush, type PushSubscriptionState } from '../lib/push';
 import type { ReadingPlan, UserPlanProgress } from '../lib/types';
@@ -29,6 +30,18 @@ export function PerfilScreen() {
   const [pushState, setPushState] = useState<PushSubscriptionState>('unsupported');
   const [pushBusy, setPushBusy] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [isChurchAdmin, setIsChurchAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    let mounted = true;
+    fetchIsChurchAdmin(user.id)
+      .then((ok) => mounted && setIsChurchAdmin(ok))
+      .catch(() => mounted && setIsChurchAdmin(false));
+    return () => {
+      mounted = false;
+    };
+  }, [user?.id]);
 
   const firstName = (profile?.full_name ?? user?.email ?? '').split(' ')[0];
 
@@ -252,6 +265,20 @@ const handleDeleteAccount = async () => {
           )}
         </div>
       </section>
+
+      {isChurchAdmin && (
+        <section className="card perfil-section">
+          <h3 className="home-section-title">Liderança</h3>
+          <button
+            type="button"
+            className="perfil-config-row perfil-config-row-btn"
+            onClick={() => navigate('/membros')}
+          >
+            <span>Rol de membros</span>
+            <ChevronIcon />
+          </button>
+        </section>
+      )}
 
       {/* Minha área */}
       <section className="card perfil-section">
