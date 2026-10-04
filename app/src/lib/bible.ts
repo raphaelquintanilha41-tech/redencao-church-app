@@ -38,7 +38,13 @@ export async function fetchAvailableChapters(bookId: number): Promise<number[]> 
   const { data, error } = await supabase
     .from('bible_verses')
     .select('chapter')
-    .eq('book_id', bookId);
+    .eq('book_id', bookId)
+    // Só o versículo 1 de cada capítulo: uma linha por capítulo (máx. 150).
+    // Sem isto, livros com mais de 1000 versículos (Salmos, Gênesis, Isaías…)
+    // eram cortados pelo limite de 1000 linhas por pedido do Supabase e os
+    // capítulos finais não apareciam.
+    .eq('verse', 1)
+    .order('chapter');
   if (error) throw error;
   const set = new Set((data ?? []).map((r: { chapter: number }) => r.chapter));
   return Array.from(set).sort((a, b) => a - b);
