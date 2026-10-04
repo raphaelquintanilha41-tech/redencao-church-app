@@ -155,3 +155,10 @@ export function membersToCsv(members: Member[]): string {
   const rows = members.map((m) => cols.map(([, f]) => csvCell(f(m))).join(';'));
   return '\uFEFF' + [head, ...rows].join('\r\n');
 }
+
+/** Total de membros ativos (só o número; qualquer utilizador com sessão pode ver). */
+export async function fetchActiveMemberCount(): Promise<number> {
+  const { data, error } = await supabase.rpc('count_active_members');
+  if (error) throw error;
+  return (data as number) ?? 0;
+}

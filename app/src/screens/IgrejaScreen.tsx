@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchNextService } from '../lib/home';
+import { fetchActiveMemberCount } from '../lib/members';
 import type { ChurchEvent } from '../lib/types';
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
@@ -49,6 +50,16 @@ export function IgrejaScreen() {
   const [nextService, setNextService] = useState<ChurchEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+  const [memberCount, setMemberCount] = useState<number | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchActiveMemberCount()
+      .then((n) => mounted && setMemberCount(n))
+      .catch((err) => console.error('[IgrejaScreen] falha ao contar membros:', err));
+    return () => {
+      mounted = false;
+    };
+  }, []);
   useEffect(() => {
     let mounted = true;
     fetchNextService()
@@ -68,8 +79,19 @@ export function IgrejaScreen() {
   };
   return (
     <div className="igreja-screen">
-      <header className="igreja-header">
+      <header className="igreja-header igreja-header-row">
         <h1 className="igreja-title">Igreja</h1>
+        {memberCount !== null && memberCount > 0 && (
+          <div className="igreja-members-badge" role="img" aria-label={`Somos ${memberCount} membros`}>
+            <span className="igreja-members-icon">
+              <PeopleIcon />
+            </span>
+            <span className="igreja-members-text">
+              <span className="igreja-members-label">Somos</span>
+              <span className="igreja-members-number">{memberCount}</span>
+            </span>
+          </div>
+        )}
       </header>
       <section className="card-navy igreja-highlight">
         <span className="home-verse-kicker">PRÓXIMO CULTO</span>
@@ -109,6 +131,17 @@ export function IgrejaScreen() {
     </div>
   );
 }
+function PeopleIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <circle cx="9" cy="8" r="3.4" />
+      <path d="M2.5 19.2c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6c0 .5-.4.8-.8.8H3.3c-.4 0-.8-.3-.8-.8Z" />
+      <circle cx="17" cy="9" r="2.6" opacity=".75" />
+      <path d="M16.6 13.4c2.9.2 4.9 2.3 4.9 5.2 0 .4-.3.7-.7.7h-3.9c.1-.3.1-.6.1-.9 0-1.9-.6-3.6-1.7-4.9.4-.1.8-.1 1.3-.1Z" opacity=".75" />
+    </svg>
+  );
+}
+
 function ChevronIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
