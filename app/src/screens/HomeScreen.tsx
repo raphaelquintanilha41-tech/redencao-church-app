@@ -16,6 +16,7 @@ import {
 import { fetchUnreadNotificationCount } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
 import { signalHomeReady } from '../lib/splash';
+import { BirthdayCard } from './BirthdayCard';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -334,6 +335,9 @@ export function HomeScreen() {
               </button>
             </div>
           </section>
+
+          {/* Pedido da data de aniversário (só enquanto não estiver preenchida) */}
+          <BirthdayCard variant="home" />
 
           {/* Seu momento com Deus */}
           <section className="card home-section">

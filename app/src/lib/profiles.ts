@@ -14,7 +14,7 @@ return data as Profile | null;
 
 export async function updateOwnProfile(
 userId: string,
-patch: Partial<Pick<Profile, 'full_name' | 'avatar_url'>>,
+patch: Partial<Pick<Profile, 'full_name' | 'avatar_url' | 'birth_day' | 'birth_month' | 'birth_year'>>,
 ): Promise<Profile> {
 const { data, error } = await supabase
 .from('profiles')

@@ -9,6 +9,7 @@ import { fetchIsChurchAdmin } from '../lib/members';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/preferences';
 import { getPushSubscriptionState, subscribeToPush, unsubscribeFromPush, type PushSubscriptionState } from '../lib/push';
 import type { ReadingPlan, UserPlanProgress } from '../lib/types';
+import { BirthdayCard } from './BirthdayCard';
 
 type InstallState = 'unknown' | 'installable' | 'installed' | 'unsupported';
 
@@ -265,6 +266,8 @@ const handleDeleteAccount = async () => {
           )}
         </div>
       </section>
+
+      <BirthdayCard variant="perfil" />
 
       {isChurchAdmin && (
         <section className="card perfil-section">
