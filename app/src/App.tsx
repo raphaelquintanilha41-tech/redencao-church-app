@@ -30,6 +30,8 @@ import { HistoricoScreen } from './screens/HistoricoScreen';
 import { PedidosScreen } from './screens/PedidosScreen';
 import { NotificacoesScreen } from './screens/NotificacoesScreen';
 import { PrivacidadeScreen } from './screens/PrivacidadeScreen';
+import { MembrosScreen } from './screens/MembrosScreen';
+import { MembroFormScreen } from './screens/MembroFormScreen';
 import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
@@ -70,6 +72,26 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <HomeScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/membros"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <MembrosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/membros/:id"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <MembroFormScreen />
                 </AppShell>
               </ProtectedRoute>
             }
