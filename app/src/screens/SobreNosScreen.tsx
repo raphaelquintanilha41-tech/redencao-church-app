@@ -4,7 +4,7 @@ const valores = ['Palavra de Deus', 'Oração', 'Unidade', 'Santidade', 'Honra',
 
 const lideranca = [
   { nome: 'Bianca Donato', cargo: 'Pastora Presidente' },
-  { nome: 'Raphael Quintanilha', cargo: 'Presbítero' },
+  { nome: 'Raphael Quintanilha', cargo: 'Pastor' },
   { nome: 'Robson Santos', cargo: 'Pastor auxiliar' },
   { nome: 'Andreza', cargo: 'Pastora auxiliar' },
 ];
