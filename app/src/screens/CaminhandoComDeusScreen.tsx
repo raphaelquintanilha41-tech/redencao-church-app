@@ -15,6 +15,7 @@ export function CaminhandoComDeusScreen() {
   const [today, setToday] = useState<UserDailyProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+  const [devotionalOpen, setDevotionalOpen] = useState(false);
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
@@ -46,6 +47,7 @@ export function CaminhandoComDeusScreen() {
       const s = await fetchStreak(user.id);
       setStreak(s);
       showToast('Devocional concluído.');
+      setDevotionalOpen(false);
     } catch (err) {
       showToast(`Falha ao salvar: ${err instanceof Error ? err.message : String(err)}`);
     }
@@ -89,14 +91,23 @@ export function CaminhandoComDeusScreen() {
         </div>
       </section>
       {devotional && (
-        <section className="card perfil-section">
+        <section
+          className="card perfil-section home-devotional-card-btn"
+          role="button"
+          tabIndex={0}
+          onClick={() => setDevotionalOpen(true)}
+          onKeyDown={(e) => e.key === 'Enter' && setDevotionalOpen(true)}
+        >
           <div className="home-devotional-card-header">
             <h3 className="home-section-title">Devocional de hoje</h3>
             <button
               type="button"
               className="home-devotional-card-share"
               aria-label="Partilhar devocional"
-              onClick={handleShare}
+              onClick={(e) => {
+                e.stopPropagation();
+                void handleShare();
+              }}
             >
               <ShareIcon />
             </button>
@@ -106,17 +117,86 @@ export function CaminhandoComDeusScreen() {
           {devotional.duration_minutes && (
             <div className="home-event-meta">{devotional.duration_minutes} min de leitura</div>
           )}
+          <button
+            type="button"
+            className="btn-secondary agenda-cta"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDevotionalOpen(true);
+            }}
+          >
+            Ler devocional
+          </button>
           {today?.did_devotional ? (
             <div className="caminhada-done-badge">Concluído hoje ✓</div>
           ) : (
-            <button type="button" className="btn-primary agenda-cta" onClick={concluir}>
+            <button
+              type="button"
+              className="btn-primary agenda-cta"
+              onClick={(e) => {
+                e.stopPropagation();
+                void concluir();
+              }}
+            >
               Concluí meu devocional
             </button>
           )}
         </section>
       )}
+      {devotionalOpen && devotional && (
+        <div className="home-devotional-modal" onClick={() => setDevotionalOpen(false)}>
+          <div className="home-devotional-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="home-devotional-modal-close"
+              aria-label="Fechar"
+              onClick={() => setDevotionalOpen(false)}
+            >
+              <CloseIcon />
+            </button>
+            <button
+              type="button"
+              className="home-devotional-modal-share"
+              aria-label="Partilhar devocional"
+              onClick={handleShare}
+            >
+              <ShareIcon />
+            </button>
+            <span className="home-verse-kicker">DEVOCIONAL DE HOJE</span>
+            <h2 className="home-devotional-modal-title">{devotional.title}</h2>
+            <div className="home-event-meta">
+              {devotional.author}
+              {devotional.author && devotional.duration_minutes ? ' · ' : ''}
+              {devotional.duration_minutes ? `${devotional.duration_minutes} min de leitura` : ''}
+            </div>
+            <div className="home-devotional-modal-body">
+              {(devotional.content ?? devotional.summary)
+                .split(/\n{2,}/)
+                .filter((paragraph) => paragraph.trim().length > 0)
+                .map((paragraph, index) => (
+                  <p key={index}>{paragraph.trim()}</p>
+                ))}
+            </div>
+            {today?.did_devotional ? (
+              <div className="caminhada-done-badge">Concluído hoje ✓</div>
+            ) : (
+              <button type="button" className="btn-primary home-verse-btn" onClick={concluir}>
+                Concluí meu devocional
+              </button>
+            )}
+          </div>
+        </div>
+      )}
       {toast && <div className="rc-toast">{toast}</div>}
     </div>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+    </svg>
   );
 }
 
