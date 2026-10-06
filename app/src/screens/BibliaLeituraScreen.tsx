@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   addFavorite,
@@ -19,7 +19,15 @@ import {
 } from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
 import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
-import { buildPassageFiles, passageReference, passageToText, sharePassage } from '../lib/share-card';
+import {
+  buildPassageFiles,
+  parseVersesParam,
+  passageReference,
+  passageToText,
+  sharePassage,
+  sharePassageText,
+  versesParam,
+} from '../lib/share-card';
 import type { ScripturePassage } from '../lib/share-card';
 import type { BibleBook, BibleVerse } from '../lib/types';
 
@@ -30,6 +38,11 @@ export function BibliaLeituraScreen() {
   const chapter = parseInt(chapterParam, 10) || 1;
   const navigate = useNavigate();
   const { user } = useAuth();
+  // Link partilhado: /biblia/sl/40?v=1-3,7 → marca esses versículos ao abrir.
+  const [searchParams] = useSearchParams();
+  const linkedVerses = useMemo(() => parseVersesParam(searchParams.get('v')), [searchParams]);
+  // Escolha Imagem/Texto ao partilhar (null = fechado).
+  const [shareChoice, setShareChoice] = useState<BibleVerse[] | null>(null);
 
   const [book, setBook] = useState<BibleBook | null>(null);
   const [availableChapters, setAvailableChapters] = useState<number[]>([]);
@@ -248,7 +261,12 @@ export function BibliaLeituraScreen() {
     bookName: book?.name ?? '',
     chapter,
     verses: list.map((v) => ({ verse: v.verse, text: v.text })),
+    url: passageUrl(list),
   });
+  const passageUrl = (list: BibleVerse[]) => {
+    const base = `${window.location.origin}/biblia/${bookAbbrev}/${chapter}`;
+    return list.length === verses.length ? base : `${base}?v=${versesParam(list.map((v) => v.verse))}`;
+  };
   const passageKey = (list: BibleVerse[]) => `${book?.id}:${chapter}:${list.map((v) => v.id).join(',')}`;
 
   // Prepara as imagens da seleção atual (ou do capítulo inteiro) em segundo plano.
@@ -294,6 +312,22 @@ export function BibliaLeituraScreen() {
       setSharing(false);
     }
   };
+
+  const shareAsText = async (list: BibleVerse[]) => {
+    if (!book || list.length === 0) return;
+    const outcome = await sharePassageText(toPassage(list));
+    if (outcome === 'copied') showToast('Texto copiado — cole no WhatsApp.');
+    else if (outcome === 'failed') showToast('Não foi possível compartilhar neste aparelho.');
+    else if (outcome === 'shared') clearSelection();
+  };
+
+  // Ao abrir por um link partilhado, rola até ao primeiro versículo marcado.
+  useEffect(() => {
+    if (loading || linkedVerses.size === 0) return;
+    const first = Math.min(...linkedVerses);
+    const el = document.querySelector(`[data-verse="${first}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [loading, linkedVerses, verses]);
 
   const copySelection = () => {
     if (selectedVerses.length === 0) return;
@@ -391,8 +425,9 @@ export function BibliaLeituraScreen() {
             {verses.map((v) => (
               <span
                 key={v.id}
-                className={`biblia-verse${selectedIds.has(v.id) ? ' biblia-verse-selected' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
+                className={`biblia-verse${selectedIds.has(v.id) ? ' biblia-verse-selected' : ''}${linkedVerses.has(v.verse) ? ' biblia-verse-linked' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
                 style={highlightedColors.has(v.id) ? { backgroundColor: highlightedColors.get(v.id) } : undefined}
+                data-verse={v.verse}
                 onClick={() => toggleSelect(v.id)}
               >
                 <sup className="biblia-verse-num">
@@ -411,7 +446,7 @@ export function BibliaLeituraScreen() {
             <button
               type="button"
               className="btn-secondary biblia-share-chapter-btn"
-              onClick={() => sharePassageOf(verses)}
+              onClick={() => setShareChoice(verses)}
               disabled={sharing || verses.length === 0}
             >
               {sharing && selectedVerses.length === 0 ? 'A preparar…' : `Compartilhar ${book.name} ${chapter} inteiro`}
@@ -499,10 +534,53 @@ export function BibliaLeituraScreen() {
             <button
               type="button"
               className="biblia-action-share"
-              onClick={() => sharePassageOf(selectedVerses)}
+              onClick={() => setShareChoice(selectedVerses)}
               disabled={sharing}
             >
               {sharing ? 'A preparar…' : 'Compartilhar'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {shareChoice && (
+        <div className="biblia-share-sheet-backdrop" onClick={() => setShareChoice(null)}>
+          <div className="biblia-share-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Compartilhar">
+            <div className="biblia-share-sheet-title">
+              Compartilhar {passageReference(toPassage(shareChoice))}
+            </div>
+            <button
+              type="button"
+              className="biblia-share-option"
+              onClick={() => {
+                const list = shareChoice;
+                setShareChoice(null);
+                sharePassageOf(list);
+              }}
+            >
+              <span className="biblia-share-option-icon" aria-hidden="true">🖼️</span>
+              <span>
+                <strong>Imagem</strong>
+                <small>Com as cores e o logo da igreja</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              className="biblia-share-option"
+              onClick={() => {
+                const list = shareChoice;
+                setShareChoice(null);
+                shareAsText(list);
+              }}
+            >
+              <span className="biblia-share-option-icon" aria-hidden="true">💬</span>
+              <span>
+                <strong>Texto</strong>
+                <small>Formatado para WhatsApp, com link para abrir na app</small>
+              </span>
+            </button>
+            <button type="button" className="biblia-share-cancel" onClick={() => setShareChoice(null)}>
+              Cancelar
             </button>
           </div>
         </div>
