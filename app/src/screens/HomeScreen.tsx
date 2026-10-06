@@ -16,6 +16,9 @@ import {
 import { fetchUnreadNotificationCount } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
 import { signalHomeReady } from '../lib/splash';
+import { versesParam } from '../lib/share-card';
+import type { ScripturePassage } from '../lib/share-card';
+import { PassageShareSheet } from './PassageShareSheet';
 import { BirthdayCard } from './BirthdayCard';
 import type {
   ChurchEvent,
@@ -102,6 +105,8 @@ export function HomeScreen() {
   const [videoOpen, setVideoOpen] = useState(false);
   const [devotionalOpen, setDevotionalOpen] = useState(false);
   const [verseRef, setVerseRef] = useState<ResolvedDailyVerse | null>(null);
+  // Partilha da Palavra do dia (mesmo painel Imagem/Texto da Bíblia).
+  const [versePassage, setVersePassage] = useState<ScripturePassage | null>(null);
   const [verseFavorited, setVerseFavorited] = useState(false);
 
   const showToast = (msg: string) => {
@@ -202,6 +207,18 @@ export function HomeScreen() {
 
   const handleShareVerse = async () => {
     if (!verse) return;
+    if (verseRef && verseRef.verses.length > 0) {
+      setVersePassage({
+        bookName: verseRef.bookName,
+        chapter: verseRef.chapter,
+        verses: verseRef.verses,
+        url: `${window.location.origin}/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}?v=${versesParam(
+          verseRef.verses.map((v) => v.verse),
+        )}`,
+      });
+      return;
+    }
+    // Referência não reconhecida: partilha o texto simples, como antes.
     const shareText = `"${verse.text}"\n${verse.reference}\n\nRedenção Church`;
     try {
       if (navigator.share) {
@@ -509,6 +526,10 @@ export function HomeScreen() {
             </section>
           )}
         </div>
+      )}
+
+      {versePassage && (
+        <PassageShareSheet passage={versePassage} onClose={() => setVersePassage(null)} onToast={showToast} />
       )}
 
       {toast && <div className="rc-toast">{toast}</div>}
