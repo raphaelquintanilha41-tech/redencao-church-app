@@ -377,3 +377,49 @@
 .biblia-search-result-ref {
   border-color: var(--color-accent, #d6b473);
 }
+
+/* Seleção de vários versículos */
+.biblia-selection-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.biblia-selection-ref {
+  display: flex;
+  flex-direction: column;
+  color: #D6B473;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.25;
+  min-width: 0;
+}
+.biblia-selection-ref small {
+  color: #8E9AB2;
+  font-weight: 500;
+  font-size: 14px;
+}
+.biblia-selection-links {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+.biblia-selection-links button {
+  background: rgba(237, 231, 219, 0.1);
+  border: 1px solid rgba(237, 231, 219, 0.2);
+  color: #EDE7DB;
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+.biblia-action-buttons button.biblia-action-share {
+  background: linear-gradient(135deg, #F1DDAE, #C99A48);
+  color: #0A1120;
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+}
+.biblia-action-buttons button:disabled {
+  opacity: 0.6;
+}
