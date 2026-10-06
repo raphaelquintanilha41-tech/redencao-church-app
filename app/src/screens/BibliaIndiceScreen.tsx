@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchBooks, parseChapterReference, searchVerses } from '../lib/bible';
+import { fetchBooks, findBooksByName, parseChapterReference, searchVerses } from '../lib/bible';
 import type { BibleBook } from '../lib/types';
 import type { VerseSearchResult } from '../lib/bible';
 
@@ -49,6 +49,7 @@ export function BibliaIndiceScreen() {
 
   const filteredBooks = useMemo(() => books.filter((b) => b.testament === tab), [books, tab]);
   const reference = useMemo(() => parseChapterReference(query, books), [query, books]);
+  const bookMatches = useMemo(() => (reference ? [] : findBooksByName(query, books)), [reference, query, books]);
 
   return (
     <div className="biblia-index-screen">
@@ -79,8 +80,21 @@ export function BibliaIndiceScreen() {
               <span className="biblia-search-snippet">Ir para o capítulo</span>
             </button>
           )}
+          {bookMatches.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              className="biblia-search-result biblia-search-result-ref"
+              onClick={() => navigate(`/biblia/${b.abbrev}/1`)}
+            >
+              <span className="biblia-search-ref">Abrir o livro de {b.name}</span>
+              <span className="biblia-search-snippet">
+                {b.chapter_count} capítulos · começar no capítulo 1
+              </span>
+            </button>
+          ))}
           {searching && <p className="home-event-meta">A buscar…</p>}
-          {!searching && !reference && results && results.length === 0 && (
+          {!searching && !reference && bookMatches.length === 0 && results && results.length === 0 && (
             <p className="home-event-meta">Nenhum resultado para "{query}".</p>
           )}
           {!searching &&
