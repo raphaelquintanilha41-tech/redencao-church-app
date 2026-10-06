@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -19,6 +19,8 @@ import {
 } from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
 import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
+import { buildPassageFiles, passageReference, passageToText, sharePassage } from '../lib/share-card';
+import type { ScripturePassage } from '../lib/share-card';
 import type { BibleBook, BibleVerse } from '../lib/types';
 
 const HIGHLIGHT_COLORS = ['#D6B473', '#8FBF8F', '#8FB4D9', '#D98F8F', '#C79ED9'];
@@ -41,7 +43,12 @@ export function BibliaLeituraScreen() {
       return next;
     });
   };
-  const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
+  // Vários versículos podem ser selecionados (toque para marcar/desmarcar).
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [sharing, setSharing] = useState(false);
+  // Imagens geradas com antecedência: o iPhone só aceita a partilha se ela
+  // começar logo após o toque, sem esperar pelo desenho das imagens.
+  const prebuiltRef = useRef<{ key: string; files: File[] } | null>(null);
   const [favoritedIds, setFavoritedIds] = useState<Set<number>>(new Set());
   const [notedIds, setNotedIds] = useState<Set<number>>(new Set());
   const [highlightedColors, setHighlightedColors] = useState<Map<number, string>>(new Map());
@@ -58,7 +65,7 @@ export function BibliaLeituraScreen() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    setSelectedVerse(null);
+    setSelectedIds(new Set());
     setNoteEditorVerse(null);
     setNoteDraft('');
     setFavoritedIds(new Set());
@@ -216,38 +223,104 @@ export function BibliaLeituraScreen() {
     }
   };
 
-  const copyVerse = (v: BibleVerse) => {
-    const ref = `${book?.name} ${v.chapter}:${v.verse}`;
-    const content = `"${v.text.trim()}" — ${ref}`;
+  const selectedVerses = useMemo(
+    () => verses.filter((v) => selectedIds.has(v.id)),
+    [verses, selectedIds],
+  );
+  const singleSelected = selectedVerses.length === 1 ? selectedVerses[0].id : null;
+
+  const toggleSelect = (verseId: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(verseId)) next.delete(verseId);
+      else next.add(verseId);
+      return next;
+    });
+    setNoteEditorVerse(null);
+  };
+  const clearSelection = () => {
+    setSelectedIds(new Set());
+    setNoteEditorVerse(null);
+  };
+  const selectAll = () => setSelectedIds(new Set(verses.map((v) => v.id)));
+
+  const toPassage = (list: BibleVerse[]): ScripturePassage => ({
+    bookName: book?.name ?? '',
+    chapter,
+    verses: list.map((v) => ({ verse: v.verse, text: v.text })),
+  });
+  const passageKey = (list: BibleVerse[]) => `${book?.id}:${chapter}:${list.map((v) => v.id).join(',')}`;
+
+  // Prepara as imagens da seleção atual (ou do capítulo inteiro) em segundo plano.
+  const prebuild = (list: BibleVerse[]) => {
+    if (!book || list.length === 0) return;
+    const key = passageKey(list);
+    if (prebuiltRef.current?.key === key) return;
+    buildPassageFiles(toPassage(list))
+      .then((files) => {
+        prebuiltRef.current = { key, files };
+      })
+      .catch(() => {
+        /* gera no momento da partilha */
+      });
+  };
+  useEffect(() => {
+    const list = selectedVerses.length ? selectedVerses : verses;
+    const t = window.setTimeout(() => prebuild(list), 600);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedVerses, verses, book?.id, chapter]);
+
+  const sharePassageOf = async (list: BibleVerse[]) => {
+    if (!book || list.length === 0 || sharing) return;
+    const key = passageKey(list);
+    const ready = prebuiltRef.current?.key === key ? prebuiltRef.current.files : null;
+    setSharing(true);
+    if (!ready) showToast('A preparar as imagens…');
+    try {
+      let files = ready;
+      if (!files) {
+        files = await buildPassageFiles(toPassage(list));
+        prebuiltRef.current = { key, files };
+      }
+      const outcome = await sharePassage(toPassage(list), files, !ready);
+      if (outcome === 'retry') showToast('Imagens prontas — toque de novo em Compartilhar.');
+      else if (outcome === 'copied') showToast('Texto copiado — cole no WhatsApp.');
+      else if (outcome === 'failed') showToast('Não foi possível compartilhar neste aparelho.');
+      else if (outcome === 'shared') clearSelection();
+    } catch (err) {
+      showToast(`Falha ao compartilhar: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const copySelection = () => {
+    if (selectedVerses.length === 0) return;
+    const content = passageToText(toPassage(selectedVerses));
     if (navigator.clipboard) {
       navigator.clipboard
         .writeText(content)
-        .then(() => showToast('Versículo copiado.'))
+        .then(() => showToast(selectedVerses.length > 1 ? 'Versículos copiados.' : 'Versículo copiado.'))
         .catch(() => showToast('Não foi possível copiar.'));
     } else {
       showToast('Não foi possível copiar neste navegador.');
     }
-    setSelectedVerse(null);
   };
 
-  const shareVerse = async (v: BibleVerse) => {
-    const ref = `${book?.name} ${v.chapter}:${v.verse}`;
-    const content = `"${v.text.trim()}" — ${ref}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: content });
-      } catch {
-        // usuário cancelou o compartilhamento — sem ação necessária.
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(content);
-        showToast('Compartilhamento não suportado aqui — copiado para a área de transferência.');
-      } catch {
-        showToast('Compartilhamento não suportado neste navegador.');
-      }
+  // Destacar / favoritar aplicam-se a todos os versículos selecionados.
+  const highlightSelection = async (color: string) => {
+    const allSame = selectedVerses.every((v) => highlightedColors.get(v.id) === color);
+    for (const v of selectedVerses) {
+      const has = highlightedColors.get(v.id) === color;
+      if (allSame || !has) await toggleHighlight(v.id, color);
     }
-    setSelectedVerse(null);
+  };
+  const allFavorited = selectedVerses.length > 0 && selectedVerses.every((v) => favoritedIds.has(v.id));
+  const favoriteSelection = async () => {
+    for (const v of selectedVerses) {
+      if (allFavorited || !favoritedIds.has(v.id)) await toggleFavorite(v.id);
+    }
   };
 
   if (loading) {
@@ -318,9 +391,9 @@ export function BibliaLeituraScreen() {
             {verses.map((v) => (
               <span
                 key={v.id}
-                className={`biblia-verse${selectedVerse === v.id ? ' biblia-verse-selected' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
+                className={`biblia-verse${selectedIds.has(v.id) ? ' biblia-verse-selected' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
                 style={highlightedColors.has(v.id) ? { backgroundColor: highlightedColors.get(v.id) } : undefined}
-                onClick={() => setSelectedVerse(selectedVerse === v.id ? null : v.id)}
+                onClick={() => toggleSelect(v.id)}
               >
                 <sup className="biblia-verse-num">
                   {v.verse}
@@ -331,13 +404,23 @@ export function BibliaLeituraScreen() {
               </span>
             ))}
           </div>
-          <button type="button" className="btn-primary biblia-mark-read-btn" onClick={markChapterRead}>
-            Marcar capítulo como lido
-          </button>
+          <div className="biblia-chapter-actions">
+            <button type="button" className="btn-primary biblia-mark-read-btn" onClick={markChapterRead}>
+              Marcar capítulo como lido
+            </button>
+            <button
+              type="button"
+              className="btn-secondary biblia-share-chapter-btn"
+              onClick={() => sharePassageOf(verses)}
+              disabled={sharing || verses.length === 0}
+            >
+              {sharing && selectedVerses.length === 0 ? 'A preparar…' : `Compartilhar ${book.name} ${chapter} inteiro`}
+            </button>
+          </div>
         </>
       )}
 
-      {selectedVerse && noteEditorVerse === selectedVerse && (
+      {singleSelected !== null && noteEditorVerse === singleSelected && (
         <div className="biblia-action-bar">
           <div className="biblia-note-editor">
             <textarea
@@ -352,12 +435,12 @@ export function BibliaLeituraScreen() {
               <button type="button" onClick={closeNoteEditor} disabled={savingNote}>
                 Cancelar
               </button>
-              {notedIds.has(selectedVerse) && (
-                <button type="button" onClick={() => removeNoteForVerse(selectedVerse)} disabled={savingNote}>
+              {notedIds.has(singleSelected) && (
+                <button type="button" onClick={() => removeNoteForVerse(singleSelected)} disabled={savingNote}>
                   Excluir
                 </button>
               )}
-              <button type="button" onClick={() => submitNote(selectedVerse)} disabled={savingNote}>
+              <button type="button" onClick={() => submitNote(singleSelected)} disabled={savingNote}>
                 {savingNote ? 'A guardar…' : 'Guardar'}
               </button>
             </div>
@@ -365,52 +448,61 @@ export function BibliaLeituraScreen() {
         </div>
       )}
 
-      {selectedVerse && noteEditorVerse !== selectedVerse && (
+      {selectedVerses.length > 0 && noteEditorVerse === null && (
         <div className="biblia-action-bar">
+          <div className="biblia-selection-head">
+            <span className="biblia-selection-ref">
+              {passageReference(toPassage(selectedVerses))}
+              <small>
+                {selectedVerses.length === 1 ? '1 versículo' : `${selectedVerses.length} versículos`} · toque noutros para juntar
+              </small>
+            </span>
+            <span className="biblia-selection-links">
+              {selectedVerses.length < verses.length && (
+                <button type="button" onClick={selectAll}>
+                  Todos
+                </button>
+              )}
+              <button type="button" onClick={clearSelection} aria-label="Limpar seleção">
+                ✕
+              </button>
+            </span>
+          </div>
           <div className="biblia-color-swatches">
             {HIGHLIGHT_COLORS.map((c) => (
               <button
                 key={c}
                 type="button"
-                className={`biblia-color-swatch${highlightedColors.get(selectedVerse) === c ? ' biblia-color-swatch-active' : ''}`}
+                className={`biblia-color-swatch${selectedVerses.every((v) => highlightedColors.get(v.id) === c) ? ' biblia-color-swatch-active' : ''}`}
                 style={{ background: c }}
                 aria-label="Destacar"
-                onClick={() => toggleHighlight(selectedVerse, c)}
+                onClick={() => highlightSelection(c)}
               />
             ))}
           </div>
           <div className="biblia-action-buttons">
-            <button
-              type="button"
-              className={favoritedIds.has(selectedVerse) ? 'biblia-action-active' : ''}
-              onClick={() => toggleFavorite(selectedVerse)}
-            >
-              {favoritedIds.has(selectedVerse) ? '★ Favoritado' : 'Favoritar'}
+            <button type="button" className={allFavorited ? 'biblia-action-active' : ''} onClick={favoriteSelection}>
+              {allFavorited ? '★ Favoritado' : 'Favoritar'}
             </button>
-            <button
-              type="button"
-              className={notedIds.has(selectedVerse) ? 'biblia-action-active' : ''}
-              onClick={() => openNoteEditor(selectedVerse)}
-            >
-              {notedIds.has(selectedVerse) ? 'Editar nota' : 'Nota'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                const v = verses.find((v) => v.id === selectedVerse);
-                if (v) copyVerse(v);
-              }}
-            >
+            {singleSelected !== null && (
+              <button
+                type="button"
+                className={notedIds.has(singleSelected) ? 'biblia-action-active' : ''}
+                onClick={() => openNoteEditor(singleSelected)}
+              >
+                {notedIds.has(singleSelected) ? 'Editar nota' : 'Nota'}
+              </button>
+            )}
+            <button type="button" onClick={copySelection}>
               Copiar
             </button>
             <button
               type="button"
-              onClick={() => {
-                const v = verses.find((v) => v.id === selectedVerse);
-                if (v) shareVerse(v);
-              }}
+              className="biblia-action-share"
+              onClick={() => sharePassageOf(selectedVerses)}
+              disabled={sharing}
             >
-              Compartilhar
+              {sharing ? 'A preparar…' : 'Compartilhar'}
             </button>
           </div>
         </div>
