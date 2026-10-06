@@ -137,6 +137,20 @@ const normalizeName = (s: string) =>
     .trim();
 
 /**
+ * Livros cujo nome (ou abreviatura) corresponde ao que foi escrito na busca,
+ * sem número de capítulo — ex.: "Salmos", "salmo", "Sl", "1 cor".
+ */
+export function findBooksByName(query: string, books: BibleBook[]): BibleBook[] {
+  const q = query.trim();
+  if (!q || /\d\s*$/.test(q.replace(/^\d\s*/, '')) || /[:.,]/.test(q)) return [];
+  const wanted = normalizeName(q);
+  if (!wanted) return [];
+  const exact = books.filter((b) => normalizeName(b.abbrev) === wanted || normalizeName(b.name) === wanted);
+  const prefix = books.filter((b) => !exact.includes(b) && normalizeName(b.name).startsWith(wanted));
+  return [...exact, ...prefix].slice(0, 5);
+}
+
+/**
  * Reconhece referências digitadas na busca — "João 3", "João 3:16", "1 Co 13",
  * "sl 23" — contra a lista de livros carregada (nome completo, abreviatura ou
  * prefixo do nome, sem acentos/maiúsculas). Devolve null se não for referência.
