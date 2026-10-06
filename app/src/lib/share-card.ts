@@ -13,6 +13,8 @@ export interface ScripturePassage {
   chapter: number;
   verses: ShareVerse[];
   translation?: string;
+  /** Link que abre a passagem na app (com os versículos marcados). */
+  url?: string;
 }
 
 const W = 1080;
@@ -292,7 +294,53 @@ export function passageToText(p: ScripturePassage): string {
     p.verses.length === 1
       ? `“${p.verses[0].text.trim()}”`
       : p.verses.map((v) => `*${v.verse}* ${v.text.trim()}`).join('\n');
-  return `📖 *${title}* (${p.translation ?? 'Bíblia Livre'})\n\n${body}\n\n— Redenção Church\n${window.location.origin}`;
+  return `📖 *${title}* (${p.translation ?? 'Bíblia Livre'})\n\n${body}\n\n— Redenção Church\nLer na app: ${p.url ?? window.location.origin}`;
+}
+
+/** Partilha só o texto formatado (com o link para a passagem). */
+export async function sharePassageText(p: ScripturePassage): Promise<ShareOutcome> {
+  const text = passageToText(p);
+  try {
+    if (navigator.share) {
+      await navigator.share({ text, title: passageReference(p) });
+      return 'shared';
+    }
+  } catch (err) {
+    if ((err as DOMException)?.name === 'AbortError') return 'cancelled';
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    return 'copied';
+  } catch {
+    return 'failed';
+  }
+}
+
+/** "1,2,3,7" → "1-3,7" (compacto para o link). */
+export function versesParam(nums: number[]): string {
+  const sorted = [...nums].sort((a, b) => a - b);
+  const parts: string[] = [];
+  for (let i = 0; i < sorted.length; i++) {
+    let j = i;
+    while (j + 1 < sorted.length && sorted[j + 1] === sorted[j] + 1) j++;
+    parts.push(j > i ? `${sorted[i]}-${sorted[j]}` : String(sorted[i]));
+    i = j;
+  }
+  return parts.join(',');
+}
+
+/** "1-3,7" → Set{1,2,3,7} (ignora valores inválidos). */
+export function parseVersesParam(param: string | null): Set<number> {
+  const out = new Set<number>();
+  if (!param) return out;
+  for (const part of param.split(',')) {
+    const m = part.trim().match(/^(\d{1,3})(?:-(\d{1,3}))?$/);
+    if (!m) continue;
+    const a = Number(m[1]);
+    const b = m[2] ? Number(m[2]) : a;
+    for (let n = Math.min(a, b); n <= Math.max(a, b) && n - a < 200; n++) out.add(n);
+  }
+  return out;
 }
 
 export type ShareOutcome = 'shared' | 'copied' | 'cancelled' | 'retry' | 'failed';
@@ -319,7 +367,7 @@ export async function buildPassageFiles(p: ScripturePassage): Promise<File[]> {
  */
 export async function sharePassage(p: ScripturePassage, prebuilt?: File[] | null, justBuilt = false): Promise<ShareOutcome> {
   const title = passageReference(p);
-  const caption = `📖 ${title} — Redenção Church\n${window.location.origin}`;
+  const caption = `📖 ${title} — Redenção Church\nLer na app: ${p.url ?? window.location.origin}`;
   try {
     const files = prebuilt ?? (await buildPassageFiles(p));
     if (navigator.canShare?.({ files })) {
