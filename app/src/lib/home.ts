@@ -24,8 +24,11 @@ export async function fetchDailyVerse(): Promise<DailyVerse | null> {
 
 export interface ResolvedDailyVerse {
   bookAbbrev: string;
+  bookName: string;
   chapter: number;
   verseIds: number[];
+  /** Texto de cada versículo (para a partilha em imagem/texto). */
+  verses: { verse: number; text: string }[];
 }
 
 /**
@@ -44,8 +47,10 @@ export async function resolveDailyVerseRef(verse: DailyVerse): Promise<ResolvedD
   if (verses.length === 0) return null;
   return {
     bookAbbrev: book.abbrev,
+    bookName: book.name,
     chapter: parsed.chapter,
     verseIds: verses.map((v) => v.id),
+    verses: verses.map((v) => ({ verse: v.verse, text: v.text })),
   };
 }
 export async function fetchRecommendedDevotional(): Promise<Devotional | null> {
