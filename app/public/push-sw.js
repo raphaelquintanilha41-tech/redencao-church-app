@@ -15,7 +15,10 @@ self.addEventListener('push', (event) => {
   const options = {
     body: payload.body || '',
     icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    // Ícone pequeno (barra de estado / ecrã de bloqueio no Android): tem de ser
+    // monocromático com fundo transparente — o Android usa só a transparência,
+    // por isso um PNG opaco aparecia como um quadrado claro.
+    badge: '/icons/badge-96.png',
     tag: payload.tag,
     data: { url: payload.url || '/notificacoes' },
   };
