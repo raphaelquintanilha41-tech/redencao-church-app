@@ -148,3 +148,16 @@
   display: block;
   object-fit: cover;
 }
+
+/* Notificações: data + "Abrir ›" para as que levam a uma área da app */
+.notif-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.notif-open {
+  color: var(--color-accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
