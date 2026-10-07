@@ -10,6 +10,15 @@ export interface AppNotification {
   body: string | null;
   read_at: string | null;
   created_at: string;
+  /** Rota da app a abrir ao tocar na notificação (ex.: '/', '/batismo'). */
+  link?: string | null;
+}
+
+/** Só rotas internas da app (evita abrir endereços externos). */
+export function notificationTarget(n: Pick<AppNotification, 'link'>): string | null {
+  const l = n.link?.trim();
+  if (!l || !l.startsWith('/') || l.startsWith('//')) return null;
+  return l;
 }
 
 export async function fetchNotifications(userId: string): Promise<AppNotification[]> {
