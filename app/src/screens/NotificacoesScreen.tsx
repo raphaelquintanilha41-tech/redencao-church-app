@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   fetchNotifications,
   markAllNotificationsRead,
   markNotificationRead,
+  notificationTarget,
   type AppNotification,
 } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
@@ -17,6 +18,9 @@ function formatNotifiedAt(iso: string): string {
 
 export function NotificacoesScreen() {
   const navigate = useNavigate();
+  // Vindo de uma notificação push: /notificacoes?abrir=<id>
+  const [searchParams] = useSearchParams();
+  const openId = searchParams.get('abrir');
   const { user } = useAuth();
   const [items, setItems] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +60,22 @@ export function NotificacoesScreen() {
       showToast(`Falha ao marcar como lida: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
+
+  // Tocar numa notificação: marca como lida e leva à área correspondente.
+  const openNotification = (n: AppNotification, replace = false) => {
+    void readOne(n);
+    const target = notificationTarget(n);
+    if (target) navigate(target, { replace });
+  };
+
+  // Aberta a partir do push: abre logo o destino dessa notificação.
+  useEffect(() => {
+    if (loading || !openId) return;
+    const n = items.find((i) => i.id === openId);
+    if (n) openNotification(n, true);
+    else navigate('/notificacoes', { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, openId]);
 
   const readAll = async () => {
     if (!user || unreadCount === 0) return;
@@ -99,12 +119,16 @@ export function NotificacoesScreen() {
           <section
             key={n.id}
             className={`card caminhada-cell-card${n.read_at ? '' : ' biblia-tab-active'}`}
-            style={{ cursor: n.read_at ? 'default' : 'pointer' }}
-            onClick={() => readOne(n)}
+            style={{ cursor: n.read_at && !notificationTarget(n) ? 'default' : 'pointer' }}
+            onClick={() => openNotification(n)}
+            role={notificationTarget(n) ? 'link' : undefined}
           >
             <span className="agenda-card-category">{n.read_at ? n.title : `● ${n.title}`}</span>
             {n.body && <p className="static-body-text">{n.body}</p>}
-            <span className="home-event-meta">{formatNotifiedAt(n.created_at)}</span>
+            <span className="home-event-meta notif-meta">
+              {formatNotifiedAt(n.created_at)}
+              {notificationTarget(n) && <span className="notif-open">Abrir ›</span>}
+            </span>
           </section>
         ))
       )}
