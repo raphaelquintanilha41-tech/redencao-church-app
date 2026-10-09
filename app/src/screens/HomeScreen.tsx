@@ -514,7 +514,7 @@ export function HomeScreen() {
                     key={ev.id}
                     type="button"
                     className="home-carousel-card"
-                    onClick={() => navigate('/agenda')}
+                    onClick={() => navigate(`/agenda?evento=${ev.id}`)}
                     aria-label={`Ver ${ev.title} na agenda`}
                   >
                     <div className="home-carousel-date">{formatEventDate(ev.event_date)}</div>

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchAllEvents, fetchMyRegistrations, registerForEvent, unregisterFromEvent } from '../lib/agenda';
+import { buildEventFiles, shareEvent } from '../lib/event-share';
 import type { ChurchEvent } from '../lib/types';
 
 function formatEventDate(iso: string): string {
@@ -22,6 +23,11 @@ export function AgendaScreen() {
   const [category, setCategory] = useState<string>('Todos');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // Link partilhado: /agenda?evento=<id> → destaca e mostra esse evento.
+  const [searchParams] = useSearchParams();
+  const focusId = searchParams.get('evento');
+  // Cartazes preparados com antecedência para a partilha (iPhone).
+  const filesRef = useRef<Map<string, File[]>>(new Map());
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -46,6 +52,32 @@ export function AgendaScreen() {
       mounted = false;
     };
   }, [user]);
+
+  // Prepara os cartazes para partilhar e leva ao evento do link, se houver.
+  useEffect(() => {
+    if (loading) return;
+    for (const ev of events) {
+      if (ev.image_url && !filesRef.current.has(ev.id)) {
+        buildEventFiles(ev)
+          .then((files) => filesRef.current.set(ev.id, files))
+          .catch(() => {
+            /* partilha só o texto */
+          });
+      }
+    }
+    if (focusId) {
+      const t = window.setTimeout(() => {
+        document.getElementById(`evento-${focusId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+      return () => window.clearTimeout(t);
+    }
+  }, [loading, events, focusId]);
+
+  const handleShare = async (ev: ChurchEvent) => {
+    const outcome = await shareEvent(ev, filesRef.current.get(ev.id) ?? null);
+    if (outcome === 'copied') showToast('Texto do evento copiado — cole no WhatsApp.');
+    else if (outcome === 'failed') showToast('Não foi possível compartilhar neste aparelho.');
+  };
 
   const categories = useMemo(() => {
     const set = new Set(events.map((e) => e.category).filter(Boolean) as string[]);
@@ -110,7 +142,11 @@ export function AgendaScreen() {
           {filtered.map((ev) => {
             const isRegistered = registered.has(ev.id);
             return (
-              <div key={ev.id} className="card agenda-card">
+              <div
+                key={ev.id}
+                id={`evento-${ev.id}`}
+                className={`card agenda-card${focusId === ev.id ? ' agenda-card-focus' : ''}`}
+              >
                 {ev.image_url && (
                   <img className="agenda-card-image" src={ev.image_url} alt={ev.title} loading="lazy" />
                 )}
@@ -118,14 +154,24 @@ export function AgendaScreen() {
                 <div className="home-event-title">{ev.title}</div>
                 {ev.location && <div className="home-event-meta">{ev.location}</div>}
                 {ev.category && <span className="agenda-card-category">{ev.category}</span>}
-                <button
-                  type="button"
-                  className={isRegistered ? 'btn-secondary agenda-cta' : 'btn-primary agenda-cta'}
-                  disabled={busyId === ev.id}
-                  onClick={() => toggleRegistration(ev.id)}
-                >
-                  {isRegistered ? 'Inscrição confirmada ✓' : 'Inscrever-me'}
-                </button>
+                <div className="agenda-card-actions">
+                  <button
+                    type="button"
+                    className={isRegistered ? 'btn-secondary agenda-cta' : 'btn-primary agenda-cta'}
+                    disabled={busyId === ev.id}
+                    onClick={() => toggleRegistration(ev.id)}
+                  >
+                    {isRegistered ? 'Inscrição confirmada ✓' : 'Inscrever-me'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary agenda-share-btn"
+                    aria-label={`Compartilhar ${ev.title}`}
+                    onClick={() => handleShare(ev)}
+                  >
+                    Compartilhar
+                  </button>
+                </div>
               </div>
             );
           })}
