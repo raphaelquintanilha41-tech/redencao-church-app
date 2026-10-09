@@ -54,3 +54,23 @@
     margin-top: var(--space-2);
     width: 100%;
 }
+
+/* Inscrever-me + Compartilhar lado a lado */
+.agenda-card-actions {
+    display: flex;
+    gap: var(--space-2);
+    align-items: stretch;
+}
+.agenda-card-actions .agenda-cta {
+    flex: 1;
+    width: auto;
+}
+.agenda-share-btn {
+    margin-top: var(--space-2);
+    white-space: nowrap;
+}
+
+/* Evento aberto a partir de um link partilhado */
+.agenda-card-focus {
+    box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-md);
+}
