@@ -161,3 +161,15 @@
   font-weight: 700;
   white-space: nowrap;
 }
+
+/* Palavra do dia de uma data (aberta pela notificação) */
+.palavra-dia-date {
+  text-transform: capitalize;
+  margin-top: var(--space-1);
+}
+.palavra-dia-devotional {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
