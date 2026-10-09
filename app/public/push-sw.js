@@ -20,6 +20,11 @@ self.addEventListener('push', (event) => {
     // por isso um PNG opaco aparecia como um quadrado claro.
     badge: '/icons/badge-96.png',
     tag: payload.tag,
+    // Alerta sonoro + vibração (o som é o de notificação do aparelho; a
+    // vibração funciona no Android — no iPhone o sistema decide pelas definições).
+    silent: false,
+    renotify: Boolean(payload.tag),
+    vibrate: [250, 120, 250, 120, 400],
     data: { url: payload.url || '/notificacoes' },
   };
 
