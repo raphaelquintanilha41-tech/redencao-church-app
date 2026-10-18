@@ -237,3 +237,18 @@
 .home-campaign-title { color: #F1DDAE; font-weight: 700; font-size: 19px; }
 .home-campaign-sub { color: #C9C2B4; font-size: 15px; }
 .home-campaign-chevron { color: #D6B473; font-size: 28px; flex: 0 0 auto; }
+
+/* Campanha: sugestão de leitura e práticas */
+.campanha-today-practices { color: #D6B473; font-size: 14px; font-weight: 700; text-align: center; }
+.campanha-practices { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
+.campanha-practices-title { margin: 0; font-size: 20px; }
+.campanha-practices-sub { margin: var(--space-1) 0 0; font-weight: 700; }
+.campanha-practices-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.campanha-practices-list li { display: flex; gap: var(--space-3); align-items: flex-start; }
+.campanha-practice-icon {
+  flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--color-accent-soft); font-size: 20px;
+}
+.campanha-practices-list strong { display: block; }
+.campanha-practices-list small { display: block; color: var(--color-muted); font-size: 15px; line-height: 1.4; }
+.campanha-phase-plan { font-weight: 600; }
