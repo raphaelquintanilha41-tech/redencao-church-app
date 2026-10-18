@@ -19,6 +19,7 @@ import { signalHomeReady } from '../lib/splash';
 import { versesParam } from '../lib/share-card';
 import type { ScripturePassage } from '../lib/share-card';
 import { PassageShareSheet } from './PassageShareSheet';
+import { CAMPAIGN, campaignToday, chaptersLabel, shortDate } from '../lib/campaign';
 import { BirthdayCard } from './BirthdayCard';
 import type {
   ChurchEvent,
@@ -356,6 +357,9 @@ export function HomeScreen() {
           {/* Pedido da data de aniversário (só enquanto não estiver preenchida) */}
           <BirthdayCard variant="home" />
 
+          {/* Campanha de Obede-Edom */}
+          <CampaignCard onOpen={() => navigate('/campanha')} />
+
           {/* Seu momento com Deus */}
           <section className="card home-section">
             <h3 className="home-section-title">Seu momento com Deus</h3>
@@ -597,6 +601,32 @@ export function HomeScreen() {
         </div>
       )}
     </div>
+  );
+}
+
+function CampaignCard({ onOpen }: { onOpen: () => void }) {
+  const t = campaignToday();
+  if (t.state === 'depois') return null;
+  let sub = '';
+  if (t.state === 'antes' && t.phase) {
+    sub = `Começa ${t.daysToStart === 1 ? 'amanhã' : `a ${shortDate(t.phase.start)}`} · ${t.phase.name} · ${t.phase.book}`;
+  } else if (t.phase && t.reading) {
+    const r = t.reading;
+    sub =
+      r.to >= r.from
+        ? `${t.phase.name} · hoje: ${t.phase.book}, ${chaptersLabel(r.from, r.to)}`
+        : `${t.phase.name} · dia de meditação`;
+  }
+  return (
+    <button type="button" className="home-campaign-card" onClick={onOpen}>
+      <img src={CAMPAIGN.poster} alt="" />
+      <span className="home-campaign-text">
+        <span className="home-campaign-kicker">CAMPANHA{t.isFastDay ? ' · DIA DE JEJUM' : ''}</span>
+        <span className="home-campaign-title">Obede-Edom · {CAMPAIGN.subtitle}</span>
+        {sub && <span className="home-campaign-sub">{sub}</span>}
+      </span>
+      <span className="home-campaign-chevron" aria-hidden="true">›</span>
+    </button>
   );
 }
 
