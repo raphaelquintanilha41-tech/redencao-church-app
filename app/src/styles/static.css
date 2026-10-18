@@ -173,3 +173,67 @@
   flex-direction: column;
   gap: var(--space-2);
 }
+
+/* Campanha de Obede-Edom */
+.campanha-screen { display: flex; flex-direction: column; gap: var(--space-4); }
+.campanha-poster { width: 100%; border-radius: var(--radius-card); display: block; box-shadow: var(--shadow-md); }
+.campanha-hero { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); }
+.campanha-title { font-size: 26px; color: #F1DDAE; margin: 0; }
+.campanha-subtitle { margin: 0; color: #D6B473; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 15px; }
+.campanha-motto { margin: 0; color: #EDE7DB; font-style: italic; }
+.campanha-today {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: var(--space-3); border-radius: 14px;
+  background: rgba(214, 180, 115, 0.12); border: 1px solid rgba(214, 180, 115, 0.35);
+  color: #EDE7DB;
+}
+.campanha-today strong { color: #F1DDAE; font-size: 18px; }
+.campanha-fast-today { color: #F1DDAE; font-weight: 700; }
+.campanha-today-btn { margin-top: var(--space-1); }
+.campanha-share { margin-top: var(--space-1); }
+.campanha-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.campanha-pillar {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px;
+  padding: var(--space-3) var(--space-2); border-radius: var(--radius-card);
+  background: var(--color-surface); border: 1px solid var(--color-line);
+}
+.campanha-pillar span { font-size: 24px; }
+.campanha-pillar strong { font-size: 15px; }
+.campanha-pillar small { color: var(--color-muted); font-size: 13px; }
+.campanha-phase { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
+.campanha-phase-atual { box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-md); }
+.campanha-phase-concluida { opacity: 0.75; }
+.campanha-phase-head { display: flex; align-items: center; gap: var(--space-3); }
+.campanha-phase-num {
+  flex: 0 0 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #F1DDAE, #C99A48); color: #0A1120; font-weight: 700; font-size: 20px;
+}
+.campanha-phase-name { font-size: 22px; font-weight: 700; letter-spacing: 0.08em; color: var(--color-accent); }
+.campanha-phase-book { font-weight: 700; }
+.campanha-phase-tagline { margin: 0; font-style: italic; }
+.campanha-keyverse {
+  margin: 0; padding: var(--space-3); border-left: 3px solid var(--color-accent);
+  background: var(--color-accent-soft); border-radius: 0 12px 12px 0;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.campanha-keyverse span { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-muted); }
+.campanha-keyverse cite { font-style: normal; font-weight: 700; color: var(--color-accent); }
+.campanha-phase-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.campanha-phase-actions button { flex: 1; min-width: 140px; }
+.campanha-leader { text-align: center; font-style: italic; }
+
+/* Cartão da campanha no Início */
+.home-campaign-card {
+  width: 100%; display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3); border-radius: var(--radius-card); cursor: pointer; text-align: left;
+  border: 1px solid rgba(214, 180, 115, 0.55);
+  background: linear-gradient(135deg, #2a1d08 0%, #0E1A31 70%);
+  color: #EDE7DB; box-shadow: var(--shadow-md);
+}
+.home-campaign-card img { width: 64px; height: 96px; object-fit: cover; border-radius: 10px; flex: 0 0 auto; }
+.home-campaign-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.home-campaign-kicker { color: #D6B473; font-weight: 700; letter-spacing: 0.12em; font-size: 13px; }
+.home-campaign-title { color: #F1DDAE; font-weight: 700; font-size: 19px; }
+.home-campaign-sub { color: #C9C2B4; font-size: 15px; }
+.home-campaign-chevron { color: #D6B473; font-size: 28px; flex: 0 0 auto; }
