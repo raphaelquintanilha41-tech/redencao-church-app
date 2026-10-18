@@ -37,6 +37,7 @@ import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { SplashController } from './screens/SplashController';
 import { PalavraDoDiaScreen } from './screens/PalavraDoDiaScreen';
+import { CampanhaScreen } from './screens/CampanhaScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
 function ConfigWarningBanner() {
   if (isSupabaseConfigured) return null;
@@ -333,6 +334,16 @@ export default function App() {
               <ProtectedRoute>
                 <AppShell>
                   <PedidosScreen />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/campanha"
+            element={
+              <ProtectedRoute>
+                <AppShell>
+                  <CampanhaScreen />
                 </AppShell>
               </ProtectedRoute>
             }
