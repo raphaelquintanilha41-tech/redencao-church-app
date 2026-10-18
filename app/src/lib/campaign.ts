@@ -95,24 +95,46 @@ export function phaseStatus(p: CampaignPhase, today = localDateKey()): 'futura' 
 }
 
 /**
- * Plano sugerido: aproximadamente um capítulo por dia.
- * - Se o livro tem mais capítulos do que dias (Êxodo: 40 em 31), alguns dias
- *   levam 2 capítulos, repartidos ao longo do mês (ajuste do 1.º mês).
- * - Se tem menos (Levítico 27 em 30; Atos 28 em 31), lê-se 1 capítulo por dia
- *   e os últimos dias ficam para revisão das anotações.
+ * Plano sugerido: aproximadamente um capítulo por dia, repartido de forma
+ * uniforme pelos dias da fase.
+ * - Mais capítulos do que dias (Êxodo: 40 em 31): alguns dias levam 2
+ *   capítulos, espalhados ao longo do mês (ajuste do 1.º mês).
+ * - Menos capítulos do que dias (Levítico 27 em 30; Atos 28 em 31): 1 capítulo
+ *   por dia, com dias de revisão espalhados ao longo do mês.
  * Num dia de revisão `to < from`.
  */
 export function readingForDay(p: CampaignPhase, today = localDateKey()): { day: number; totalDays: number; from: number; to: number } | null {
   if (phaseStatus(p, today) !== 'atual') return null;
   const totalDays = daysBetween(p.start, p.end) + 1;
   const i = daysBetween(p.start, today);
-  if (p.chapters >= totalDays) {
-    const from = Math.floor((i * p.chapters) / totalDays) + 1;
-    const to = Math.floor(((i + 1) * p.chapters) / totalDays);
-    return { day: i + 1, totalDays, from, to };
+  const done = (k: number) => chaptersDone(p.chapters, totalDays, k);
+  return { day: i + 1, totalDays, from: done(i) + 1, to: done(i + 1) };
+}
+
+/**
+ * Capítulos lidos até ao fim do dia k. Com mais capítulos do que dias, os dias
+ * duplos ficam espalhados (floor); com menos, arredonda-se para cima (ceil),
+ * para o 1.º dia ter sempre leitura e as revisões caírem ao longo do mês.
+ */
+function chaptersDone(chapters: number, totalDays: number, k: number): number {
+  const x = (k * chapters) / totalDays;
+  return chapters >= totalDays ? Math.floor(x) : Math.ceil(x);
+}
+
+/** Dias (1-based) da fase que são de revisão (sem capítulo novo). */
+export function revisionDays(p: CampaignPhase): number[] {
+  const totalDays = daysBetween(p.start, p.end) + 1;
+  const out: number[] = [];
+  for (let i = 0; i < totalDays; i++) {
+    if (chaptersDone(p.chapters, totalDays, i + 1) === chaptersDone(p.chapters, totalDays, i)) out.push(i + 1);
   }
-  if (i < p.chapters) return { day: i + 1, totalDays, from: i + 1, to: i + 1 };
-  return { day: i + 1, totalDays, from: p.chapters + 1, to: p.chapters };
+  return out;
+}
+
+function addDays(dateKey: string, n: number): string {
+  const d = new Date(`${dateKey}T12:00:00`);
+  d.setDate(d.getDate() + n);
+  return localDateKey(d);
 }
 
 /** Resumo do plano de leitura de cada fase (para mostrar na campanha). */
@@ -120,11 +142,12 @@ export function planSummary(p: CampaignPhase): string {
   const totalDays = daysBetween(p.start, p.end) + 1;
   if (p.chapters > totalDays) {
     const doubles = p.chapters - totalDays;
-    return `${p.chapters} capítulos em ${totalDays} dias: 1 por dia e, em ${doubles} dias, 2 capítulos.`;
+    return `${p.chapters} capítulos em ${totalDays} dias: 1 por dia e, em ${doubles} dias espalhados pelo mês, 2 capítulos.`;
   }
   if (p.chapters < totalDays) {
-    const rest = totalDays - p.chapters;
-    return `1 capítulo por dia durante ${p.chapters} dias; os últimos ${rest} dias são para revisão.`;
+    const days = revisionDays(p).map((d) => shortDate(addDays(p.start, d - 1)));
+    const list = days.length > 1 ? `${days.slice(0, -1).join(', ')} e ${days[days.length - 1]}` : days[0];
+    return `1 capítulo por dia, com ${days.length} dias de revisão ao longo do mês (${list}).`;
   }
   return `1 capítulo por dia.`;
 }
