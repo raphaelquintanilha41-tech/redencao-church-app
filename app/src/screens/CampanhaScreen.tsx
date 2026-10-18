@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   CAMPAIGN,
   PHASES,
+  PRACTICES,
+  planSummary,
   campaignToday,
   chaptersLabel,
   phaseStatus,
@@ -119,18 +121,23 @@ export function CampanhaScreen() {
                   Leitura de hoje: {phase.book}, {chaptersLabel(r.from, r.to)}.
                 </span>
               ) : (
-                <span>Hoje sem capítulo novo: medite no versículo-chave e no último capítulo lido.</span>
+                <span>Dia de revisão: releia as suas anotações e medite no versículo-chave.</span>
               )}
               {today.isFastDay && <span className="campanha-fast-today">🕐 Hoje é dia de jejum de 24h.</span>}
               <button
                 type="button"
                 className="btn-primary campanha-today-btn"
                 onClick={() =>
-                  navigate(bibleLink(phase.bookAbbrev, r.to >= r.from ? r.from : Math.max(1, r.from - 1)))
+                  navigate(
+                    r.to >= r.from
+                      ? bibleLink(phase.bookAbbrev, r.from)
+                      : bibleLink(phase.bookAbbrev, phase.keyVerse.chapter, phase.keyVerse.verse),
+                  )
                 }
               >
-                {r.to >= r.from ? 'Ler agora' : 'Abrir a leitura'}
+                {r.to >= r.from ? 'Ler agora' : 'Ver versículo-chave'}
               </button>
+              <span className="campanha-today-practices">🙏 Ore antes · ✍️ Anote · 👣 Aplique hoje</span>
             </>
           )}
           {today.state === 'depois' && <strong>Campanha concluída. Glória a Deus por cada vida transformada!</strong>}
@@ -160,6 +167,33 @@ export function CampanhaScreen() {
         </div>
       </div>
 
+      {/* Sugestão de leitura e práticas diárias */}
+      <section className="card campanha-practices">
+        <span className="home-verse-kicker">COMO VIVER A CAMPANHA</span>
+        <h3 className="campanha-practices-title">Aproximadamente um capítulo por dia</h3>
+        <p className="static-body-text">
+          No 1.º mês há um ajuste: Êxodo tem 40 capítulos para 31 dias, por isso em alguns dias leem-se 2 capítulos. A
+          app indica todos os dias o que ler.
+        </p>
+        <p className="campanha-practices-sub">Mantenha três práticas todos os dias:</p>
+        <ol className="campanha-practices-list">
+          {PRACTICES.map((pr) => (
+            <li key={pr.title}>
+              <span className="campanha-practice-icon" aria-hidden="true">
+                {pr.icon}
+              </span>
+              <span>
+                <strong>{pr.title}</strong>
+                <small>{pr.text}</small>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <button type="button" className="btn-secondary" onClick={() => navigate('/notas')}>
+          Ver as minhas anotações
+        </button>
+      </section>
+
       {PHASES.map((p) => (
         <PhaseCard key={p.number} phase={p} onOpen={(ch, v) => navigate(bibleLink(p.bookAbbrev, ch, v))} />
       ))}
@@ -187,6 +221,7 @@ function PhaseCard({ phase: p, onOpen }: { phase: CampaignPhase; onOpen: (chapte
       <div className="campanha-phase-book">
         {p.book} — {p.chapters} capítulos
       </div>
+      <div className="home-event-meta campanha-phase-plan">📖 {planSummary(p)}</div>
       <p className="campanha-phase-tagline">{p.tagline}</p>
       <p className="static-body-text">{p.description}</p>
       <blockquote className="campanha-keyverse">

@@ -615,7 +615,7 @@ function CampaignCard({ onOpen }: { onOpen: () => void }) {
     sub =
       r.to >= r.from
         ? `${t.phase.name} · hoje: ${t.phase.book}, ${chaptersLabel(r.from, r.to)}`
-        : `${t.phase.name} · dia de meditação`;
+        : `${t.phase.name} · dia de revisão`;
   }
   return (
     <button type="button" className="home-campaign-card" onClick={onOpen}>
