@@ -94,15 +94,47 @@ export function phaseStatus(p: CampaignPhase, today = localDateKey()): 'futura' 
   return 'atual';
 }
 
-/** Capítulos do dia, repartidos de forma uniforme pelos dias da fase. */
+/**
+ * Plano sugerido: aproximadamente um capítulo por dia.
+ * - Se o livro tem mais capítulos do que dias (Êxodo: 40 em 31), alguns dias
+ *   levam 2 capítulos, repartidos ao longo do mês (ajuste do 1.º mês).
+ * - Se tem menos (Levítico 27 em 30; Atos 28 em 31), lê-se 1 capítulo por dia
+ *   e os últimos dias ficam para revisão das anotações.
+ * Num dia de revisão `to < from`.
+ */
 export function readingForDay(p: CampaignPhase, today = localDateKey()): { day: number; totalDays: number; from: number; to: number } | null {
   if (phaseStatus(p, today) !== 'atual') return null;
   const totalDays = daysBetween(p.start, p.end) + 1;
   const i = daysBetween(p.start, today);
-  const from = Math.floor((i * p.chapters) / totalDays) + 1;
-  const to = Math.floor(((i + 1) * p.chapters) / totalDays);
-  return { day: i + 1, totalDays, from, to };
+  if (p.chapters >= totalDays) {
+    const from = Math.floor((i * p.chapters) / totalDays) + 1;
+    const to = Math.floor(((i + 1) * p.chapters) / totalDays);
+    return { day: i + 1, totalDays, from, to };
+  }
+  if (i < p.chapters) return { day: i + 1, totalDays, from: i + 1, to: i + 1 };
+  return { day: i + 1, totalDays, from: p.chapters + 1, to: p.chapters };
 }
+
+/** Resumo do plano de leitura de cada fase (para mostrar na campanha). */
+export function planSummary(p: CampaignPhase): string {
+  const totalDays = daysBetween(p.start, p.end) + 1;
+  if (p.chapters > totalDays) {
+    const doubles = p.chapters - totalDays;
+    return `${p.chapters} capítulos em ${totalDays} dias: 1 por dia e, em ${doubles} dias, 2 capítulos.`;
+  }
+  if (p.chapters < totalDays) {
+    const rest = totalDays - p.chapters;
+    return `1 capítulo por dia durante ${p.chapters} dias; os últimos ${rest} dias são para revisão.`;
+  }
+  return `1 capítulo por dia.`;
+}
+
+/** As três práticas diárias sugeridas para a campanha. */
+export const PRACTICES = [
+  { icon: '🙏', title: 'Oração antes da leitura', text: 'Peça ao Espírito Santo que abra o seu entendimento antes de abrir a Bíblia.' },
+  { icon: '✍️', title: 'Anotação', text: 'Anote o que Deus está ensinando pela Palavra — use "Nota" nos versículos da Bíblia da app.' },
+  { icon: '👣', title: 'Aplicação prática', text: 'Escolha uma atitude concreta para viver durante o dia a partir do que leu.' },
+];
 
 export interface CampaignToday {
   phase: CampaignPhase | null; // fase atual (ou a próxima, se ainda não começou)
