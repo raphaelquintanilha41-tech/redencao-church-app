@@ -494,3 +494,59 @@
   padding: 10px;
   cursor: pointer;
 }
+
+/* Leitura em áudio */
+.biblia-font-controls button.biblia-listen-btn { font-size: 15px; }
+.biblia-font-controls button.biblia-listen-btn-active {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: #D6B473;
+}
+.biblia-verse-speaking {
+  background: rgba(214, 180, 115, 0.32);
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(214, 180, 115, 0.32);
+}
+.biblia-audio-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 76px;
+  z-index: 44;
+  background: var(--color-navy);
+  color: #EDE7DB;
+  padding: var(--space-2) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.25);
+}
+.biblia-audio-info { display: flex; flex-direction: column; min-width: 0; }
+.biblia-audio-ref { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.biblia-audio-sub { font-size: 13px; color: #D6B473; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.biblia-audio-controls { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+.biblia-audio-controls button {
+  background: none;
+  border: none;
+  color: #EDE7DB;
+  font-size: 20px;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.biblia-audio-controls button.biblia-audio-main {
+  background: #D6B473;
+  color: #0F1E3A;
+  font-size: 18px;
+}
+.biblia-audio-controls button.biblia-audio-rate {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(237, 231, 219, 0.35);
+  height: 30px;
+  min-width: 44px;
+}
