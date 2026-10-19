@@ -18,6 +18,7 @@ import {
   setHighlight,
 } from '../lib/bible';
 import { markTodayProgress } from '../lib/home';
+import { AUDIO_RATES, audioSupported, speakableText, useBibleAudio, type AudioItem } from '../lib/bible-audio';
 import { getBibleFontSize, setBibleFontSize } from '../lib/preferences';
 import {
   buildPassageFiles,
@@ -74,6 +75,22 @@ export function BibliaLeituraScreen() {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
   };
+
+  // Áudio: anúncio do capítulo + um item por versículo.
+  const audioItems = useMemo<AudioItem[]>(
+    () =>
+      // Só quando os versículos já são deste capítulo (evita misturar com o anterior).
+      book && verses.length && verses[0].chapter === chapter
+        ? [
+            { id: null, text: `${book.name}, capítulo ${chapter}.` },
+            ...verses.map((v) => ({ id: v.id, text: speakableText(v.text) })),
+          ]
+        : [],
+    [book, chapter, verses],
+  );
+  const audio = useBibleAudio(audioItems);
+  const speakingId = audio.status === 'playing' || audio.status === 'paused' ? audioItems[audio.index]?.id ?? null : null;
+  const nextChapter = availableChapters.find((c) => c > chapter) ?? null;
 
   useEffect(() => {
     let mounted = true;
@@ -321,6 +338,55 @@ export function BibliaLeituraScreen() {
     else if (outcome === 'shared') clearSelection();
   };
 
+  // Mudou de capítulo: pára; se veio da leitura contínua (?ouvir=1), continua.
+  const autoListen = searchParams.get('ouvir') === '1';
+  useEffect(() => {
+    if (loading) return;
+    if (!autoListen || audioItems.length === 0) {
+      audio.stop();
+      return;
+    }
+    audio.speakFrom(0);
+    // Se o aparelho bloquear o arranque automático, fica em pausa: um toque retoma.
+    const t = window.setTimeout(() => {
+      if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) audio.pause();
+    }, 1500);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, audioItems]);
+
+  // Fim do capítulo: passa sozinho ao seguinte, como no YouVersion.
+  useEffect(() => {
+    if (loading || audio.status !== 'ended' || nextChapter === null) return;
+    const t = window.setTimeout(() => {
+      audio.stop();
+      navigate(`/biblia/${bookAbbrev}/${nextChapter}?ouvir=1`, { replace: true });
+    }, 1200);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, audio.status, nextChapter, bookAbbrev, navigate]);
+
+  // Acompanha o versículo que está a ser lido.
+  useEffect(() => {
+    if (audio.status !== 'playing' || speakingId === null) return;
+    const v = verses.find((x) => x.id === speakingId);
+    if (!v) return;
+    document.querySelector(`[data-verse="${v.verse}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [audio.status, speakingId, verses]);
+
+  const listenFromSelection = () => {
+    const first = selectedVerses[0];
+    if (!first) return;
+    const i = audioItems.findIndex((it) => it.id === first.id);
+    clearSelection();
+    audio.speakFrom(i < 0 ? 0 : i);
+  };
+
+  const cycleRate = () => {
+    const i = AUDIO_RATES.indexOf(audio.rate as (typeof AUDIO_RATES)[number]);
+    audio.setRate(AUDIO_RATES[(i + 1) % AUDIO_RATES.length]);
+  };
+
   // Ao abrir por um link partilhado, rola até ao primeiro versículo marcado.
   useEffect(() => {
     if (loading || linkedVerses.size === 0) return;
@@ -384,6 +450,16 @@ export function BibliaLeituraScreen() {
           {book.name} {chapter}
         </div>
         <div className="biblia-font-controls">
+          {audioSupported() && chapterAvailable && verses.length > 0 && (
+            <button
+              type="button"
+              className={`biblia-listen-btn${audio.status !== 'idle' ? ' biblia-listen-btn-active' : ''}`}
+              onClick={() => (audio.status === 'playing' ? audio.pause() : audio.speakFrom(audio.status === 'paused' ? audio.index : 0))}
+              aria-label={audio.status === 'playing' ? 'Pausar áudio' : 'Ouvir capítulo'}
+            >
+              {audio.status === 'playing' ? '⏸' : '🔊'}
+            </button>
+          )}
           <button type="button" onClick={() => setFontSize((s) => Math.max(14, s - 1))} aria-label="Diminuir fonte">
             A-
           </button>
@@ -425,7 +501,7 @@ export function BibliaLeituraScreen() {
             {verses.map((v) => (
               <span
                 key={v.id}
-                className={`biblia-verse${selectedIds.has(v.id) ? ' biblia-verse-selected' : ''}${linkedVerses.has(v.verse) ? ' biblia-verse-linked' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}`}
+                className={`biblia-verse${selectedIds.has(v.id) ? ' biblia-verse-selected' : ''}${linkedVerses.has(v.verse) ? ' biblia-verse-linked' : ''}${highlightedColors.has(v.id) ? ' biblia-verse-highlighted' : ''}${speakingId === v.id ? ' biblia-verse-speaking' : ''}`}
                 style={highlightedColors.has(v.id) ? { backgroundColor: highlightedColors.get(v.id) } : undefined}
                 data-verse={v.verse}
                 onClick={() => toggleSelect(v.id)}
@@ -531,6 +607,11 @@ export function BibliaLeituraScreen() {
             <button type="button" onClick={copySelection}>
               Copiar
             </button>
+            {audioSupported() && (
+              <button type="button" onClick={listenFromSelection}>
+                Ouvir
+              </button>
+            )}
             <button
               type="button"
               className="biblia-action-share"
@@ -538,6 +619,54 @@ export function BibliaLeituraScreen() {
               disabled={sharing}
             >
               {sharing ? 'A preparar…' : 'Compartilhar'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {audio.status !== 'idle' && selectedIds.size === 0 && noteEditorVerse === null && (
+        <div className="biblia-audio-bar" role="region" aria-label="Leitura em áudio">
+          <div className="biblia-audio-info">
+            <span className="biblia-audio-ref">
+              🔊 {book.name} {chapter}
+              {speakingId !== null ? `:${verses.find((v) => v.id === speakingId)?.verse ?? ''}` : ''}
+            </span>
+            <span className="biblia-audio-sub">
+              {audio.status === 'ended'
+                ? nextChapter !== null
+                  ? `A seguir: capítulo ${nextChapter}…`
+                  : `Fim de ${book.name}.`
+                : audio.voiceName
+                  ? `Voz: ${audio.voiceName.replace(/\s*\(.*\)\s*/, ' ').trim()}`
+                  : 'Português (Brasil)'}
+            </span>
+          </div>
+          <div className="biblia-audio-controls">
+            <button type="button" onClick={() => audio.speakFrom(Math.max(1, audio.index - 1))} aria-label="Versículo anterior">
+              ⏮
+            </button>
+            {audio.status === 'playing' ? (
+              <button type="button" className="biblia-audio-main" onClick={audio.pause} aria-label="Pausar">
+                ⏸
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="biblia-audio-main"
+                onClick={() => audio.speakFrom(audio.status === 'ended' ? 0 : audio.index)}
+                aria-label={audio.status === 'ended' ? 'Ouvir de novo' : 'Continuar'}
+              >
+                ▶
+              </button>
+            )}
+            <button type="button" onClick={() => audio.speakFrom(audio.index + 1)} aria-label="Próximo versículo">
+              ⏭
+            </button>
+            <button type="button" className="biblia-audio-rate" onClick={cycleRate} aria-label="Velocidade">
+              {String(audio.rate).replace('.', ',')}×
+            </button>
+            <button type="button" onClick={audio.stop} aria-label="Fechar áudio">
+              ✕
             </button>
           </div>
         </div>
