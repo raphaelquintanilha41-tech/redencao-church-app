@@ -631,15 +631,24 @@ export function BibliaLeituraScreen() {
               🔊 {book.name} {chapter}
               {speakingId !== null ? `:${verses.find((v) => v.id === speakingId)?.verse ?? ''}` : ''}
             </span>
-            <span className="biblia-audio-sub">
-              {audio.status === 'ended'
-                ? nextChapter !== null
-                  ? `A seguir: capítulo ${nextChapter}…`
-                  : `Fim de ${book.name}.`
-                : audio.voiceName
-                  ? `Voz: ${audio.voiceName.replace(/\s*\(.*\)\s*/, ' ').trim()}`
+            {audio.status === 'ended' ? (
+              <span className="biblia-audio-sub">
+                {nextChapter !== null ? `A seguir: capítulo ${nextChapter}…` : `Fim de ${book.name}.`}
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="biblia-audio-sub biblia-audio-voice"
+                onClick={audio.nextVoice}
+                disabled={audio.voiceCount < 2}
+                aria-label="Trocar voz"
+              >
+                {audio.voiceName
+                  ? `Voz: ${audio.voiceName.replace(/\s*\(.*\)\s*/, ' ').replace(/^Microsoft\s+/i, '').replace(/\s+Online.*$/i, '').trim()}`
                   : 'Português (Brasil)'}
-            </span>
+                {audio.voiceCount > 1 ? ' ⇄' : ''}
+              </button>
+            )}
           </div>
           <div className="biblia-audio-controls">
             <button type="button" onClick={() => audio.speakFrom(Math.max(1, audio.index - 1))} aria-label="Versículo anterior">
