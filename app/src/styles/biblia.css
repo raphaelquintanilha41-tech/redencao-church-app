@@ -550,3 +550,12 @@
   height: 30px;
   min-width: 44px;
 }
+.biblia-audio-voice {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.biblia-audio-voice:disabled { cursor: default; opacity: 1; }
