@@ -29,24 +29,64 @@ function saveRate(r: number) {
   }
 }
 
-// Vozes de melhor qualidade primeiro (neurais / "naturais" / Google).
-const PREFERRED = [/natural/i, /neural/i, /online/i, /google/i, /luciana/i, /francisca/i, /thalita/i, /felipe/i, /fernanda/i];
+// Voz masculina por defeito. Nomes conhecidos de vozes pt-BR masculinas:
+// iPhone/Mac (Felipe), Windows/Edge (Antonio, Daniel, Donato, Fabio, Humberto,
+// Julio, Nicolau, Valerio, Thiago) e Google/Android (variante "ptd").
+const MALE = [/antonio/i, /daniel/i, /felipe/i, /donato/i, /f[aá]bio/i, /humberto/i, /j[uú]lio/i, /nicolau/i, /val[eé]rio/i, /thiago/i, /ptd/i, /\bmale\b/i, /masculin/i];
+const FEMALE = [/luciana/i, /francisca/i, /maria/i, /thalita/i, /fernanda/i, /leila/i, /yara/i, /brenda/i, /giovanna/i, /let[ií]cia/i, /manuela/i, /elza/i, /raquel/i, /afs/i, /pte/i, /female/i, /feminin/i];
+// Qualidade: vozes neurais / "naturais" / online soam melhor.
+const QUALITY = [/natural/i, /neural/i, /online/i, /enhanced|melhorada|premium/i, /google/i];
+
+const VOICE_KEY = 'redencao_bible_audio_voice';
 
 function norm(lang: string) {
   return lang.replace('_', '-').toLowerCase();
 }
 
-export function pickPtBrVoice(): SpeechSynthesisVoice | null {
-  if (!audioSupported()) return null;
+export function isMaleVoice(v: SpeechSynthesisVoice): boolean {
+  return MALE.some((re) => re.test(v.name)) && !FEMALE.some((re) => re.test(v.name));
+}
+
+function score(v: SpeechSynthesisVoice): number {
+  let s = 0;
+  if (isMaleVoice(v)) s += 100;
+  else if (!FEMALE.some((re) => re.test(v.name))) s += 10; // género desconhecido
+  const q = QUALITY.findIndex((re) => re.test(v.name));
+  if (q >= 0) s += 10 - q;
+  if (norm(v.lang) === 'pt-br') s += 5;
+  return s;
+}
+
+/** Vozes em português disponíveis, da preferida (masculina, melhor qualidade) para a pior. */
+export function ptVoices(): SpeechSynthesisVoice[] {
+  if (!audioSupported()) return [];
   const voices = window.speechSynthesis.getVoices();
   const br = voices.filter((v) => norm(v.lang) === 'pt-br');
   const pool = br.length ? br : voices.filter((v) => norm(v.lang).startsWith('pt'));
-  if (!pool.length) return null;
-  for (const re of PREFERRED) {
-    const v = pool.find((x) => re.test(x.name));
-    if (v) return v;
+  return [...pool].sort((a, b) => score(b) - score(a));
+}
+
+function savedVoiceName(): string | null {
+  try {
+    return localStorage.getItem(VOICE_KEY);
+  } catch {
+    return null;
   }
-  return pool.find((v) => v.localService) ?? pool[0];
+}
+
+export function saveVoiceName(name: string) {
+  try {
+    localStorage.setItem(VOICE_KEY, name);
+  } catch {
+    /* sem localStorage */
+  }
+}
+
+export function pickPtBrVoice(): SpeechSynthesisVoice | null {
+  const list = ptVoices();
+  if (!list.length) return null;
+  const saved = savedVoiceName();
+  return list.find((v) => v.name === saved) ?? list[0];
 }
 
 /** Limpa marcas do texto que não devem ser lidas em voz alta. */
@@ -75,6 +115,7 @@ export function useBibleAudio(items: AudioItem[]) {
   const [index, setIndex] = useState(0);
   const [rate, setRateState] = useState(getRate);
   const [voiceName, setVoiceName] = useState<string | null>(null);
+  const [voiceCount, setVoiceCount] = useState(0);
   const itemsRef = useRef(items);
   itemsRef.current = items;
   const rateRef = useRef(rate);
@@ -86,7 +127,10 @@ export function useBibleAudio(items: AudioItem[]) {
 
   useEffect(() => {
     if (!audioSupported()) return;
-    const update = () => setVoiceName(pickPtBrVoice()?.name ?? null);
+    const update = () => {
+      setVoiceName(pickPtBrVoice()?.name ?? null);
+      setVoiceCount(ptVoices().length);
+    };
     update();
     window.speechSynthesis.addEventListener?.('voiceschanged', update);
     return () => window.speechSynthesis.removeEventListener?.('voiceschanged', update);
@@ -150,6 +194,23 @@ export function useBibleAudio(items: AudioItem[]) {
     [status, index, speakFrom],
   );
 
+  /** Passa para a próxima voz em português instalada no aparelho. */
+  const nextVoice = useCallback(() => {
+    const list = ptVoices();
+    if (list.length < 2) return;
+    const cur = pickPtBrVoice();
+    const i = list.findIndex((v) => v.name === cur?.name);
+    const next = list[(i + 1) % list.length];
+    saveVoiceName(next.name);
+    setVoiceName(next.name);
+    if (status === 'playing') speakFrom(index);
+  }, [status, index, speakFrom]);
+
+  const voiceIsMale = (() => {
+    const v = pickPtBrVoice();
+    return v ? isMaleVoice(v) : false;
+  })();
+
   // Ao sair do ecrã, cala-se.
   useEffect(
     () => () => {
@@ -159,5 +220,5 @@ export function useBibleAudio(items: AudioItem[]) {
     [],
   );
 
-  return { status, index, rate, voiceName, speakFrom, pause, stop, setRate };
+  return { status, index, rate, voiceName, voiceCount, voiceIsMale, nextVoice, speakFrom, pause, stop, setRate };
 }
