@@ -85,6 +85,11 @@ function downloadEventToCalendar(event: ChurchEvent): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// Encontros online (Google Meet, Zoom…) não têm morada: sem botão "Direções".
+function isOnlineEvent(event: ChurchEvent): boolean {
+  return /\b(online|google meet|meet\.google|zoom|teams)\b/i.test(event.location ?? '');
+}
+
 function openEventDirections(event: ChurchEvent): void {
   const query = encodeURIComponent(event.location || event.title);
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${query}`, '_blank', 'noopener,noreferrer');
@@ -428,13 +433,15 @@ export function HomeScreen() {
                 >
                   Calendário
                 </button>
-                <button
-                  type="button"
-                  className="btn-secondary home-verse-btn"
-                  onClick={() => openEventDirections(nextEvent)}
-                >
-                  Direções
-                </button>
+                {!isOnlineEvent(nextEvent) && (
+                  <button
+                    type="button"
+                    className="btn-secondary home-verse-btn"
+                    onClick={() => openEventDirections(nextEvent)}
+                  >
+                    Direções
+                  </button>
+                )}
               </div>
             </section>
           )}
