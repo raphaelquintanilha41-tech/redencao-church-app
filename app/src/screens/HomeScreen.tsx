@@ -1,4 +1,6 @@
 import { PrayerBackground } from './PrayerBackground';
+import { versePhotoUrl } from '../lib/verse-photo';
+import { localDateKey } from '../lib/dates';
 import { guidedPrayerFor } from '../lib/guided-prayer';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -337,7 +339,12 @@ export function HomeScreen() {
       ) : (
         <div className="home-content">
           {/* Palavra do dia */}
-          <section className="card-navy home-verse-card">
+          <section
+            className="card-navy home-verse-card home-verse-card-photo"
+            style={{
+              backgroundImage: `linear-gradient(180deg, rgba(8, 14, 28, 0.22) 0%, rgba(8, 14, 28, 0.38) 40%, rgba(8, 14, 28, 0.80) 100%), url("${versePhotoUrl(verse?.text, verse?.active_date ?? localDateKey())}")`,
+            }}
+          >
             <div className="home-verse-header">
               <span className="home-verse-kicker">PALAVRA DO DIA</span>
               <button
