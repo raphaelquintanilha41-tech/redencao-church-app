@@ -3,6 +3,7 @@
 // Encerramento. O conteúdo roda pelos dias (um roteiro diferente por dia).
 // Versículos: Bíblia Livre (a mesma tradução da Bíblia da app).
 import { localDateKey } from './dates';
+import { supabase } from './supabaseClient';
 
 export type PrayerSection = 'BEM-VINDO' | 'HONRE A DEUS' | 'MINHAS PREOCUPAÇÕES' | 'AGRADEÇA A DEUS' | 'ENCERRAMENTO';
 
@@ -213,4 +214,58 @@ export function guidedPrayerFor(date = localDateKey()): GuidedPrayer {
     },
   ];
   return { date, scene, steps, totalSeconds: steps.reduce((s, x) => s + x.seconds, 0) };
+}
+
+// ── Roteiros diários escritos para cada data (tabela guided_prayer_scripts) ──
+
+interface ScriptRow {
+  prayer_date: string;
+  welcome: string[];
+  honor: string;
+  care_ref: string;
+  care_text: string;
+  care_question: string;
+  care_guidance: string;
+  thanks_ref: string;
+  thanks_text: string;
+  thanks_question: string;
+  thanks_guidance: string;
+  closing: string | null;
+}
+
+/** Tira aspas soltas que ficam quando o versículo é um pedaço de uma fala. */
+function cleanVerse(t: string): string {
+  const open = (t.match(/“/g) ?? []).length;
+  const close = (t.match(/”/g) ?? []).length;
+  const s = open !== close ? t.replace(/[“”]/g, '') : t;
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+function fromRow(r: ScriptRow): GuidedPrayer {
+  const scene = guidedPrayerFor(r.prayer_date).scene;
+  const steps: PrayerStep[] = [
+    { section: 'BEM-VINDO', lines: r.welcome.slice(0, 3), breath: true, seconds: 32 },
+    { section: 'HONRE A DEUS', lines: [r.honor], seconds: readSeconds(r.honor, 18) },
+    { section: 'MINHAS PREOCUPAÇÕES', verse: { text: cleanVerse(r.care_text), ref: r.care_ref }, seconds: readSeconds(r.care_text, 14) },
+    { section: 'MINHAS PREOCUPAÇÕES', question: r.care_question, guidance: r.care_guidance, addPrayer: true, seconds: 60 },
+    { section: 'AGRADEÇA A DEUS', verse: { text: cleanVerse(r.thanks_text), ref: r.thanks_ref }, seconds: readSeconds(r.thanks_text, 14) },
+    { section: 'AGRADEÇA A DEUS', question: r.thanks_question, guidance: r.thanks_guidance, seconds: 50 },
+    {
+      section: 'ENCERRAMENTO',
+      lines: [r.closing || 'Que este tempo com Deus fortaleça o seu dia.', 'Fique mais um pouco em silêncio e termine quando se sentir pronto.'],
+      seconds: 30,
+    },
+  ];
+  return { date: r.prayer_date, scene, steps, totalSeconds: steps.reduce((a, x) => a + x.seconds, 0) };
+}
+
+/** Roteiro escrito para a data; se não houver (ou sem rede), usa o roteiro de reserva. */
+export async function fetchGuidedPrayer(date = localDateKey()): Promise<GuidedPrayer> {
+  try {
+    const { data, error } = await supabase.from('guided_prayer_scripts').select('*').eq('prayer_date', date).maybeSingle();
+    if (error || !data) return guidedPrayerFor(date);
+    return fromRow(data as ScriptRow);
+  } catch {
+    return guidedPrayerFor(date);
+  }
 }
