@@ -1,3 +1,5 @@
+import { PrayerBackground } from './PrayerBackground';
+import { guidedPrayerFor } from '../lib/guided-prayer';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -356,6 +358,19 @@ export function HomeScreen() {
 
           {/* Pedido da data de aniversário (só enquanto não estiver preenchida) */}
           <BirthdayCard variant="home" />
+
+          {/* Oração guiada */}
+          <button type="button" className="home-prayer-card" onClick={() => navigate('/oracao-guiada')}>
+            <span className="home-prayer-text">
+              <span className="home-prayer-kicker">Oração guiada</span>
+              <span className="home-prayer-title">Iniciar uma conversa com Deus</span>
+              <span className="home-prayer-sub">▶ 4–6 minutos · com música</span>
+            </span>
+            <span className="home-prayer-thumb">
+              <PrayerBackground scene={guidedPrayerFor().scene} still />
+              <span className="home-prayer-thumb-icon" aria-hidden="true">🙏</span>
+            </span>
+          </button>
 
           {/* Campanha de Obede-Edom */}
           <CampaignCard onOpen={() => navigate('/campanha')} />
