@@ -51,40 +51,23 @@ function formatDuration(seconds: number | null): string {
   return `${m} min`;
 }
 
-function formatIcsDate(d: Date): string {
+function formatGCalDate(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
 
-function escapeIcsText(s: string): string {
-  return s.replace(/([,;])/g, '\\$1').replace(/\n/g, '\\n');
-}
-
+// Abre o evento pré-preenchido no Google Calendar (app ou web). O download de
+// um ficheiro .ics não abre nada na PWA instalada no Android.
 function downloadEventToCalendar(event: ChurchEvent): void {
   const start = new Date(event.event_date);
-  const end = new Date(start.getTime() + 60 * 60 * 1000);
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Redenção Church//App//PT',
-    'BEGIN:VEVENT',
-    `UID:${event.id}@redencao-church-app`,
-    `DTSTAMP:${formatIcsDate(new Date())}`,
-    `DTSTART:${formatIcsDate(start)}`,
-    `DTEND:${formatIcsDate(end)}`,
-    `SUMMARY:${escapeIcsText(event.title)}`,
-    event.location ? `LOCATION:${escapeIcsText(event.location)}` : null,
-    'END:VEVENT',
-    'END:VCALENDAR',
-  ].filter((line): line is string => line !== null);
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${event.title.replace(/[^a-zA-Z0-9]+/g, '-')}.ics`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates: `${formatGCalDate(start)}/${formatGCalDate(end)}`,
+    details: 'Redenção Church',
+  });
+  if (event.location) params.set('location', event.location);
+  window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank', 'noopener,noreferrer');
 }
 
 // Encontros online (Google Meet, Zoom…) não têm morada: sem botão "Direções".
