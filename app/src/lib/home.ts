@@ -1,6 +1,6 @@
 import { fetchBookByName, fetchVerseRange, parseVerseReference } from './bible';
 import { supabase } from './supabaseClient';
-import { localDateKey, startOfTodayISO } from './dates';
+import { eventCutoffISO, localDateKey } from './dates';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -79,7 +79,7 @@ export async function fetchNextService(): Promise<ChurchEvent | null> {
     .from('events')
     .select('*')
     .eq('category', 'Culto')
-    .gte('event_date', startOfTodayISO())
+    .gte('event_date', eventCutoffISO())
     .order('event_date', { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -90,7 +90,7 @@ export async function fetchUpcomingEvents(limit = 5): Promise<ChurchEvent[]> {
   const { data, error } = await supabase
     .from('events')
     .select('*')
-    .gte('event_date', startOfTodayISO())
+    .gte('event_date', eventCutoffISO())
     .order('event_date', { ascending: true })
     .limit(limit);
   if (error) throw error;

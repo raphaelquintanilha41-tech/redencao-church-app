@@ -17,6 +17,15 @@ export function localDateKey(d: Date = new Date()): string {
  * Um evento de hoje continua visível como "próximo" até à meia-noite,
  * mesmo depois de a hora de início ter passado.
  */
+/**
+ * Um evento sai da app 3 h depois de começar (cultos duram ~2h30, encontros 1–2 h).
+ * Devolve o instante a partir do qual um evento ainda conta como "a acontecer".
+ */
+export const EVENT_VISIBLE_HOURS = 3;
+export function eventCutoffISO(): string {
+  return new Date(Date.now() - EVENT_VISIBLE_HOURS * 60 * 60 * 1000).toISOString();
+}
+
 export function startOfTodayISO(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);

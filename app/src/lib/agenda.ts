@@ -1,17 +1,17 @@
 import { supabase } from './supabaseClient';
 import type { ChurchEvent } from './types';
+import { eventCutoffISO } from './dates';
 
 /**
- * Eventos a partir do início do dia de hoje (hora local). Eventos passados
- * ficavam listados com o botão "Inscrever-me" ativo.
+ * Eventos ainda a decorrer ou futuros: um evento sai da lista 3 h depois de
+ * começar (ver EVENT_VISIBLE_HOURS). Eventos passados ficavam listados com o
+ * botão "Inscrever-me" ativo.
  */
 export async function fetchAllEvents(): Promise<ChurchEvent[]> {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
   const { data, error } = await supabase
     .from('events')
     .select('*')
-    .gte('event_date', startOfToday.toISOString())
+    .gte('event_date', eventCutoffISO())
     .order('event_date', { ascending: true });
   if (error) throw error;
   return (data ?? []) as ChurchEvent[];
