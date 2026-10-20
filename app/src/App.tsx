@@ -28,6 +28,7 @@ import { NotasScreen } from './screens/NotasScreen';
 import { DestaquesScreen } from './screens/DestaquesScreen';
 import { HistoricoScreen } from './screens/HistoricoScreen';
 import { PedidosScreen } from './screens/PedidosScreen';
+import { OracaoGuiadaScreen } from './screens/OracaoGuiadaScreen';
 import { NotificacoesScreen } from './screens/NotificacoesScreen';
 import { PrivacidadeScreen } from './screens/PrivacidadeScreen';
 import { MembrosScreen } from './screens/MembrosScreen';
@@ -335,6 +336,14 @@ export default function App() {
                 <AppShell>
                   <PedidosScreen />
                 </AppShell>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/oracao-guiada"
+            element={
+              <ProtectedRoute>
+                <OracaoGuiadaScreen />
               </ProtectedRoute>
             }
           />
