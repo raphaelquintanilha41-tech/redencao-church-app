@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AmbientMusic } from '../lib/ambient-music';
 import { submitPrayerRequest } from '../lib/caminhada';
-import { guidedPrayerFor } from '../lib/guided-prayer';
+import { fetchGuidedPrayer, guidedPrayerFor, type GuidedPrayer } from '../lib/guided-prayer';
 import { PrayerBackground } from './PrayerBackground';
 
 type Phase = 'intro' | 'playing' | 'done';
@@ -16,7 +16,7 @@ type Phase = 'intro' | 'playing' | 'done';
 export function OracaoGuiadaScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const prayer = useMemo(() => guidedPrayerFor(), []);
+  const [prayer, setPrayer] = useState<GuidedPrayer>(() => guidedPrayerFor());
   const steps = prayer.steps;
 
   const [phase, setPhase] = useState<Phase>('intro');
@@ -28,6 +28,19 @@ export function OracaoGuiadaScreen() {
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const phaseRef = useRef<Phase>('intro');
+  phaseRef.current = phase;
+
+  // Roteiro escrito para hoje (só troca enquanto ainda está na abertura).
+  useEffect(() => {
+    let alive = true;
+    fetchGuidedPrayer().then((p) => {
+      if (alive && phaseRef.current === 'intro') setPrayer(p);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const musicRef = useRef<AmbientMusic | null>(null);
   const wakeRef = useRef<{ release: () => Promise<void> } | null>(null);
