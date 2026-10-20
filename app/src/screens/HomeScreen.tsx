@@ -550,6 +550,9 @@ export function HomeScreen() {
                     onClick={() => navigate(`/agenda?evento=${ev.id}`)}
                     aria-label={`Ver ${ev.title} na agenda`}
                   >
+                    {ev.image_url && (
+                      <img className="home-carousel-image" src={ev.image_url} alt="" aria-hidden="true" loading="lazy" />
+                    )}
                     <div className="home-carousel-date">{formatEventDate(ev.event_date)}</div>
                     <div className="home-carousel-event-title">{ev.title}</div>
                     {ev.location && <div className="home-carousel-location">{ev.location}</div>}
