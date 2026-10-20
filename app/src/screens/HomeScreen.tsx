@@ -429,6 +429,9 @@ export function HomeScreen() {
           {nextEvent && (
             <section className="card home-section">
               <h3 className="home-section-title">Próximo encontro</h3>
+              {nextEvent.image_url && (
+                <img className="home-event-image" src={nextEvent.image_url} alt="" aria-hidden="true" />
+              )}
               <div className="home-event-title">{nextEvent.title}</div>
               <div className="home-event-meta">{formatEventDate(nextEvent.event_date)}</div>
               {nextEvent.location && <div className="home-event-meta">{nextEvent.location}</div>}
