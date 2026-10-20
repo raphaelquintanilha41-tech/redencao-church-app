@@ -1,0 +1,143 @@
+/* Oração guiada — ecrã inteiro */
+.oracao-screen {
+  position: fixed; inset: 0; z-index: 200; overflow: hidden;
+  color: #FFF8EC; background: #0b0f1d;
+  font-family: var(--font-body);
+  -webkit-user-select: none; user-select: none;
+}
+.oracao-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.oracao-shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(5,8,18,0.55) 0%, rgba(5,8,18,0.25) 35%, rgba(5,8,18,0.35) 65%, rgba(5,8,18,0.7) 100%);
+}
+.oracao-top {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 16px; right: 16px;
+  display: flex; justify-content: space-between; z-index: 3;
+}
+.oracao-icon-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(10, 14, 28, 0.45); color: #FFF8EC; font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.oracao-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 16px; }
+.oracao-stage {
+  position: absolute; inset: 0; z-index: 2; display: flex; align-items: center;
+  padding: 90px 64px 110px 26px; cursor: pointer;
+}
+.oracao-content { display: flex; flex-direction: column; gap: 18px; width: 100%; max-width: 560px; }
+.oracao-kicker {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #F1DDAE;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5); animation: oracao-in 0.9s ease both;
+}
+.oracao-line {
+  margin: 0; font-size: clamp(25px, 7vw, 34px); line-height: 1.22; font-weight: 700;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.55); animation: oracao-in 1.4s ease both;
+}
+.oracao-line-long { font-size: clamp(21px, 5.8vw, 29px); line-height: 1.28; }
+.oracao-verse {
+  margin: 0; padding: 4px 0 4px 18px; border-left: 3px solid #D6B473;
+  animation: oracao-in 1.4s ease 0.3s both;
+}
+.oracao-verse p {
+  margin: 0 0 12px; font-family: var(--font-display, Georgia, serif); font-size: clamp(21px, 5.8vw, 27px);
+  line-height: 1.35; font-weight: 600; text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+}
+.oracao-verse cite { font-style: normal; font-weight: 700; font-size: 15px; color: #F1DDAE; }
+.oracao-question {
+  margin: 0; font-size: clamp(24px, 6.6vw, 31px); font-weight: 700; line-height: 1.25;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.55); animation: oracao-in 1.4s ease 0.3s both;
+}
+.oracao-guidance {
+  margin: 0; font-size: 18px; line-height: 1.45; color: #EDE3D2;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.6); animation: oracao-in 1.4s ease 1.6s both;
+}
+.oracao-add, .oracao-amen {
+  align-self: flex-start; border: 1px solid rgba(255,248,236,0.5); background: rgba(10,14,28,0.35);
+  color: #FFF8EC; border-radius: 999px; padding: 10px 18px; font-size: 16px; font-weight: 700;
+  cursor: pointer; font-family: var(--font-body); animation: oracao-in 1.4s ease 2.6s both;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.oracao-amen { background: #D6B473; color: #0F1E3A; border-color: #D6B473; animation-delay: 3.4s; }
+@keyframes oracao-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.oracao-breath { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin: 4px 0; }
+.oracao-breath-circle {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,232,190,0.55) 0%, rgba(214,180,115,0.18) 60%, rgba(214,180,115,0) 72%);
+  border: 1px solid rgba(255,232,190,0.45);
+  animation: oracao-breath 8s ease-in-out infinite;
+}
+.oracao-breath-label { position: relative; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; }
+@keyframes oracao-breath { 0%, 100% { transform: scale(0.62); } 50% { transform: scale(1); } }
+.oracao-held .oracao-breath-circle { animation-play-state: paused; }
+
+.oracao-progress {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%); z-index: 3;
+  display: flex; flex-direction: column; gap: 6px; pointer-events: none;
+}
+.oracao-progress-seg { width: 4px; height: 26px; border-radius: 4px; background: rgba(255,248,236,0.28); overflow: hidden; display: block; }
+.oracao-progress-fill { display: block; width: 100%; background: #FFF8EC; border-radius: 4px; transition: height 0.2s linear; }
+.oracao-play { position: absolute; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); z-index: 3; font-size: 14px; letter-spacing: -2px; }
+.oracao-paused-hint {
+  position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
+  text-align: center; font-size: 14px; color: #EDE3D2; z-index: 3; pointer-events: none;
+}
+
+.oracao-intro, .oracao-done {
+  position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end;
+  gap: 14px; padding: 90px 26px calc(env(safe-area-inset-bottom, 0px) + 40px);
+}
+.oracao-intro-title, .oracao-done-title {
+  margin: 0; font-size: clamp(30px, 8.5vw, 40px); line-height: 1.12; font-weight: 800;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.55);
+}
+.oracao-intro-sub, .oracao-done-text { margin: 0; font-size: 18px; color: #EDE3D2; line-height: 1.45; }
+.oracao-intro-steps { margin: 4px 0 8px; padding-left: 22px; font-size: 17px; line-height: 1.7; color: #FFF8EC; }
+.oracao-intro-tip { margin: 0; font-size: 14px; color: #D9CFBE; text-align: center; }
+.oracao-start {
+  border: none; border-radius: 999px; padding: 15px 22px; font-size: 18px; font-weight: 800; cursor: pointer;
+  background: #D6B473; color: #0F1E3A; font-family: var(--font-body);
+}
+.oracao-start:disabled { opacity: 0.55; cursor: default; }
+.oracao-ghost {
+  border: 1px solid rgba(255,248,236,0.55); border-radius: 999px; padding: 13px 22px; font-size: 17px; font-weight: 700;
+  background: rgba(10,14,28,0.35); color: #FFF8EC; cursor: pointer; font-family: var(--font-body);
+}
+.oracao-done-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+.oracao-sheet-backdrop { position: absolute; inset: 0; z-index: 10; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; }
+.oracao-sheet {
+  width: 100%; background: #0F1E3A; color: #EDE7DB; border-radius: 22px 22px 0 0;
+  padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 20px); display: flex; flex-direction: column; gap: 12px;
+}
+.oracao-sheet h2 { margin: 0; font-size: 22px; color: #F1DDAE; }
+.oracao-sheet p { margin: 0; font-size: 15px; line-height: 1.45; color: #C9C2B4; }
+.oracao-sheet small { color: #A8A090; font-size: 13px; text-align: center; }
+.oracao-sheet textarea {
+  width: 100%; box-sizing: border-box; border-radius: 14px; border: 1px solid rgba(237,231,219,0.3);
+  background: rgba(237,231,219,0.08); color: #FFF8EC; font-size: 17px; padding: 12px 14px; font-family: var(--font-body);
+  resize: vertical; -webkit-user-select: text; user-select: text;
+}
+.oracao-sheet-actions { display: flex; flex-direction: column; gap: 10px; }
+.oracao-screen .rc-toast { z-index: 20; }
+
+/* Cartão no Início */
+.home-prayer-card {
+  width: 100%; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3);
+  border-radius: var(--radius-card); border: 1px solid var(--color-line); background: var(--color-surface);
+  color: var(--color-text); cursor: pointer; text-align: left; box-shadow: var(--shadow-sm, none);
+}
+.home-prayer-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.home-prayer-kicker { color: var(--color-muted); font-size: 14px; }
+.home-prayer-title { font-weight: 700; font-size: 19px; line-height: 1.25; }
+.home-prayer-sub { color: var(--color-muted); font-size: 14px; }
+.home-prayer-thumb {
+  position: relative; width: 92px; height: 66px; border-radius: 12px; overflow: hidden; flex: 0 0 auto;
+}
+.home-prayer-thumb .oracao-bg { position: absolute; inset: 0; }
+.home-prayer-thumb-icon {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 30px; height: 30px; border-radius: 50%; background: rgba(255,248,236,0.9); color: #0F1E3A;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
