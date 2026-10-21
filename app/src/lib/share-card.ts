@@ -15,6 +15,8 @@ export interface ScripturePassage {
   translation?: string;
   /** Link que abre a passagem na app (com os versículos marcados). */
   url?: string;
+  /** Foto de fundo (ex.: a mesma da Palavra do dia). Sem foto, usa o azul-noite. */
+  photoUrl?: string;
 }
 
 const W = 1080;
@@ -43,6 +45,8 @@ export function passageReference(p: ScripturePassage): string {
 function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image();
+    // Necessário para desenhar fotos de outro domínio (Unsplash) sem "sujar" o canvas.
+    img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = src;
@@ -86,19 +90,34 @@ function layoutLines(ctx: CanvasRenderingContext2D, verses: ShareVerse[], width:
   return lines;
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D) {
+function drawBackground(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | null) {
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, NAVY_TOP);
   g.addColorStop(1, NAVY_BOTTOM);
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  // brilho dourado suave no topo
-  const glow = ctx.createRadialGradient(W / 2, 0, 40, W / 2, 0, 700);
-  glow.addColorStop(0, 'rgba(214,180,115,0.18)');
-  glow.addColorStop(1, 'rgba(214,180,115,0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, W, H);
+  if (photo) {
+    // Foto a cobrir toda a imagem (recorte centrado), como no cartão da app.
+    const scale = Math.max(W / photo.naturalWidth, H / photo.naturalHeight);
+    const dw = photo.naturalWidth * scale;
+    const dh = photo.naturalHeight * scale;
+    ctx.drawImage(photo, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    // Véu azul-noite por cima: leve no topo, mais fechado em baixo, para o texto ler bem.
+    const veil = ctx.createLinearGradient(0, 0, 0, H);
+    veil.addColorStop(0, 'rgba(8,14,28,0.55)');
+    veil.addColorStop(0.35, 'rgba(8,14,28,0.50)');
+    veil.addColorStop(1, 'rgba(8,14,28,0.86)');
+    ctx.fillStyle = veil;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    // brilho dourado suave no topo
+    const glow = ctx.createRadialGradient(W / 2, 0, 40, W / 2, 0, 700);
+    glow.addColorStop(0, 'rgba(214,180,115,0.18)');
+    glow.addColorStop(1, 'rgba(214,180,115,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+  }
 
   // moldura dourada fina
   ctx.strokeStyle = 'rgba(214,180,115,0.55)';
@@ -191,6 +210,7 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
 export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
   await ensureFonts();
   const logo = await loadImage(LOGO_URL);
+  const photo = p.photoUrl ? await loadImage(p.photoUrl) : null;
   const title = passageReference(p);
   const subtitle = p.translation ?? 'Bíblia Livre';
   const single = p.verses.length === 1;
@@ -253,7 +273,13 @@ export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d')!;
-    drawBackground(ctx);
+    drawBackground(ctx, photo);
+    if (photo) {
+      // Sombra no texto para se destacar da foto.
+      ctx.shadowColor = 'rgba(0,0,0,0.7)';
+      ctx.shadowBlur = 14;
+      ctx.shadowOffsetY = 2;
+    }
     drawHeader(ctx, logo, title, subtitle);
 
     const pageLines = pages[pi];
