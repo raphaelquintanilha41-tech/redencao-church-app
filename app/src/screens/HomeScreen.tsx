@@ -208,6 +208,8 @@ export function HomeScreen() {
         url: `${window.location.origin}/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}?v=${versesParam(
           verseRef.verses.map((v) => v.verse),
         )}`,
+        // A mesma foto que está no cartão da Palavra do dia, em tamanho de partilha.
+        photoUrl: versePhotoUrl(verse.text, verse.active_date ?? localDateKey(), 1080),
       });
       return;
     }
