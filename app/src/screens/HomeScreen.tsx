@@ -96,6 +96,7 @@ export function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [verseFull, setVerseFull] = useState(false);
   const [devotionalOpen, setDevotionalOpen] = useState(false);
   const [verseRef, setVerseRef] = useState<ResolvedDailyVerse | null>(null);
   // Partilha da Palavra do dia (mesmo painel Imagem/Texto da Bíblia).
@@ -341,8 +342,15 @@ export function HomeScreen() {
                 <ShareIcon />
               </button>
             </div>
-            <p className="home-verse-text">"{verse?.text ?? 'Sem versículo disponível hoje.'}"</p>
-            {verse && <span className="home-verse-ref">{verse.reference}</span>}
+            <button
+              type="button"
+              className="home-verse-open"
+              onClick={() => verse && setVerseFull(true)}
+              aria-label="Ver a Palavra do dia em ecrã inteiro"
+            >
+              <p className="home-verse-text">"{verse?.text ?? 'Sem versículo disponível hoje.'}"</p>
+              {verse && <span className="home-verse-ref">{verse.reference}</span>}
+            </button>
             <div className="home-verse-actions">
               <button type="button" className="btn-secondary home-verse-btn" onClick={handleSaveVerse}>
                 {verseFavorited ? '✓ Salvo' : 'Salvar'}
@@ -557,6 +565,48 @@ export function HomeScreen() {
       )}
 
       {toast && <div className="rc-toast">{toast}</div>}
+
+      {verseFull && verse && (
+        <div
+          className="home-verse-full"
+          style={{
+            backgroundImage: `linear-gradient(180deg, rgba(8, 14, 28, 0.45) 0%, rgba(8, 14, 28, 0.55) 45%, rgba(8, 14, 28, 0.88) 100%), url("${versePhotoUrl(verse.text, verse.active_date ?? localDateKey(), 1080)}")`,
+          }}
+          role="dialog"
+          aria-label="Palavra do dia"
+        >
+          <button type="button" className="home-video-modal-close" aria-label="Fechar" onClick={() => setVerseFull(false)}>
+            <CloseIcon />
+          </button>
+          <div className="home-verse-full-body">
+            <span className="home-verse-full-logo">
+              <img src={logo} alt="" aria-hidden="true" />
+            </span>
+            <span className="home-verse-full-brand">REDENÇÃO CHURCH</span>
+            <span className="home-verse-full-kicker">PALAVRA DO DIA</span>
+            <p className="home-verse-full-text">“{verse.text}”</p>
+            <span className="home-verse-full-ref">{verse.reference}</span>
+          </div>
+          <div className="home-verse-full-actions">
+            <button type="button" className="btn-secondary home-verse-btn" onClick={handleSaveVerse}>
+              {verseFavorited ? '✓ Salvo' : 'Salvar'}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary home-verse-btn"
+              onClick={() => {
+                setVerseFull(false);
+                handleShareVerse();
+              }}
+            >
+              Partilhar
+            </button>
+            <button type="button" className="btn-primary home-verse-btn" onClick={handleReadChapter}>
+              Ler capítulo
+            </button>
+          </div>
+        </div>
+      )}
 
       {videoOpen && sermon?.video_url && (
         <div className="home-video-modal" onClick={() => setVideoOpen(false)}>
