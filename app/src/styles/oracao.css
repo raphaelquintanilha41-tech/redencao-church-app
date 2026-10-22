@@ -21,6 +21,10 @@
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .oracao-close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 16px; }
+.oracao-share { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 16px; }
+.oracao-icon-btn:disabled, .oracao-ghost:disabled { opacity: 0.55; cursor: default; }
+.oracao-share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.oracao-share-link { text-align: center; text-decoration: none; font-size: 15px; padding: 12px 10px; }
 .oracao-stage {
   position: absolute; inset: 0; z-index: 2; display: flex; align-items: center;
   padding: 90px 64px 110px 26px; cursor: pointer;
