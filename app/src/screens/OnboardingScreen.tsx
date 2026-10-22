@@ -23,7 +23,7 @@ const slides: Slide[] = [
   },
   {
     overline: 'COMUNHÃO',
-    title: 'Comunhão que\nnão fica só no culto',
+    title: 'Comunhão que\nnão fica só na celebração',
     subtitle: 'Encontre uma célula, sirva, batize-se e caminhe acompanhado.',
   },
   {

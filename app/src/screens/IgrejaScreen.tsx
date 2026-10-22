@@ -66,7 +66,7 @@ export function IgrejaScreen() {
       .then((s) => mounted && setNextService(s))
       .catch((err) => {
         // eslint-disable-next-line no-console
-        console.error('[IgrejaScreen] falha ao carregar próximo culto:', err);
+        console.error('[IgrejaScreen] falha ao carregar próxima celebração:', err);
       })
       .finally(() => mounted && setLoading(false));
     return () => {
@@ -94,7 +94,7 @@ export function IgrejaScreen() {
         )}
       </header>
       <section className="card-navy igreja-highlight">
-        <span className="home-verse-kicker">PRÓXIMO CULTO</span>
+        <span className="home-verse-kicker">PRÓXIMA CELEBRAÇÃO</span>
         {loading ? (
           <p className="igreja-highlight-text">A carregar…</p>
         ) : nextService ? (
@@ -104,7 +104,7 @@ export function IgrejaScreen() {
             {nextService.location && <div className="igreja-highlight-meta">{nextService.location}</div>}
           </>
         ) : (
-          <p className="igreja-highlight-text">Nenhum culto agendado no momento.</p>
+          <p className="igreja-highlight-text">Nenhuma celebração agendada no momento.</p>
         )}
       </section>
       {groups.map((group) => (

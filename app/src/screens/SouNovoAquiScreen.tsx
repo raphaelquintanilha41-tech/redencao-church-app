@@ -87,11 +87,11 @@ export function SouNovoAquiScreen() {
       </section>
 
       <section className="card perfil-section">
-        <h3 className="home-section-title">Horários dos cultos</h3>
+        <h3 className="home-section-title">Horários das celebrações</h3>
         {schedule === null ? (
           <p className="home-event-meta">A carregar…</p>
         ) : schedule.length === 0 ? (
-          <p className="home-event-meta">Consulte a Agenda para os próximos cultos.</p>
+          <p className="home-event-meta">Consulte a Agenda para as próximas celebrações.</p>
         ) : (
           schedule.map((line) => (
             <div key={line} className="home-event-title">
@@ -104,7 +104,7 @@ export function SouNovoAquiScreen() {
       <section className="card perfil-section">
         <h3 className="home-section-title">Para as crianças</h3>
         <p className="static-body-text">
-          Temos uma sala das crianças disponível durante o culto, para que os pequenos também tenham seu espaço.
+          Temos uma sala das crianças disponível durante a celebração, para que os pequenos também tenham seu espaço.
         </p>
       </section>
 

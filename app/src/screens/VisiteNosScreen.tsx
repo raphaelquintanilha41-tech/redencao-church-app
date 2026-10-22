@@ -48,7 +48,7 @@ export function VisiteNosScreen() {
         {schedule === null ? (
           <p className="home-event-meta">A carregar…</p>
         ) : schedule.length === 0 ? (
-          <p className="home-event-meta">Consulte a Agenda para os próximos cultos.</p>
+          <p className="home-event-meta">Consulte a Agenda para as próximas celebrações.</p>
         ) : (
           schedule.map((line) => (
             <div key={line} className="home-event-title">

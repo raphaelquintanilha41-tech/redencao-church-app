@@ -30,7 +30,7 @@ export function SobreNosScreen() {
         <p className="static-body-text">
           A Redenção Church nasceu em outubro de 2023, em Portugal, por meio da célula "Cavando Poços". O que começou
           como uma pequena reunião de oração e comunhão cresceu, alcançou vidas e tornou-se uma família espiritual.
-          Em 25 de novembro de 2024, inaugurámos o nosso primeiro culto de portas abertas no formato de igreja, dando
+          Em 25 de novembro de 2024, inaugurámos a nossa primeira celebração de portas abertas no formato de igreja, dando
           início a um novo tempo de expansão, cuidado e cumprimento do propósito de Deus.
         </p>
       </section>

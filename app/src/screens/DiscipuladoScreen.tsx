@@ -67,7 +67,7 @@ export function DiscipuladoScreen() {
         <div className="caminhada-empty-state">
           <p className="static-body-text">
             Em breve: as turmas de discipulado vão aparecer aqui, com líder, dia e horário. Enquanto isso, fale com a
-            liderança no culto.
+            liderança na celebração.
           </p>
         </div>
       ) : (

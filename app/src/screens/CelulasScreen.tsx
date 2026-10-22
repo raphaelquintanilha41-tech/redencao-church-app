@@ -73,7 +73,7 @@ export function CelulasScreen() {
         <div className="caminhada-empty-state">
           <p className="static-body-text">
             Em breve: as células da Redenção Church vão aparecer aqui, com líder, dia e zona. Enquanto isso, fale
-            conosco no culto ou pelo Instagram.
+            conosco na celebração ou pelo Instagram.
           </p>
         </div>
       ) : (
