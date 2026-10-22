@@ -492,3 +492,89 @@
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
+
+/* Palavra do dia em ecrã inteiro */
+.home-verse-open {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+.home-verse-open .home-verse-ref {
+    display: block;
+    margin-top: var(--space-2);
+}
+.home-verse-full {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background-color: var(--color-navy);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: calc(var(--space-8) + env(safe-area-inset-top, 0px)) var(--space-6) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+    color: #FFF8EC;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+.home-verse-full-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--space-2);
+}
+.home-verse-full-logo {
+    width: 84px;
+    height: 84px;
+    border-radius: var(--radius-circle);
+    padding: 3px;
+    background: linear-gradient(135deg, #FFF1C9, #C99A48 50%, #7A5A22);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    margin-bottom: var(--space-2);
+}
+.home-verse-full-logo img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-circle);
+    object-fit: cover;
+    display: block;
+}
+.home-verse-full-brand,
+.home-verse-full-kicker {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--color-accent);
+}
+.home-verse-full-text {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    line-height: 1.4;
+    margin: var(--space-4) 0 var(--space-2);
+}
+.home-verse-full-ref {
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 700;
+    color: #F1DDAE;
+}
+.home-verse-full-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+.home-verse-full-actions .btn-secondary {
+    background: rgba(8, 14, 28, 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
