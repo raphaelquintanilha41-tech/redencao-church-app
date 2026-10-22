@@ -78,7 +78,7 @@ export async function fetchNextService(): Promise<ChurchEvent | null> {
   const { data, error } = await supabase
     .from('events')
     .select('*')
-    .eq('category', 'Culto')
+    .eq('category', 'Celebração')
     .gte('event_date', eventCutoffISO())
     .order('event_date', { ascending: true })
     .limit(1)

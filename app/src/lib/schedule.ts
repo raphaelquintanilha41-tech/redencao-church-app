@@ -1,8 +1,8 @@
 import { supabase } from './supabaseClient';
 
 /**
- * Horários regulares dos cultos, derivados dos próximos eventos com
- * categoria "Culto" (mantidos pelo cron ensure_recurring_cultos). Evita
+ * Horários regulares das celebrações, derivados dos próximos eventos com
+ * categoria "Celebração" (mantidos pelo cron ensure_recurring_cultos). Evita
  * horários escritos à mão nos ecrãs "Sou novo aqui" e "Visite-nos".
  * Devolve linhas prontas a mostrar, ex.: "Quintas-feiras, 20h".
  */
@@ -10,7 +10,7 @@ export async function fetchServiceSchedule(): Promise<string[]> {
   const { data, error } = await supabase
     .from('events')
     .select('event_date')
-    .eq('category', 'Culto')
+    .eq('category', 'Celebração')
     .gte('event_date', new Date().toISOString())
     .order('event_date', { ascending: true })
     .limit(12);
