@@ -167,8 +167,16 @@
 }
 .home-verse-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-3);
     margin-top: var(--space-3);
+}
+.home-invite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-basis: 100%;
 }
 .home-verse-card .btn-secondary {
     color: #EDE7DB;
