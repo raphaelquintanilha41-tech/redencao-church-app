@@ -138,3 +138,23 @@ font-weight: 600;
 font-size: 27px;
 color: var(--rc-faint);
 }
+
+/* Janelas por cima da página: o scroll fica dentro da janela e não "escapa"
+   para a página de baixo (ver lib/scroll-lock.ts, que também fixa o <body>). */
+.home-video-modal,
+.home-devotional-modal,
+.home-verse-full,
+.biblia-share-sheet-backdrop,
+.oracao-sheet-backdrop,
+.oracao-screen {
+  overscroll-behavior: contain;
+}
+.home-devotional-modal-card,
+.biblia-share-sheet,
+.oracao-sheet {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+html.scroll-locked {
+  overscroll-behavior: none;
+}
