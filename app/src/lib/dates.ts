@@ -18,10 +18,11 @@ export function localDateKey(d: Date = new Date()): string {
  * mesmo depois de a hora de início ter passado.
  */
 /**
- * Um evento sai da app 3 h depois de começar (celebrações duram ~2h30, encontros 1–2 h).
- * Devolve o instante a partir do qual um evento ainda conta como "a acontecer".
+ * Um evento sai da app 2 h depois da hora de início (celebrações, encontros e
+ * estudos duram até ~2 h). Devolve o instante a partir do qual um evento ainda
+ * conta como "a acontecer".
  */
-export const EVENT_VISIBLE_HOURS = 3;
+export const EVENT_VISIBLE_HOURS = 2;
 export function eventCutoffISO(): string {
   return new Date(Date.now() - EVENT_VISIBLE_HOURS * 60 * 60 * 1000).toISOString();
 }
