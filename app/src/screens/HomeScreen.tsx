@@ -2,7 +2,7 @@ import { PrayerBackground } from './PrayerBackground';
 import { versePhotoUrl } from '../lib/verse-photo';
 import { localDateKey } from '../lib/dates';
 import { guidedPrayerFor } from '../lib/guided-prayer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { addFavorite, fetchFavoritedVerseIds, fetchLastRead, removeFavorite, type ReadingHistoryItem } from '../lib/bible';
@@ -21,6 +21,7 @@ import { fetchUnreadNotificationCount } from '../lib/notifications';
 import { updateAppBadge } from '../lib/push';
 import { signalHomeReady } from '../lib/splash';
 import { versesParam } from '../lib/share-card';
+import { buildEventFiles, shareEvent } from '../lib/event-share';
 import type { ScripturePassage } from '../lib/share-card';
 import { PassageShareSheet } from './PassageShareSheet';
 import { CAMPAIGN, campaignToday, chaptersLabel, shortDate } from '../lib/campaign';
@@ -304,6 +305,30 @@ export function HomeScreen() {
 
   const nextEvent = events[0];
 
+  // Cartaz do próximo encontro pronto antes do toque em "Convidar" (o iPhone só
+  // partilha ficheiros se a partilha começar logo após o toque).
+  const nextEventFilesRef = useRef<{ id: string; files: File[] } | null>(null);
+  useEffect(() => {
+    if (!nextEvent) return;
+    let alive = true;
+    buildEventFiles(nextEvent)
+      .then((files) => {
+        if (alive) nextEventFilesRef.current = { id: nextEvent.id, files };
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [nextEvent]);
+
+  const inviteToNextEvent = async () => {
+    if (!nextEvent) return;
+    const cached = nextEventFilesRef.current;
+    const outcome = await shareEvent(nextEvent, cached && cached.id === nextEvent.id ? cached.files : null);
+    if (outcome === 'copied') showToast('Convite copiado. Cole onde quiser partilhar.');
+    else if (outcome === 'failed') showToast('Não foi possível partilhar.');
+  };
+
   return (
     <div className="home-screen">
       <header className="home-header">
@@ -429,6 +454,10 @@ export function HomeScreen() {
               <div className="home-event-meta">{formatEventDate(nextEvent.event_date)}</div>
               {nextEvent.location && <div className="home-event-meta">{nextEvent.location}</div>}
               <div className="home-verse-actions">
+                <button type="button" className="btn-primary home-verse-btn home-invite-btn" onClick={inviteToNextEvent}>
+                  <ShareIcon />
+                  Convidar
+                </button>
                 <button
                   type="button"
                   className="btn-secondary home-verse-btn"
