@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { AmbientMusic } from '../lib/ambient-music';
 import { submitPrayerRequest } from '../lib/caminhada';
 import { fetchGuidedPrayer, guidedPrayerFor, type GuidedPrayer } from '../lib/guided-prayer';
+import { prayerShareLinks, prayerShareText, renderPrayerCard, sharePrayer } from '../lib/prayer-share';
 import { PrayerBackground } from './PrayerBackground';
 
 type Phase = 'intro' | 'playing' | 'done';
@@ -28,6 +29,9 @@ export function OracaoGuiadaScreen() {
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [shareLinksOpen, setShareLinksOpen] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const shareFileRef = useRef<File | null>(null);
   const phaseRef = useRef<Phase>('intro');
   phaseRef.current = phase;
 
@@ -41,6 +45,41 @@ export function OracaoGuiadaScreen() {
       alive = false;
     };
   }, []);
+
+  // Imagem de partilha pronta antes do toque (o iPhone só partilha se for imediato).
+  useEffect(() => {
+    let alive = true;
+    shareFileRef.current = null;
+    renderPrayerCard(prayer)
+      .then((b) => {
+        if (alive) shareFileRef.current = new File([b], 'oracao-guiada.jpg', { type: 'image/jpeg' });
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [prayer]);
+
+  const share = async () => {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      const outcome = await sharePrayer(prayer, shareFileRef.current);
+      if (outcome === 'unsupported') setShareLinksOpen(true);
+      else if (outcome === 'failed') showToast('Não foi possível partilhar.');
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const copyShareText = async () => {
+    try {
+      await navigator.clipboard.writeText(prayerShareText(prayer));
+      showToast('Texto copiado.');
+    } catch {
+      showToast('Não foi possível copiar.');
+    }
+  };
 
   const musicRef = useRef<AmbientMusic | null>(null);
   const wakeRef = useRef<{ release: () => Promise<void> } | null>(null);
@@ -216,6 +255,9 @@ export function OracaoGuiadaScreen() {
           <button type="button" className="oracao-icon-btn oracao-close" onClick={close} aria-label="Fechar">
             ✕
           </button>
+          <button type="button" className="oracao-icon-btn oracao-share" onClick={share} aria-label="Partilhar" disabled={sharing}>
+            <ShareIcon />
+          </button>
           <span className="oracao-kicker">ORAÇÃO GUIADA</span>
           <h1 className="oracao-intro-title">Iniciar uma conversa com Deus</h1>
           <p className="oracao-intro-sub">{Math.round(prayer.totalSeconds / 60)}–{Math.round(prayer.totalSeconds / 60) + 2} minutos · com música</p>
@@ -332,12 +374,39 @@ export function OracaoGuiadaScreen() {
             <button type="button" className="oracao-start" onClick={() => navigate('/palavra-do-dia')}>
               Ler a Palavra do dia
             </button>
+            <button type="button" className="oracao-ghost" onClick={share} disabled={sharing}>
+              Partilhar nas redes
+            </button>
             <button type="button" className="oracao-ghost" onClick={begin}>
               Orar de novo
             </button>
             <button type="button" className="oracao-ghost" onClick={() => navigate('/')}>
               Voltar ao Início
             </button>
+          </div>
+        </div>
+      )}
+
+      {shareLinksOpen && (
+        <div className="oracao-sheet-backdrop" onClick={() => setShareLinksOpen(false)}>
+          <div className="oracao-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Partilhar">
+            <h2>Partilhar a Oração guiada</h2>
+            <p>Escolha a rede. No telemóvel, a imagem vai junto; aqui vai o texto com o link.</p>
+            <div className="oracao-share-grid">
+              {prayerShareLinks(prayer).map((l) => (
+                <a key={l.name} className="oracao-ghost oracao-share-link" href={l.href} target="_blank" rel="noopener noreferrer">
+                  {l.name}
+                </a>
+              ))}
+              <button type="button" className="oracao-ghost oracao-share-link" onClick={copyShareText}>
+                Copiar texto
+              </button>
+            </div>
+            <div className="oracao-sheet-actions">
+              <button type="button" className="oracao-ghost" onClick={() => setShareLinksOpen(false)}>
+                Fechar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -393,6 +462,18 @@ function SpeakerOff() {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor" />
       <path d="m16 9 5 6M21 9l-5 6" />
+    </svg>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5" />
+      <line x1="15.4" y1="6.5" x2="8.6" y2="10.5" />
     </svg>
   );
 }
