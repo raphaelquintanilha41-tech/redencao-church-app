@@ -17,10 +17,15 @@ export interface ScripturePassage {
   url?: string;
   /** Foto de fundo (ex.: a mesma da Palavra do dia). Sem foto, usa o azul-noite. */
   photoUrl?: string;
+  /** 'story' = 1080×1920 (9:16), igual à vista em ecrã inteiro da Palavra do dia. Por omissão 1080×1350. */
+  format?: 'post' | 'story';
 }
 
 const W = 1080;
-const H = 1350;
+/** Altura da imagem: 1350 (4:5, publicação) ou 1920 (9:16, Status/Stories, ecrã inteiro). */
+let H = 1350;
+/** Margem extra no topo no formato 9:16, para o cabeçalho não ficar colado ao topo do ecrã. */
+let TOP = 0;
 const PAD = 84;
 const NAVY_TOP = '#0E1A31';
 const NAVY_BOTTOM = '#070D19';
@@ -149,26 +154,26 @@ function drawLogo(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null, 
 }
 
 function drawHeader(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null, title: string, subtitle: string): number {
-  drawLogo(ctx, logo, W / 2, 132, 58);
+  drawLogo(ctx, logo, W / 2, TOP + 132, 58);
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = GOLD;
   ctx.font = `700 24px ${FONT}`;
   ctx.letterSpacing = '6px';
-  ctx.fillText('REDENÇÃO CHURCH', W / 2, 238);
+  ctx.fillText('REDENÇÃO CHURCH', W / 2, TOP + 238);
   ctx.letterSpacing = '0px';
 
   ctx.fillStyle = GOLD_LIGHT;
   ctx.font = `700 60px ${FONT}`;
-  ctx.fillText(title, W / 2, 318);
+  ctx.fillText(title, W / 2, TOP + 318);
 
   ctx.fillStyle = MUTED;
   ctx.font = `400 26px ${FONT}`;
-  ctx.fillText(subtitle, W / 2, 360);
+  ctx.fillText(subtitle, W / 2, TOP + 360);
 
   // divisor dourado com losango
-  const y = 392;
+  const y = TOP + 392;
   ctx.strokeStyle = 'rgba(214,180,115,0.7)';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -192,11 +197,11 @@ function drawFooter(ctx: CanvasRenderingContext2D, page: number, total: number) 
   ctx.textAlign = 'center';
   ctx.fillStyle = MUTED;
   ctx.font = `400 24px ${FONT}`;
-  ctx.fillText('Partilhado pela app Redenção Church · Carnaxide, Oeiras', W / 2, H - 82);
+  ctx.fillText('Partilhado pela app Redenção Church · Carnaxide, Oeiras', W / 2, H - (TOP ? 200 : 82));
   if (total > 1) {
     ctx.fillStyle = GOLD;
     ctx.font = `700 24px ${FONT}`;
-    ctx.fillText(`${page}/${total}`, W / 2, H - 120);
+    ctx.fillText(`${page}/${total}`, W / 2, H - (TOP ? 240 : 120));
   }
 }
 
@@ -208,6 +213,9 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
 
 /** Desenha a passagem em uma ou mais imagens com a marca da igreja. */
 export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
+  const story = p.format === 'story';
+  H = story ? 1920 : 1350;
+  TOP = story ? 200 : 0;
   await ensureFonts();
   const logo = await loadImage(LOGO_URL);
   const photo = p.photoUrl ? await loadImage(p.photoUrl) : null;
@@ -217,7 +225,7 @@ export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
 
   const measure = document.createElement('canvas').getContext('2d')!;
   // Um só versículo: letra grande e centrada. Capítulo: letra de leitura.
-  const fontSize = single ? (p.verses[0].text.length > 260 ? 44 : 54) : 32;
+  const fontSize = single ? (p.verses[0].text.length > 260 ? (story ? 52 : 44) : story ? 64 : 54) : 32;
   const lineH = Math.round(fontSize * (single ? 1.45 : 1.45));
   measure.font = `400 ${fontSize}px ${FONT}`;
   const textWidth = W - PAD * 2;
@@ -227,8 +235,8 @@ export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
     ? layoutLines(measure, [{ verse: 0, text: `“${p.verses[0].text.trim()}”` }], textWidth, 0).map((l) => ({ ...l, num: null }))
     : layoutLines(measure, p.verses, textWidth, numWidth);
 
-  const top = 444;
-  const bottom = H - 150;
+  const top = TOP + 444;
+  const bottom = H - (story ? 320 : 150);
   const avail = bottom - top;
   const gapH = Math.round(lineH * 0.45); // espaço entre versículos
   const heightOf = (l: Line) => (l.text === '' ? gapH : lineH);
