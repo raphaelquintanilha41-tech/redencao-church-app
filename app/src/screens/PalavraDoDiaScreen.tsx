@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 import { localDateKey } from '../lib/dates';
 import { resolveDailyVerseRef, type ResolvedDailyVerse } from '../lib/home';
 import { versesParam, type ScripturePassage } from '../lib/share-card';
+import { versePhotoUrl } from '../lib/verse-photo';
 import type { DailyVerse, Devotional } from '../lib/types';
 import { PassageShareSheet } from './PassageShareSheet';
 
@@ -75,6 +76,9 @@ export function PalavraDoDiaScreen() {
       url: `${window.location.origin}/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}?v=${versesParam(
         verseRef.verses.map((v) => v.verse),
       )}`,
+      // Mesmo visual da Palavra do dia no Início: foto de fundo e formato de ecrã inteiro.
+      photoUrl: verse ? versePhotoUrl(verse.text, verse.active_date ?? date, 1080) : undefined,
+      format: 'story',
     });
   };
 

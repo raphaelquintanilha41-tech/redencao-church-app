@@ -210,8 +210,10 @@ export function HomeScreen() {
         url: `${window.location.origin}/biblia/${verseRef.bookAbbrev}/${verseRef.chapter}?v=${versesParam(
           verseRef.verses.map((v) => v.verse),
         )}`,
-        // A mesma foto que está no cartão da Palavra do dia, em tamanho de partilha.
+        // A mesma foto que está no cartão da Palavra do dia, em tamanho de partilha,
+        // no formato de ecrã inteiro (9:16), igual à vista que abre ao tocar no versículo.
         photoUrl: versePhotoUrl(verse.text, verse.active_date ?? localDateKey(), 1080),
+        format: 'story',
       });
       return;
     }
