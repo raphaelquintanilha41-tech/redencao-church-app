@@ -1,9 +1,11 @@
-// Ecrã de abertura (logo da igreja) definido em index.html (#rc-splash).
-// Fica visível até a app estar pronta a mostrar conteúdo e, no mínimo,
-// MIN_VISIBLE_MS desde o arranque — para a apresentação não "piscar".
+// Ecrã de abertura definido em index.html (#rc-splash).
+// A formação do logo corre em CSS; quando a app está pronta (e já passou o
+// tempo mínimo da sequência), este módulo dispara o "salto" do leão e retira
+// o ecrã. Nas aberturas seguintes do mesmo dia (html.rc-short) a sequência é curta.
 
-const MIN_VISIBLE_MS = 3600; // pelo menos 3,6 s — a sequência (linha, logo, versículo) termina aos ~2,6 s
-const FADE_MS = 500;
+const FULL_MIN_MS = 3400; // formação (1,6 s) + assentar + versículo
+const SHORT_MIN_MS = 700;
+const LEAP_MS = 1150; // duração do salto + véu (ver CSS rc-leap / rc-splash-veil)
 
 let hidden = false;
 
@@ -12,15 +14,16 @@ export function hideSplash() {
   hidden = true;
   const el = document.getElementById('rc-splash');
   if (!el) return;
-  const wait = Math.max(0, MIN_VISIBLE_MS - performance.now());
+  const short = document.documentElement.classList.contains('rc-short');
+  const wait = Math.max(0, (short ? SHORT_MIN_MS : FULL_MIN_MS) - performance.now());
   window.setTimeout(() => {
-    el.classList.add('rc-splash-hide');
-    window.setTimeout(() => el.remove(), FADE_MS);
+    el.classList.add('rc-splash-leap');
+    window.setTimeout(() => el.remove(), LEAP_MS);
   }, wait);
 }
 
 // A Home avisa quando os dados iniciais terminaram de carregar, para que o
-// utilizador passe do logo diretamente para a Home já preenchida.
+// utilizador passe da abertura diretamente para a Home já preenchida.
 export const HOME_READY_EVENT = 'rc:home-ready';
 
 export function signalHomeReady() {
