@@ -12,8 +12,10 @@
     <!-- Ecrã de abertura: aparece antes de o JavaScript carregar e é retirado
          por src/lib/splash.ts quando a sessão (e a Home) estiverem prontas. -->
     <style>
-      /* Fundo escuro desde o primeiro pixel, igual ao ecrã do sistema do PWA. */
-      html, body { margin: 0; background: #0a1120; }
+      /* Abertura "Revelação": fundo igual ao do logo, uma linha dourada que se
+         desenha, o logo que sobe suavemente e o versículo. Só opacidade e um
+         deslize curto — nada de máscaras, filtros ou sombras animadas. */
+      html, body { margin: 0; background: #000818; }
       #rc-splash {
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
@@ -22,82 +24,76 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 28px;
-        padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
-        background: #0a1120;
+        padding: env(safe-area-inset-top) 28px env(safe-area-inset-bottom);
+        background: #000818;
         opacity: 1;
-        transition: opacity 0.45s ease-out;
+        transition: opacity 0.5s ease-out;
       }
-      #rc-splash.rc-splash-hide {
+      #rc-splash.rc-splash-hide { opacity: 0; pointer-events: none; }
+      .rc-splash-glow {
+        position: absolute;
+        left: 50%; top: 46%;
+        width: 150vw; max-width: 720px;
+        aspect-ratio: 1;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(214, 180, 115, 0.13) 0%, rgba(214, 180, 115, 0.05) 36%, rgba(214, 180, 115, 0) 66%);
         opacity: 0;
-        pointer-events: none;
+        animation: rc-fade 2.2s ease-out 0.3s forwards;
       }
-      /* Só opacidade: nada de escala, máscara, sombra ou filtro — nenhum
-         efeito que obrigue a redesenhar a imagem durante o carregamento. */
+      .rc-splash-line {
+        position: relative;
+        width: 0;
+        height: 1px;
+        margin-bottom: -6px;
+        background: linear-gradient(90deg, rgba(214, 180, 115, 0), #d6b473, rgba(214, 180, 115, 0));
+        animation: rc-line 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s forwards;
+      }
       .rc-splash-logo {
+        position: relative;
         display: block;
-        width: min(72vw, 340px);
+        width: min(84vw, 380px);
         height: auto;
         opacity: 0;
-        animation: rc-splash-fade 0.7s ease-out 0.05s forwards;
+        transform: translateY(18px);
+        animation: rc-rise 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s forwards;
       }
       .rc-splash-verse {
-        margin: 0;
+        position: relative;
+        margin: -4px 0 0;
         max-width: 300px;
-        color: #d6b473;
-        font: 600 16px/1.45 Arial, Helvetica, sans-serif;
-        letter-spacing: 0.02em;
         text-align: center;
+        color: #ead9b6;
+        font: italic 400 18px/1.5 "Cormorant Garamond", Georgia, "Times New Roman", "Noto Serif", serif;
         opacity: 0;
-        animation: rc-splash-fade 0.7s ease-out 0.45s forwards;
+        animation: rc-fade 1s ease-out 1.6s forwards;
       }
       .rc-splash-verse small {
         display: block;
-        margin-top: 4px;
-        color: #8e9ab2;
-        font-size: 14px;
-        font-weight: 500;
+        margin-top: 12px;
+        color: #d6b473;
+        font: 500 11px/1 Arial, Helvetica, sans-serif;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
       }
-      .rc-splash-bar {
-        position: relative;
-        width: 140px;
-        height: 3px;
-        border-radius: 3px;
-        overflow: hidden;
-        background: rgba(214, 180, 115, 0.18);
-        opacity: 0;
-        animation: rc-splash-fade 0.7s ease-out 0.7s forwards;
-      }
-      .rc-splash-bar::after {
-        content: '';
-        position: absolute;
-        top: 0; bottom: 0; left: 0;
-        width: 40%;
-        border-radius: 3px;
-        background: linear-gradient(90deg, transparent, #d6b473, transparent);
-        animation: rc-splash-slide 1.4s ease-in-out infinite;
-      }
-      @keyframes rc-splash-fade {
-        to { opacity: 1; }
-      }
-      @keyframes rc-splash-slide {
-        from { transform: translateX(-100%); }
-        to { transform: translateX(250%); }
-      }
+      @keyframes rc-fade { to { opacity: 1; } }
+      @keyframes rc-line { to { width: min(64vw, 260px); } }
+      @keyframes rc-rise { to { opacity: 1; transform: translateY(0); } }
       @media (prefers-reduced-motion: reduce) {
-        .rc-splash-logo, .rc-splash-verse, .rc-splash-bar { animation: none; opacity: 1; }
-        .rc-splash-bar::after { animation: none; }
+        .rc-splash-glow, .rc-splash-logo, .rc-splash-verse { animation: none; opacity: 1; transform: none; }
+        .rc-splash-line { animation: none; width: min(64vw, 260px); }
       }
     </style>
   </head>
   <body>
     <div id="rc-splash" role="status" aria-label="A abrir a aplicação Redenção Church">
-      <img class="rc-splash-logo" src="/splash-logo.webp" alt="" width="480" height="480" decoding="sync" fetchpriority="high" />
+      <div class="rc-splash-glow" aria-hidden="true"></div>
+      <div class="rc-splash-line" aria-hidden="true"></div>
+      <img class="rc-splash-logo" src="/splash-logo.webp" alt="" width="900" height="900" decoding="sync" fetchpriority="high" />
       <p class="rc-splash-verse">
         “Eu sou o caminho, a verdade e a vida.”
-        <small>João 14:6</small>
+        <small>João 14 · 6</small>
       </p>
-      <div class="rc-splash-bar" aria-hidden="true"></div>
     </div>
     <script>
       // Segurança: se algo falhar no arranque, o ecrã de abertura não fica preso.
