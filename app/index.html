@@ -8,21 +8,11 @@
     <meta name="theme-color" content="#0A1120" />
     <meta name="description" content="Redenção Church — palavra, comunhão e propósito, num só lugar." />
     <title>Redenção Church</title>
-    <link rel="preload" as="image" href="/splash-pieces.webp" type="image/webp" />
-    <!-- Ecrã de abertura (index.html + src/lib/splash.ts): o logo forma-se a
-         partir de 8 fragmentos, assenta, mostra o versículo e, quando a app está
-         pronta, o leão "salta" ao encontro da pessoa (zoom) e dissolve para a Home.
-         Só deslocamento, escala e opacidade — nada de máscaras ou filtros.
-         Nas aberturas seguintes do mesmo dia corre a versão curta (html.rc-short). -->
-    <script>
-      (function () {
-        try {
-          var k = 'rc-splash-day', d = new Date().toISOString().slice(0, 10);
-          if (localStorage.getItem(k) === d) document.documentElement.className += ' rc-short';
-          localStorage.setItem(k, d);
-        } catch (e) {}
-      })();
-    </script>
+    <link rel="preload" as="image" href="/splash-logo.webp" type="image/webp" />
+    <!-- Ecrã de abertura (index.html + src/lib/splash.ts): o logo nasce de um
+         ponto de luz, cresce até ao tamanho final, mostra o versículo e, quando
+         a app está pronta, avança e sai pelo ecrã (zoom no leão) para a Home.
+         Só escala e opacidade — nada de máscaras ou filtros; uma única imagem. -->
     <style>
       html, body { margin: 0; background: #000818; }
       #rc-splash {
@@ -31,7 +21,6 @@
         z-index: 9999;
         overflow: hidden;
         background: #000818;
-        opacity: 1;
       }
       .rc-splash-glow {
         position: absolute;
@@ -40,36 +29,36 @@
         aspect-ratio: 1;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(214, 180, 115, 0.14) 0%, rgba(214, 180, 115, 0.05) 36%, rgba(214, 180, 115, 0) 66%);
+        background: radial-gradient(circle, rgba(214, 180, 115, 0.16) 0%, rgba(214, 180, 115, 0.06) 36%, rgba(214, 180, 115, 0) 66%);
         opacity: 0;
-        animation: rc-fade 2s ease-out 0.5s forwards;
+        animation: rc-fade 2.4s ease-out 0.2s forwards;
+      }
+      /* Ponto de luz de onde o logo nasce */
+      .rc-splash-spark {
+        position: absolute;
+        left: 50%; top: 46%;
+        width: 6px; height: 6px;
+        margin: -3px 0 0 -3px;
+        border-radius: 50%;
+        background: #f1ddae;
+        opacity: 0;
+        animation: rc-spark 1.2s ease-out 0.1s forwards;
       }
       .rc-splash-stage {
         position: absolute;
         left: 50%; top: 46%;
         width: min(86vw, 360px);
         aspect-ratio: 1;
-        transform: translate(-50%, -50%) scale(0.94);
-        animation: rc-settle 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 1.55s forwards;
-      }
-      .rc-piece {
-        position: absolute;
-        inset: 0;
-        background-image: url('/splash-pieces.webp');
-        background-size: 400% 200%;
-        background-repeat: no-repeat;
+        transform: translate(-50%, -50%) scale(0.02);
+        transform-origin: 47% 43%;
         opacity: 0;
-        transform: translate(var(--dx), var(--dy)) scale(0.55);
-        animation: rc-join 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+        animation: rc-born 2.6s cubic-bezier(0.16, 0.6, 0.2, 1) 0.35s forwards;
       }
-      .rc-p0 { background-position: 0.0000% 0%; --dx: 65px; --dy: -157px; animation-delay: 0.25s; }
-      .rc-p1 { background-position: 33.3333% 0%; --dx: 157px; --dy: -65px; animation-delay: 0.34s; }
-      .rc-p2 { background-position: 66.6667% 0%; --dx: 157px; --dy: 65px; animation-delay: 0.43s; }
-      .rc-p3 { background-position: 100.0000% 0%; --dx: 65px; --dy: 157px; animation-delay: 0.52s; }
-      .rc-p4 { background-position: 0.0000% 100%; --dx: -65px; --dy: 157px; animation-delay: 0.61s; }
-      .rc-p5 { background-position: 33.3333% 100%; --dx: -157px; --dy: 65px; animation-delay: 0.70s; }
-      .rc-p6 { background-position: 66.6667% 100%; --dx: -157px; --dy: -65px; animation-delay: 0.79s; }
-      .rc-p7 { background-position: 100.0000% 100%; --dx: -65px; --dy: -157px; animation-delay: 0.88s; }
+      .rc-splash-logo {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
       .rc-splash-verse {
         position: absolute;
         left: 28px; right: 28px; top: 66%;
@@ -78,7 +67,7 @@
         color: #ead9b6;
         font: italic 400 18px/1.5 "Cormorant Garamond", Georgia, "Times New Roman", "Noto Serif", serif;
         opacity: 0;
-        animation: rc-fade 0.9s ease-out 2.5s forwards;
+        animation: rc-fade 0.9s ease-out 2.4s forwards;
       }
       .rc-splash-verse small {
         display: block;
@@ -95,33 +84,32 @@
         opacity: 0;
         pointer-events: none;
       }
-      /* O salto: disparado por splash.ts quando a app está pronta (classe rc-splash-leap). */
+      /* O salto para fora do ecrã: disparado por splash.ts quando a app está pronta. */
       #rc-splash.rc-splash-leap .rc-splash-stage {
-        animation: rc-leap 1.1s cubic-bezier(0.55, 0, 0.85, 0.35) forwards;
+        animation: rc-leap 1.15s cubic-bezier(0.55, 0, 0.85, 0.35) forwards;
       }
       #rc-splash.rc-splash-leap .rc-splash-verse { animation: rc-out 0.45s ease-out forwards; }
-      #rc-splash.rc-splash-leap .rc-splash-veil { animation: rc-fade 0.5s ease-in 0.65s forwards; }
-      /* Versão curta (aberturas seguintes no mesmo dia): logo já formado. */
-      html.rc-short .rc-piece { animation: none; opacity: 1; transform: none; }
-      html.rc-short .rc-splash-stage { animation: none; transform: translate(-50%, -50%); }
-      html.rc-short .rc-splash-glow { animation-delay: 0s; animation-duration: 0.6s; }
-      html.rc-short .rc-splash-verse { animation-delay: 0.1s; animation-duration: 0.5s; }
-      html.rc-short #rc-splash.rc-splash-leap .rc-splash-stage { animation: rc-leap 1.1s cubic-bezier(0.55, 0, 0.85, 0.35) forwards; }
-      @keyframes rc-join { to { opacity: 1; transform: translate(0, 0) scale(1); } }
-      @keyframes rc-settle {
-        0% { transform: translate(-50%, -50%) scale(0.94); }
-        60% { transform: translate(-50%, -50%) scale(1.03); }
-        100% { transform: translate(-50%, -50%) scale(1); }
+      #rc-splash.rc-splash-leap .rc-splash-veil { animation: rc-fade 0.5s ease-in 0.7s forwards; }
+      @keyframes rc-spark {
+        0% { opacity: 0; transform: scale(0.4); }
+        35% { opacity: 1; transform: scale(1.6); }
+        100% { opacity: 0; transform: scale(6); }
+      }
+      @keyframes rc-born {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.02); }
+        18% { opacity: 1; }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       }
       @keyframes rc-leap {
-        from { transform: translate(-50%, -50%) scale(1); }
-        to { transform: translate(-50%, -50%) scale(4.2); }
+        from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(4.6); }
       }
       @keyframes rc-fade { to { opacity: 1; } }
       @keyframes rc-out { to { opacity: 0; } }
       @media (prefers-reduced-motion: reduce) {
-        .rc-piece, .rc-splash-glow, .rc-splash-verse { animation: none; opacity: 1; transform: none; }
-        .rc-splash-stage { animation: none; transform: translate(-50%, -50%); }
+        .rc-splash-spark { animation: none; }
+        .rc-splash-stage, .rc-splash-glow, .rc-splash-verse { animation: none; opacity: 1; }
+        .rc-splash-stage { transform: translate(-50%, -50%); }
         #rc-splash.rc-splash-leap .rc-splash-stage { animation: none; }
         #rc-splash.rc-splash-leap .rc-splash-veil { animation-delay: 0s; }
       }
@@ -130,15 +118,9 @@
   <body>
     <div id="rc-splash" role="status" aria-label="A abrir a aplicação Redenção Church">
       <div class="rc-splash-glow" aria-hidden="true"></div>
-      <div class="rc-splash-stage" style="transform-origin: 47% 43%;" aria-hidden="true">
-        <div class="rc-piece rc-p0"></div>
-        <div class="rc-piece rc-p1"></div>
-        <div class="rc-piece rc-p2"></div>
-        <div class="rc-piece rc-p3"></div>
-        <div class="rc-piece rc-p4"></div>
-        <div class="rc-piece rc-p5"></div>
-        <div class="rc-piece rc-p6"></div>
-        <div class="rc-piece rc-p7"></div>
+      <div class="rc-splash-spark" aria-hidden="true"></div>
+      <div class="rc-splash-stage" aria-hidden="true">
+        <img class="rc-splash-logo" src="/splash-logo.webp" alt="" width="900" height="900" decoding="sync" fetchpriority="high" />
       </div>
       <p class="rc-splash-verse">
         “Eu sou o caminho, a verdade e a vida.”
