@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { fetchAllEvents, fetchMyRegistrations, registerForEvent, unregisterFromEvent } from '../lib/agenda';
 import { buildEventFiles, shareEvent } from '../lib/event-share';
 import type { ChurchEvent } from '../lib/types';
+import { ImageViewer } from './ImageViewer';
 
 function formatEventDate(iso: string): string {
   const d = new Date(iso);
@@ -23,6 +24,8 @@ export function AgendaScreen() {
   const [category, setCategory] = useState<string>('Todos');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // Cartaz aberto em ecrã inteiro (toque na imagem).
+  const [viewing, setViewing] = useState<ChurchEvent | null>(null);
   // Link partilhado: /agenda?evento=<id> → destaca e mostra esse evento.
   const [searchParams] = useSearchParams();
   const focusId = searchParams.get('evento');
@@ -148,7 +151,13 @@ export function AgendaScreen() {
                 className={`card agenda-card${focusId === ev.id ? ' agenda-card-focus' : ''}`}
               >
                 {ev.image_url && (
-                  <img className="agenda-card-image" src={ev.image_url} alt={ev.title} loading="lazy" />
+                  <img
+                    className="agenda-card-image"
+                    src={ev.image_url}
+                    alt={ev.title}
+                    loading="lazy"
+                    onClick={() => setViewing(ev)}
+                  />
                 )}
                 <div className="agenda-card-date">{formatEventDate(ev.event_date)}</div>
                 <div className="home-event-title">{ev.title}</div>
@@ -176,6 +185,15 @@ export function AgendaScreen() {
             );
           })}
         </div>
+      )}
+
+      {viewing?.image_url && (
+        <ImageViewer
+          src={viewing.image_url}
+          alt={viewing.title}
+          onClose={() => setViewing(null)}
+          onShare={() => handleShare(viewing)}
+        />
       )}
 
       {toast && <div className="rc-toast">{toast}</div>}

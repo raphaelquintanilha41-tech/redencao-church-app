@@ -1,4 +1,5 @@
 import { PrayerBackground } from './PrayerBackground';
+import { ImageViewer } from './ImageViewer';
 import { versePhotoUrl } from '../lib/verse-photo';
 import { localDateKey } from '../lib/dates';
 import { guidedPrayerFor } from '../lib/guided-prayer';
@@ -98,6 +99,8 @@ export function HomeScreen() {
   const [toast, setToast] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
   const [verseFull, setVerseFull] = useState(false);
+  // Cartaz do próximo encontro em ecrã inteiro (toque na imagem).
+  const [posterOpen, setPosterOpen] = useState(false);
   const [devotionalOpen, setDevotionalOpen] = useState(false);
   const [verseRef, setVerseRef] = useState<ResolvedDailyVerse | null>(null);
   // Partilha da Palavra do dia (mesmo painel Imagem/Texto da Bíblia).
@@ -450,7 +453,7 @@ export function HomeScreen() {
             <section className="card home-section">
               <h3 className="home-section-title">Próximo encontro</h3>
               {nextEvent.image_url && (
-                <img className="home-event-image" src={nextEvent.image_url} alt="" aria-hidden="true" />
+                <img className="home-event-image" src={nextEvent.image_url} alt={nextEvent.title} onClick={() => setPosterOpen(true)} />
               )}
               <div className="home-event-title">{nextEvent.title}</div>
               <div className="home-event-meta">{formatEventDate(nextEvent.event_date)}</div>
@@ -593,6 +596,15 @@ export function HomeScreen() {
 
       {versePassage && (
         <PassageShareSheet passage={versePassage} onClose={() => setVersePassage(null)} onToast={showToast} />
+      )}
+
+      {posterOpen && nextEvent?.image_url && (
+        <ImageViewer
+          src={nextEvent.image_url}
+          alt={nextEvent.title}
+          onClose={() => setPosterOpen(false)}
+          onShare={inviteToNextEvent}
+        />
       )}
 
       {toast && <div className="rc-toast">{toast}</div>}
