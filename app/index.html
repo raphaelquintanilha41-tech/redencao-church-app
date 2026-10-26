@@ -12,12 +12,11 @@
     <!-- Ecrã de abertura: aparece antes de o JavaScript carregar e é retirado
          por src/lib/splash.ts quando a sessão (e a Home) estiverem prontas. -->
     <style>
-      /* Fundo escuro desde o primeiro pixel: evita a faixa branca nas margens
-         antes de o CSS da app carregar e liga sem corte ao ecrã do sistema. */
+      /* Fundo escuro desde o primeiro pixel, igual ao ecrã do sistema do PWA. */
       html, body { margin: 0; background: #0a1120; }
       #rc-splash {
         position: fixed;
-        inset: -1px; /* cobre arredondamentos de subpixel nas bordas */
+        top: 0; right: 0; bottom: 0; left: 0;
         z-index: 9999;
         display: flex;
         flex-direction: column;
@@ -25,30 +24,22 @@
         justify-content: center;
         gap: 28px;
         padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
-        background: #0a1120 radial-gradient(circle at 50% 42%, #0d1d3d 0%, #071329 48%, #0a1120 100%);
+        background: #0a1120;
         opacity: 1;
         transition: opacity 0.45s ease-out;
-        will-change: opacity;
-        contain: strict;
       }
       #rc-splash.rc-splash-hide {
         opacity: 0;
         pointer-events: none;
       }
+      /* Só opacidade: nada de escala, máscara, sombra ou filtro — nenhum
+         efeito que obrigue a redesenhar a imagem durante o carregamento. */
       .rc-splash-logo {
-        position: relative;
+        display: block;
         width: min(72vw, 340px);
-        aspect-ratio: 1;
-        background: url('/splash-logo.webp') center / contain no-repeat;
-        -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 71%);
-        mask-image: radial-gradient(circle, #000 58%, transparent 71%);
+        height: auto;
         opacity: 0;
-        transform: translate3d(0, 0, 0) scale(0.92);
-        will-change: transform, opacity;
-        backface-visibility: hidden;
-        /* só transform/opacity (compositor) — sem filtros nem sombras animadas */
-        animation: rc-splash-in 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0s forwards,
-          rc-splash-breathe 4.8s ease-in-out 0.8s infinite;
+        animation: rc-splash-fade 0.7s ease-out 0.05s forwards;
       }
       .rc-splash-verse {
         margin: 0;
@@ -58,8 +49,7 @@
         letter-spacing: 0.02em;
         text-align: center;
         opacity: 0;
-        will-change: opacity;
-        animation: rc-splash-fade 0.8s ease-out 0.5s forwards;
+        animation: rc-splash-fade 0.7s ease-out 0.45s forwards;
       }
       .rc-splash-verse small {
         display: block;
@@ -75,42 +65,34 @@
         border-radius: 3px;
         overflow: hidden;
         background: rgba(214, 180, 115, 0.18);
-        transform: translate3d(0, 0, 0);
+        opacity: 0;
+        animation: rc-splash-fade 0.7s ease-out 0.7s forwards;
       }
       .rc-splash-bar::after {
         content: '';
         position: absolute;
-        inset: 0;
+        top: 0; bottom: 0; left: 0;
         width: 40%;
         border-radius: 3px;
         background: linear-gradient(90deg, transparent, #d6b473, transparent);
-        will-change: transform;
-        animation: rc-splash-slide 1.3s ease-in-out infinite;
-      }
-      @keyframes rc-splash-in {
-        from { opacity: 0; transform: translate3d(0, 0, 0) scale(0.92); }
-        to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-      }
-      @keyframes rc-splash-breathe {
-        0%, 100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-        50% { opacity: 1; transform: translate3d(0, 0, 0) scale(1.03); }
+        animation: rc-splash-slide 1.4s ease-in-out infinite;
       }
       @keyframes rc-splash-fade {
         to { opacity: 1; }
       }
       @keyframes rc-splash-slide {
-        from { transform: translate3d(-100%, 0, 0); }
-        to { transform: translate3d(250%, 0, 0); }
+        from { transform: translateX(-100%); }
+        to { transform: translateX(250%); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .rc-splash-logo, .rc-splash-verse { animation: none; opacity: 1; transform: none; }
-        .rc-splash-bar::after { animation-duration: 3s; }
+        .rc-splash-logo, .rc-splash-verse, .rc-splash-bar { animation: none; opacity: 1; }
+        .rc-splash-bar::after { animation: none; }
       }
     </style>
   </head>
   <body>
     <div id="rc-splash" role="status" aria-label="A abrir a aplicação Redenção Church">
-      <div class="rc-splash-logo" aria-hidden="true"></div>
+      <img class="rc-splash-logo" src="/splash-logo.webp" alt="" width="480" height="480" decoding="sync" fetchpriority="high" />
       <p class="rc-splash-verse">
         “Eu sou o caminho, a verdade e a vida.”
         <small>João 14:6</small>
