@@ -12,9 +12,12 @@
     <!-- Ecrã de abertura: aparece antes de o JavaScript carregar e é retirado
          por src/lib/splash.ts quando a sessão (e a Home) estiverem prontas. -->
     <style>
+      /* Fundo escuro desde o primeiro pixel: evita a faixa branca nas margens
+         antes de o CSS da app carregar e liga sem corte ao ecrã do sistema. */
+      html, body { margin: 0; background: #0a1120; }
       #rc-splash {
         position: fixed;
-        inset: 0;
+        inset: -1px; /* cobre arredondamentos de subpixel nas bordas */
         z-index: 9999;
         display: flex;
         flex-direction: column;
@@ -22,22 +25,30 @@
         justify-content: center;
         gap: 28px;
         padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
-        background: radial-gradient(circle at 50% 42%, #0d1d3d 0%, #061127 48%, #020a19 100%);
-        transition: opacity 0.5s ease, visibility 0.5s ease;
+        background: #0a1120 radial-gradient(circle at 50% 42%, #0d1d3d 0%, #071329 48%, #0a1120 100%);
+        opacity: 1;
+        transition: opacity 0.45s ease-out;
+        will-change: opacity;
+        contain: strict;
       }
       #rc-splash.rc-splash-hide {
         opacity: 0;
-        visibility: hidden;
+        pointer-events: none;
       }
       .rc-splash-logo {
+        position: relative;
         width: min(72vw, 340px);
         aspect-ratio: 1;
         background: url('/splash-logo.webp') center / contain no-repeat;
         -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 71%);
         mask-image: radial-gradient(circle, #000 58%, transparent 71%);
         opacity: 0;
-        animation: rc-splash-in 0.9s ease-out 0.1s forwards,
-          rc-splash-breathe 2.8s ease-in-out 1s infinite;
+        transform: translate3d(0, 0, 0) scale(0.92);
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        /* só transform/opacity (compositor) — sem filtros nem sombras animadas */
+        animation: rc-splash-in 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0s forwards,
+          rc-splash-breathe 4.8s ease-in-out 0.8s infinite;
       }
       .rc-splash-verse {
         margin: 0;
@@ -47,7 +58,8 @@
         letter-spacing: 0.02em;
         text-align: center;
         opacity: 0;
-        animation: rc-splash-fade 0.8s ease-out 0.6s forwards;
+        will-change: opacity;
+        animation: rc-splash-fade 0.8s ease-out 0.5s forwards;
       }
       .rc-splash-verse small {
         display: block;
@@ -63,6 +75,7 @@
         border-radius: 3px;
         overflow: hidden;
         background: rgba(214, 180, 115, 0.18);
+        transform: translate3d(0, 0, 0);
       }
       .rc-splash-bar::after {
         content: '';
@@ -71,25 +84,26 @@
         width: 40%;
         border-radius: 3px;
         background: linear-gradient(90deg, transparent, #d6b473, transparent);
+        will-change: transform;
         animation: rc-splash-slide 1.3s ease-in-out infinite;
       }
       @keyframes rc-splash-in {
-        from { opacity: 0; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1); }
+        from { opacity: 0; transform: translate3d(0, 0, 0) scale(0.92); }
+        to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
       }
       @keyframes rc-splash-breathe {
-        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(214, 180, 115, 0)); }
-        50% { transform: scale(1.03); filter: drop-shadow(0 0 18px rgba(214, 180, 115, 0.35)); }
+        0%, 100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        50% { opacity: 1; transform: translate3d(0, 0, 0) scale(1.03); }
       }
       @keyframes rc-splash-fade {
         to { opacity: 1; }
       }
       @keyframes rc-splash-slide {
-        from { transform: translateX(-100%); }
-        to { transform: translateX(250%); }
+        from { transform: translate3d(-100%, 0, 0); }
+        to { transform: translate3d(250%, 0, 0); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .rc-splash-logo, .rc-splash-verse { animation: none; opacity: 1; }
+        .rc-splash-logo, .rc-splash-verse { animation: none; opacity: 1; transform: none; }
         .rc-splash-bar::after { animation-duration: 3s; }
       }
     </style>
