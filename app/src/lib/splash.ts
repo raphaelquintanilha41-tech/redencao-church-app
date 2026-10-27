@@ -1,10 +1,10 @@
 // Ecrã de abertura definido em index.html (#rc-splash).
-// O nascimento do logo (ponto de luz → tamanho final) corre em CSS; quando a
-// app está pronta e já passou o tempo mínimo da sequência, este módulo dispara
-// o salto para fora do ecrã e retira a abertura.
+// O logo e o versículo aparecem em CSS; quando a app está pronta e já passou
+// o tempo mínimo (~2 s com o logo parado), este módulo dispara o salto para
+// fora do ecrã (~2 s) e retira a abertura.
 
-const MIN_MS = 3400; // nascimento (0,35 → 2,95 s) + versículo
-const LEAP_MS = 1200; // salto + véu (ver CSS rc-leap / rc-splash-veil)
+const MIN_MS = 2300; // logo + versículo visíveis ~2 s
+const LEAP_MS = 1950; // salto + véu (ver CSS rc-leap / rc-splash-veil)
 
 let hidden = false;
 
