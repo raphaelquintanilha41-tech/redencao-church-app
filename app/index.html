@@ -9,9 +9,9 @@
     <meta name="description" content="Redenção Church — palavra, comunhão e propósito, num só lugar." />
     <title>Redenção Church</title>
     <link rel="preload" as="image" href="/splash-logo.webp" type="image/webp" />
-    <!-- Ecrã de abertura (index.html + src/lib/splash.ts): o logo nasce de um
-         ponto de luz, cresce até ao tamanho final, mostra o versículo e, quando
-         a app está pronta, avança e sai pelo ecrã (zoom no leão) para a Home.
+    <!-- Ecrã de abertura (index.html + src/lib/splash.ts): o logo aparece com o
+         versículo por baixo (~2 s) e, quando a app está pronta, avança e salta
+         para fora do ecrã (zoom no leão, ~2 s) até à Home.
          Só escala e opacidade — nada de máscaras ou filtros; uma única imagem. -->
     <style>
       html, body { margin: 0; background: #000818; }
@@ -31,28 +31,17 @@
         border-radius: 50%;
         background: radial-gradient(circle, rgba(214, 180, 115, 0.16) 0%, rgba(214, 180, 115, 0.06) 36%, rgba(214, 180, 115, 0) 66%);
         opacity: 0;
-        animation: rc-fade 2.4s ease-out 0.2s forwards;
-      }
-      /* Ponto de luz de onde o logo nasce */
-      .rc-splash-spark {
-        position: absolute;
-        left: 50%; top: 46%;
-        width: 6px; height: 6px;
-        margin: -3px 0 0 -3px;
-        border-radius: 50%;
-        background: #f1ddae;
-        opacity: 0;
-        animation: rc-spark 1.2s ease-out 0.1s forwards;
+        animation: rc-fade 1.2s ease-out 0s forwards;
       }
       .rc-splash-stage {
         position: absolute;
         left: 50%; top: 46%;
         width: min(86vw, 360px);
         aspect-ratio: 1;
-        transform: translate(-50%, -50%) scale(0.02);
+        transform: translate(-50%, -50%) scale(0.96);
         transform-origin: 47% 43%;
         opacity: 0;
-        animation: rc-born 2.6s cubic-bezier(0.16, 0.6, 0.2, 1) 0.35s forwards;
+        animation: rc-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s forwards;
       }
       .rc-splash-logo {
         display: block;
@@ -67,7 +56,7 @@
         color: #ead9b6;
         font: italic 400 18px/1.5 "Cormorant Garamond", Georgia, "Times New Roman", "Noto Serif", serif;
         opacity: 0;
-        animation: rc-fade 0.9s ease-out 2.4s forwards;
+        animation: rc-fade 0.7s ease-out 0.35s forwards;
       }
       .rc-splash-verse small {
         display: block;
@@ -86,28 +75,20 @@
       }
       /* O salto para fora do ecrã: disparado por splash.ts quando a app está pronta. */
       #rc-splash.rc-splash-leap .rc-splash-stage {
-        animation: rc-leap 1.15s cubic-bezier(0.55, 0, 0.85, 0.35) forwards;
+        animation: rc-leap 1.9s cubic-bezier(0.5, 0, 0.75, 0.2) forwards;
       }
-      #rc-splash.rc-splash-leap .rc-splash-verse { animation: rc-out 0.45s ease-out forwards; }
-      #rc-splash.rc-splash-leap .rc-splash-veil { animation: rc-fade 0.5s ease-in 0.7s forwards; }
-      @keyframes rc-spark {
-        0% { opacity: 0; transform: scale(0.4); }
-        35% { opacity: 1; transform: scale(1.6); }
-        100% { opacity: 0; transform: scale(6); }
-      }
-      @keyframes rc-born {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.02); }
-        18% { opacity: 1; }
-        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      #rc-splash.rc-splash-leap .rc-splash-verse { animation: rc-out 0.5s ease-out forwards; }
+      #rc-splash.rc-splash-leap .rc-splash-veil { animation: rc-fade 0.55s ease-in 1.4s forwards; }
+      @keyframes rc-in {
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       }
       @keyframes rc-leap {
         from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        to { opacity: 1; transform: translate(-50%, -50%) scale(4.6); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(5.5); }
       }
       @keyframes rc-fade { to { opacity: 1; } }
       @keyframes rc-out { to { opacity: 0; } }
       @media (prefers-reduced-motion: reduce) {
-        .rc-splash-spark { animation: none; }
         .rc-splash-stage, .rc-splash-glow, .rc-splash-verse { animation: none; opacity: 1; }
         .rc-splash-stage { transform: translate(-50%, -50%); }
         #rc-splash.rc-splash-leap .rc-splash-stage { animation: none; }
@@ -118,7 +99,6 @@
   <body>
     <div id="rc-splash" role="status" aria-label="A abrir a aplicação Redenção Church">
       <div class="rc-splash-glow" aria-hidden="true"></div>
-      <div class="rc-splash-spark" aria-hidden="true"></div>
       <div class="rc-splash-stage" aria-hidden="true">
         <img class="rc-splash-logo" src="/splash-logo.webp" alt="" width="900" height="900" decoding="sync" fetchpriority="high" />
       </div>
