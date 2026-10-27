@@ -4,7 +4,9 @@
 // fora do ecrã (~2 s) e retira a abertura.
 
 const MIN_MS = 2300; // logo + versículo visíveis ~2 s
-const LEAP_MS = 1950; // salto + véu (ver CSS rc-leap / rc-splash-veil)
+const LEAP_MS = 1950; // salto (1,9 s) + dissolução final (ver CSS rc-leap / rc-out)
+// Cor da barra de estado: igual à abertura enquanto ela está no ecrã; depois, a da app.
+const APP_THEME_COLOR = '#0A1120';
 
 let hidden = false;
 
@@ -16,7 +18,10 @@ export function hideSplash() {
   const wait = Math.max(0, MIN_MS - performance.now());
   window.setTimeout(() => {
     el.classList.add('rc-splash-leap');
-    window.setTimeout(() => el.remove(), LEAP_MS);
+    window.setTimeout(() => {
+      el.remove();
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', APP_THEME_COLOR);
+    }, LEAP_MS);
   }, wait);
 }
 
