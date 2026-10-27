@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0A1120" />
+    <meta name="theme-color" content="#000818" />
     <meta name="description" content="Redenção Church — palavra, comunhão e propósito, num só lugar." />
     <title>Redenção Church</title>
     <link rel="preload" as="image" href="/splash-logo.webp" type="image/webp" />
@@ -21,6 +21,7 @@
         z-index: 9999;
         overflow: hidden;
         background: #000818;
+        will-change: opacity;
       }
       .rc-splash-glow {
         position: absolute;
@@ -41,6 +42,8 @@
         transform: translate(-50%, -50%) scale(0.96);
         transform-origin: 47% 43%;
         opacity: 0;
+        will-change: transform, opacity;
+        backface-visibility: hidden;
         animation: rc-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s forwards;
       }
       .rc-splash-logo {
@@ -66,19 +69,13 @@
         letter-spacing: 0.3em;
         text-transform: uppercase;
       }
-      .rc-splash-veil {
-        position: absolute;
-        inset: 0;
-        background: #000818;
-        opacity: 0;
-        pointer-events: none;
-      }
       /* O salto para fora do ecrã: disparado por splash.ts quando a app está pronta. */
       #rc-splash.rc-splash-leap .rc-splash-stage {
         animation: rc-leap 1.9s cubic-bezier(0.5, 0, 0.75, 0.2) forwards;
       }
       #rc-splash.rc-splash-leap .rc-splash-verse { animation: rc-out 0.5s ease-out forwards; }
-      #rc-splash.rc-splash-leap .rc-splash-veil { animation: rc-fade 0.55s ease-in 1.4s forwards; }
+      /* No fim do salto a abertura inteira dissolve-se sobre a Home (sem corte seco). */
+      #rc-splash.rc-splash-leap { animation: rc-out 0.6s ease-in-out 1.3s forwards; pointer-events: none; }
       @keyframes rc-in {
         to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       }
@@ -92,7 +89,7 @@
         .rc-splash-stage, .rc-splash-glow, .rc-splash-verse { animation: none; opacity: 1; }
         .rc-splash-stage { transform: translate(-50%, -50%); }
         #rc-splash.rc-splash-leap .rc-splash-stage { animation: none; }
-        #rc-splash.rc-splash-leap .rc-splash-veil { animation-delay: 0s; }
+        #rc-splash.rc-splash-leap { animation-delay: 0s; }
       }
     </style>
   </head>
@@ -106,13 +103,14 @@
         “Eu sou o caminho, a verdade e a vida.”
         <small>João 14 · 6</small>
       </p>
-      <div class="rc-splash-veil" aria-hidden="true"></div>
     </div>
     <script>
       // Segurança: se algo falhar no arranque, o ecrã de abertura não fica preso.
       setTimeout(function () {
         var s = document.getElementById('rc-splash');
         if (s) s.remove();
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', '#0A1120');
       }, 14000);
     </script>
     <div id="root"></div>

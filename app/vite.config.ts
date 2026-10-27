@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: 'Redenção',
         description: 'Palavra, comunhão e propósito — num só lugar.',
         theme_color: '#0A1120',
-        background_color: '#0A1120',
+        background_color: '#000818',
         display: 'standalone',
         start_url: '/',
         scope: '/',
