@@ -18,6 +18,9 @@ export function hideSplash() {
   const wait = Math.max(0, MIN_MS - performance.now());
   window.setTimeout(() => {
     el.classList.add('rc-splash-leap');
+    // A abertura ainda cobre o ecrã: devolve já o fundo da página ao tema, para que
+    // a dissolução final revele a app com a cor certa (claro ou escuro).
+    document.documentElement.classList.remove('rc-splashing');
     window.setTimeout(() => {
       el.remove();
       document.querySelector('meta[name="theme-color"]')?.setAttribute('content', APP_THEME_COLOR);
