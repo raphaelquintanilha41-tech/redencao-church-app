@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-PT">
+<html lang="pt-PT" class="rc-splashing">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -14,7 +14,11 @@
          para fora do ecrã (zoom no leão, ~2 s) até à Home.
          Só escala e opacidade — nada de máscaras ou filtros; uma única imagem. -->
     <style>
-      html, body { margin: 0; background: #000818; }
+      /* Fundo escuro só enquanto a abertura está no ecrã. A classe é retirada no
+         início do salto (splash.ts): depois disso o fundo da página volta a ser o
+         do tema (claro/escuro) em toda a altura, mesmo em capítulos longos. */
+      html, body { margin: 0; }
+      html.rc-splashing, html.rc-splashing body { background: #000818; }
       #rc-splash {
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
@@ -109,6 +113,7 @@
       setTimeout(function () {
         var s = document.getElementById('rc-splash');
         if (s) s.remove();
+        document.documentElement.classList.remove('rc-splashing');
         var m = document.querySelector('meta[name="theme-color"]');
         if (m) m.setAttribute('content', '#0A1120');
       }, 14000);
