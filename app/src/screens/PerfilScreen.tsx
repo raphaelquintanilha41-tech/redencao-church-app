@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { updateOwnProfile, uploadAvatar } from '../lib/profiles';
-import { fetchStreak, fetchUpcomingRegisteredCount } from '../lib/profile-stats';
+import { fetchStreak, fetchRegisteredCount } from '../lib/profile-stats';
 import { fetchActiveReadingPlanProgress } from '../lib/home';
 import { fetchIsChurchAdmin } from '../lib/members';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/preferences';
@@ -54,7 +54,7 @@ export function PerfilScreen() {
   useEffect(() => {
     if (!user) return;
     let mounted = true;
-    Promise.all([fetchStreak(user.id), fetchActiveReadingPlanProgress(user.id), fetchUpcomingRegisteredCount(user.id)])
+    Promise.all([fetchStreak(user.id), fetchActiveReadingPlanProgress(user.id), fetchRegisteredCount(user.id)])
       .then(([s, p, c]) => {
         if (!mounted) return;
         setStreak(s);
