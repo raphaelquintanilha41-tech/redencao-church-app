@@ -196,12 +196,12 @@ function drawHeader(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null
 function drawFooter(ctx: CanvasRenderingContext2D, page: number, total: number) {
   ctx.textAlign = 'center';
   ctx.fillStyle = MUTED;
-  ctx.font = `400 24px ${FONT}`;
-  ctx.fillText('Partilhado pela app Redenção Church · Carnaxide, Oeiras', W / 2, H - (TOP ? 200 : 82));
+  ctx.font = `400 28px ${FONT}`;
+  ctx.fillText('Partilhado pela app Redenção Church · Carnaxide, Oeiras', W / 2, H - (TOP ? 190 : 78));
   if (total > 1) {
     ctx.fillStyle = GOLD;
-    ctx.font = `700 24px ${FONT}`;
-    ctx.fillText(`${page}/${total}`, W / 2, H - (TOP ? 240 : 120));
+    ctx.font = `700 30px ${FONT}`;
+    ctx.fillText(`${page}/${total}`, W / 2, H - (TOP ? 236 : 120));
   }
 }
 
@@ -224,21 +224,42 @@ export async function renderPassageCards(p: ScripturePassage): Promise<Blob[]> {
   const single = p.verses.length === 1;
 
   const measure = document.createElement('canvas').getContext('2d')!;
-  // Um só versículo: letra grande e centrada. Capítulo: letra de leitura.
-  const fontSize = single ? (p.verses[0].text.length > 260 ? (story ? 52 : 44) : story ? 64 : 54) : 32;
-  const lineH = Math.round(fontSize * (single ? 1.45 : 1.45));
-  measure.font = `400 ${fontSize}px ${FONT}`;
   const textWidth = W - PAD * 2;
-  const numWidth = single ? 0 : 58;
-
-  const lines = single
-    ? layoutLines(measure, [{ verse: 0, text: `“${p.verses[0].text.trim()}”` }], textWidth, 0).map((l) => ({ ...l, num: null }))
-    : layoutLines(measure, p.verses, textWidth, numWidth);
-
   const top = TOP + 444;
-  const bottom = H - (story ? 320 : 150);
+  const bottom = H - (story ? 300 : 150);
   const avail = bottom - top;
-  const gapH = Math.round(lineH * 0.45); // espaço entre versículos
+
+  // Tamanho da letra ajustado ao texto: usa a MAIOR letra que deixa a passagem
+  // caber numa só imagem (legível no telemóvel); só se nem a mínima couber é que
+  // a passagem é repartida por várias imagens.
+  const maxSize = single ? (story ? 72 : 60) : story ? 60 : 50;
+  const minSize = single ? (story ? 48 : 42) : story ? 44 : 38;
+  const layoutFor = (size: number) => {
+    measure.font = `400 ${size}px ${FONT}`;
+    const nw = single ? 0 : Math.round(size * 1.15);
+    const ls = single
+      ? layoutLines(measure, [{ verse: 0, text: `“${p.verses[0].text.trim()}”` }], textWidth, 0).map((l) => ({ ...l, num: null }))
+      : layoutLines(measure, p.verses, textWidth, nw);
+    const lh = Math.round(size * 1.42);
+    const gap = Math.round(lh * 0.4);
+    const total = ls.reduce((acc, l) => acc + (l.text === '' ? gap : lh), 0);
+    return { ls, nw, lh, gap, total };
+  };
+  let fontSize = minSize;
+  let fit = layoutFor(minSize);
+  for (let size = maxSize; size >= minSize; size -= 2) {
+    const candidate = layoutFor(size);
+    if (candidate.total <= avail) {
+      fontSize = size;
+      fit = candidate;
+      break;
+    }
+  }
+  const lines = fit.ls;
+  const lineH = fit.lh;
+  const numWidth = fit.nw;
+
+  const gapH = fit.gap; // espaço entre versículos
   const heightOf = (l: Line) => (l.text === '' ? gapH : lineH);
 
   // Agrupa as linhas por versículo e enche cada página sem partir versículos
