@@ -104,6 +104,13 @@
 }
 .oracao-intro-sub, .oracao-done-text { margin: 0; font-size: 18px; color: #EDE3D2; line-height: 1.45; }
 .oracao-intro-steps { margin: 4px 0 8px; padding-left: 22px; font-size: 17px; line-height: 1.7; color: #FFF8EC; }
+.oracao-scene-btn {
+  align-self: center; border: 1px solid rgba(255,248,236,0.35); border-radius: 999px;
+  padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+  background: rgba(10,14,28,0.35); color: #FFF8EC; font-family: var(--font-body);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: oracao-in 0.9s ease 0.5s both;
+}
 .oracao-intro-tip { margin: 0; font-size: 14px; color: #D9CFBE; text-align: center; }
 .oracao-start {
   border: none; border-radius: 999px; padding: 15px 22px; font-size: 18px; font-weight: 800; cursor: pointer;
