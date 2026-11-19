@@ -27,7 +27,17 @@ export interface PrayerStep {
   seconds: number;
 }
 
-export type PrayerScene = 'mar' | 'montanhas' | 'estrelas' | 'aurora';
+export type PrayerScene =
+  | 'mar'
+  | 'montanhas'
+  | 'estrelas'
+  | 'aurora'
+  | 'lago'
+  | 'campo'
+  | 'deserto'
+  | 'floresta'
+  | 'nuvens'
+  | 'luar';
 
 export interface GuidedPrayer {
   date: string;
@@ -170,7 +180,21 @@ const SETS: DaySet[] = [
   },
 ];
 
-const SCENES: PrayerScene[] = ['mar', 'montanhas', 'aurora', 'estrelas'];
+/** Ordem pensada para alternar luz quente e luz fria de um dia para o outro. */
+export const SCENES: PrayerScene[] = ['mar', 'lago', 'campo', 'estrelas', 'montanhas', 'nuvens', 'deserto', 'luar', 'floresta', 'aurora'];
+
+export const SCENE_LABELS: Record<PrayerScene, string> = {
+  mar: 'Pôr do sol no mar',
+  lago: 'Lago ao amanhecer',
+  campo: 'Campo de trigo',
+  estrelas: 'Céu estrelado',
+  montanhas: 'Montanhas',
+  nuvens: 'Acima das nuvens',
+  deserto: 'Deserto',
+  luar: 'Luar no mar',
+  floresta: 'Floresta',
+  aurora: 'Raios de luz',
+};
 
 function dayIndex(date: string): number {
   const [y, m, d] = date.split('-').map(Number);

@@ -4,6 +4,7 @@
 // A partilha usa a folha do sistema (WhatsApp, Instagram, Facebook, Telegram,
 // Messenger, e-mail…); onde não existir, mostra ligações diretas por rede.
 import type { GuidedPrayer, PrayerScene } from './guided-prayer';
+import { paintPrayerScene } from '../screens/PrayerBackground';
 
 const W = 1080;
 const H = 1350;
@@ -14,8 +15,9 @@ const MUTED = '#C9C2B4';
 const FONT = 'Arimo, Arial, Helvetica, sans-serif';
 const LOGO_URL = '/redencao-logo.jpeg';
 
-/** Fotos do Unsplash (licença livre) que correspondem às cenas animadas da app. */
-const SCENE_PHOTO: Record<PrayerScene, string> = {
+/** Fotos do Unsplash (licença livre) para algumas cenas; as restantes usam a
+ *  própria pintura animada da app, num fotograma parado. */
+const SCENE_PHOTO: Partial<Record<PrayerScene, string>> = {
   mar: '1507525428034-b723cf961d3e',
   montanhas: '1490682143684-14369e18dce8',
   estrelas: '1528353518104-dbd48bee7bc4',
@@ -87,7 +89,9 @@ export async function renderPrayerCard(p: GuidedPrayer): Promise<Blob> {
   }
   const [logo, photo] = await Promise.all([
     loadImage(LOGO_URL),
-    loadImage(`https://images.unsplash.com/photo-${SCENE_PHOTO[p.scene]}?w=1080&q=70&auto=format&fit=crop`),
+    SCENE_PHOTO[p.scene]
+      ? loadImage(`https://images.unsplash.com/photo-${SCENE_PHOTO[p.scene]}?w=1080&q=70&auto=format&fit=crop`)
+      : Promise.resolve(null),
   ]);
 
   const canvas = document.createElement('canvas');
@@ -95,17 +99,21 @@ export async function renderPrayerCard(p: GuidedPrayer): Promise<Blob> {
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
 
-  // Fundo: foto da cena com véu azul-noite (ou gradiente se a foto falhar).
+  // Fundo: foto ou pintura da cena, com véu azul-noite por cima.
   const base = ctx.createLinearGradient(0, 0, 0, H);
   base.addColorStop(0, '#0E1A31');
   base.addColorStop(1, '#070D19');
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, W, H);
-  if (photo) {
+  if (!photo) {
+    paintPrayerScene(ctx, W, H, p.scene);
+  } else {
     const s = Math.max(W / photo.naturalWidth, H / photo.naturalHeight);
     const dw = photo.naturalWidth * s;
     const dh = photo.naturalHeight * s;
     ctx.drawImage(photo, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  }
+  {
     const veil = ctx.createLinearGradient(0, 0, 0, H);
     veil.addColorStop(0, 'rgba(8,14,28,0.45)');
     veil.addColorStop(0.5, 'rgba(8,14,28,0.55)');
