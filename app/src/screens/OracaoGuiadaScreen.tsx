@@ -35,6 +35,19 @@ export function OracaoGuiadaScreen() {
   const phaseRef = useRef<Phase>('intro');
   phaseRef.current = phase;
 
+  // Sem zoom neste ecrã: um gesto de pinça ou um duplo toque no tablet deixava a
+  // página ampliada e o texto, o botão "Começar" e o ✕ ficavam fora do ecrã (só
+  // se via a paisagem). Ao entrar, repõe o zoom a 100% e bloqueia-o; ao sair,
+  // devolve a configuração original.
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+    if (!meta) return;
+    const original = meta.getAttribute('content') ?? '';
+    const base = original.replace(/,?\s*(maximum-scale|minimum-scale|user-scalable)=[^,]*/g, '');
+    meta.setAttribute('content', `${base}, minimum-scale=1, maximum-scale=1, user-scalable=no`);
+    return () => meta.setAttribute('content', original);
+  }, []);
+
   // Roteiro escrito para hoje (só troca enquanto ainda está na abertura).
   useEffect(() => {
     let alive = true;
