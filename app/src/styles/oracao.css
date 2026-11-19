@@ -1,13 +1,19 @@
 /* Oração guiada — ecrã inteiro */
 .oracao-screen {
   position: fixed; inset: 0; z-index: 200; overflow: hidden;
+  /* sem pinça nem duplo toque para ampliar (o texto saía do ecrã no tablet) */
+  touch-action: pan-y;
   color: #FFF8EC; background: #0b0f1d;
   font-family: var(--font-body);
   -webkit-user-select: none; user-select: none;
+  isolation: isolate;
 }
-.oracao-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* Camadas explícitas: paisagem (0) < sombra (1) < texto e botões (2+). Alguns
+   tablets promovem o canvas a uma camada própria e, sem z-index, pintavam-no
+   por cima de tudo — via-se só a paisagem. */
+.oracao-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
 .oracao-shade {
-  position: absolute; inset: 0; pointer-events: none;
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
   background: linear-gradient(180deg, rgba(5,8,18,0.55) 0%, rgba(5,8,18,0.25) 35%, rgba(5,8,18,0.35) 65%, rgba(5,8,18,0.7) 100%);
 }
 .oracao-top {
@@ -144,4 +150,12 @@
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 30px; height: 30px; border-radius: 50%; background: rgba(255,248,236,0.9); color: #0F1E3A;
   display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+
+/* Com "remover animações" ativo no aparelho, o texto não pode ficar preso no
+   primeiro fotograma (opacidade 0): mostra-o logo. */
+@media (prefers-reduced-motion: reduce) {
+  .oracao-screen *, .oracao-screen *::before, .oracao-screen *::after {
+    animation-duration: 0.01ms !important; animation-delay: 0s !important;
+  }
 }
