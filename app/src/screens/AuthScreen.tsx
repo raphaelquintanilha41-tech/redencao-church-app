@@ -240,13 +240,13 @@ export function AuthScreen() {
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            color: 'var(--color-neutral-600)',
+            color: 'var(--color-muted)',
             fontSize: 15,
           }}
         >
-          <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+          <div style={{ flex: 1, height: 1, background: 'var(--color-line)' }} />
           ou
-          <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+          <div style={{ flex: 1, height: 1, background: 'var(--color-line)' }} />
         </div>
 
         {/* Apple login intentionally not rendered: it requires a paid Apple Developer

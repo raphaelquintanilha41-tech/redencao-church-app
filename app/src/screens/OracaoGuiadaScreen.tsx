@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AmbientMusic } from '../lib/ambient-music';
 import { submitPrayerRequest } from '../lib/caminhada';
-import { fetchGuidedPrayer, guidedPrayerFor, type GuidedPrayer } from '../lib/guided-prayer';
+import { fetchGuidedPrayer, guidedPrayerFor, SCENES, SCENE_LABELS, type GuidedPrayer, type PrayerScene } from '../lib/guided-prayer';
+import { localDateKey } from '../lib/dates';
 import { prayerShareLinks, prayerShareText, renderPrayerCard, sharePrayer } from '../lib/prayer-share';
 import { PrayerBackground } from './PrayerBackground';
 
@@ -14,11 +15,40 @@ type Phase = 'intro' | 'playing' | 'done';
  * cena animada de fundo. Toque à direita / deslize para cima = avançar;
  * toque à esquerda / deslize para baixo = voltar.
  */
+const SCENE_KEY = 'rc-oracao-scene';
+
+function readChosenScene(): PrayerScene | null {
+  try {
+    const raw = localStorage.getItem(SCENE_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw) as { date?: string; scene?: PrayerScene };
+    return v.date === localDateKey() && v.scene && SCENES.includes(v.scene) ? v.scene : null;
+  } catch {
+    return null;
+  }
+}
+
 export function OracaoGuiadaScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [prayer, setPrayer] = useState<GuidedPrayer>(() => guidedPrayerFor());
+  const [basePrayer, setPrayer] = useState<GuidedPrayer>(() => guidedPrayerFor());
+  // Paisagem: muda todos os dias sozinha; a pessoa pode escolher outra (vale para hoje).
+  const [chosenScene, setChosenScene] = useState<PrayerScene | null>(() => readChosenScene());
+  const prayer = useMemo(
+    () => (chosenScene ? { ...basePrayer, scene: chosenScene } : basePrayer),
+    [basePrayer, chosenScene],
+  );
   const steps = prayer.steps;
+  const nextScene = () => {
+    const i = SCENES.indexOf(prayer.scene);
+    const next = SCENES[(i + 1) % SCENES.length];
+    setChosenScene(next);
+    try {
+      localStorage.setItem(SCENE_KEY, JSON.stringify({ date: localDateKey(), scene: next }));
+    } catch {
+      /* sem armazenamento: a escolha vale só nesta visita */
+    }
+  };
 
   const [phase, setPhase] = useState<Phase>('intro');
   const [index, setIndex] = useState(0);
@@ -282,6 +312,9 @@ export function OracaoGuiadaScreen() {
           </ol>
           <button type="button" className="oracao-start" onClick={begin}>
             ▶ Começar
+          </button>
+          <button type="button" className="oracao-scene-btn" onClick={nextScene} aria-label="Mudar a paisagem">
+            🖼 {SCENE_LABELS[prayer.scene]} · mudar
           </button>
           <p className="oracao-intro-tip">Dica: use fones de ouvido e encontre um lugar tranquilo.</p>
         </div>
