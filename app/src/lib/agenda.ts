@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import type { ChurchEvent } from './types';
 import { eventCutoffISO } from './dates';
+import { withSpecials } from './event-specials';
 
 /**
  * Eventos ainda a decorrer ou futuros: um evento sai da lista 3 h depois de
@@ -14,7 +15,7 @@ export async function fetchAllEvents(): Promise<ChurchEvent[]> {
     .gte('event_date', eventCutoffISO())
     .order('event_date', { ascending: true });
   if (error) throw error;
-  return (data ?? []) as ChurchEvent[];
+  return withSpecials((data ?? []) as ChurchEvent[]);
 }
 
 export async function fetchMyRegistrations(userId: string): Promise<Set<string>> {
