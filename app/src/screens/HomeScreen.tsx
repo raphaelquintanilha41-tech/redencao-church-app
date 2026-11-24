@@ -27,6 +27,7 @@ import type { ScripturePassage } from '../lib/share-card';
 import { PassageShareSheet } from './PassageShareSheet';
 import { CAMPAIGN, campaignToday, chaptersLabel, shortDate } from '../lib/campaign';
 import { BirthdayCard } from './BirthdayCard';
+import { HighlightPopup } from './HighlightPopup';
 import type {
   ChurchEvent,
   DailyVerse,
@@ -606,6 +607,8 @@ export function HomeScreen() {
           onShare={inviteToNextEvent}
         />
       )}
+
+      <HighlightPopup onToast={showToast} />
 
       {toast && <div className="rc-toast">{toast}</div>}
 
