@@ -37,6 +37,7 @@ import { AppShell } from './screens/AppShell';
 import { ProtectedRoute } from './screens/ProtectedRoute';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { SplashController } from './screens/SplashController';
+import { HighlightPopup } from './screens/HighlightPopup';
 import { PalavraDoDiaScreen } from './screens/PalavraDoDiaScreen';
 import { CampanhaScreen } from './screens/CampanhaScreen';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -64,6 +65,7 @@ export default function App() {
       <AuthProvider>
         <ConfigWarningBanner />
         <SplashController />
+        <HighlightPopup />
         <Routes>
           <Route path="/onboarding" element={<OnboardingScreen />} />
           <Route path="/auth" element={<AuthScreen />} />
